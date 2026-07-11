@@ -1,37 +1,248 @@
-<div class="utility"><div class="shell"><span>Free shipping over $75</span><span>30-day returns</span><span>Support: hello&#64;gimotech.com</span></div></div>
+<div class="utility">
+  <div class="shell">
+    <span *ngIf="freeShippingThreshold !== null">Free shipping over {{ freeShippingThreshold | currency:currencyCode }}</span>
+    <span>Laboratory supply support</span>
+    <span>Support: hello&#64;gimotech.com</span>
+  </div>
+</div>
+
 <header class="nav shell">
-  <a class="brand" href="#"><i>G</i><b>GIMO</b><span>TECH</span></a>
-  <nav><a href="#">Home</a><a href="#why">About</a><a href="#shop">Products</a><a href="#plans">Bundles</a><a href="#contact">Contact</a></nav>
+  <a class="brand" href="/" aria-label="Gimo Tech Supplies home">
+    <picture>
+      <source srcset="/assets/brand/gimo-tech-supplies-logo-600.webp" type="image/webp">
+      <img src="/assets/brand/gimo-tech-supplies-logo-600.png" width="600" height="200" alt="Gimo Tech Supplies" fetchpriority="high" decoding="async">
+    </picture>
+  </a>
+  <nav aria-label="Primary navigation">
+    <a href="/">Home</a>
+    <a href="#syringe-filters">Syringe Filters</a>
+    <a href="#biohazard-bags">Biohazard Bags</a>
+    <a href="#shop">Catalog</a>
+    <a href="#contact">Contact</a>
+  </nav>
   <button class="cart" aria-label="Shopping bag">Bag <span>{{ cartCount }}</span></button>
 </header>
 
 <main>
-  <section class="hero">
+  <section class="hero" id="syringe-filters">
     <div class="shell hero-inner">
-      <div class="hero-copy"><p class="eyebrow">Smarter technology for modern life</p><h1>Upgrade the way you work and play.</h1><p>Discover dependable, beautifully designed tech essentials—tested by our team and backed by real human support.</p><div class="ticks"><span>✓ Curated by tech experts</span><span>✓ Fast nationwide delivery</span><span>✓ Two-year product care</span></div><a class="button dark" href="#shop">Shop the collection</a></div>
-      <div class="hero-visual"><div class="orb"></div><div class="device laptop"><span></span></div><div class="device phone"></div><div class="device buds">● ●</div><div class="float-label"><small>NEW ARRIVAL</small><b>Work Anywhere Kit</b><span>Everything you need to stay in flow.</span></div></div>
+      <div class="hero-copy">
+        <p class="eyebrow">Fast shipping laboratory supplies</p>
+        <h1>Syringe filters for reliable HPLC sample preparation.</h1>
+        <p>Gimo Tech Supplies provides multiple syringe filter membrane types for chromatographic workflows, including Nylon, PTFE, PVDF, and MCE options in common laboratory formats such as 25mm and 0.45um.</p>
+        <div class="ticks">
+          <span>HPLC sample prep and laboratory filtration</span>
+          <span>Bulk canister packs and routine-use supply options</span>
+          <span>Authentic lab supplies with responsive purchasing support</span>
+        </div>
+        <a class="button dark" href="#shop">View syringe filters</a>
+      </div>
+      <div class="hero-visual" aria-label="Nylon syringe filter canister">
+        <img src="/assets/products/syringe-filter-hero.svg" width="640" height="520" alt="Canister of nylon syringe filters for HPLC sample preparation" fetchpriority="high" decoding="async">
+        <div class="float-label">
+          <small>FEATURED SUPPLY</small>
+          <b>Multiple Syringe Filter Types</b>
+          <span>Nylon, PTFE, PVDF, and MCE options for laboratory sample preparation.</span>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="benefits" id="why"><div class="shell benefit-layout">
-    <div class="benefit-cards"><article><div class="line-icon">✦</div><b>600+ handpicked products</b><p>Expert-approved essentials</p><a href="#shop">Find out more →</a></article><article><div class="line-icon">▣</div><b>High-end technology</b><p>Built for real daily use</p><a href="#shop">Find out more →</a></article><article><div class="line-icon">⌂</div><b>Free home delivery</b><p>On orders over $75</p><a href="#shop">Find out more →</a></article><article><div class="line-icon">24</div><b>Helpful support</b><p>Seven days a week</p><a href="#contact">Get in touch →</a></article></div>
-    <div class="benefit-copy"><p class="eyebrow">Why Gimo Tech</p><h2>We make choosing tech simple.</h2><p>Our team tests, compares, and selects every item so you get products that work beautifully from day one.</p><ul><li>Independent product testing and clear recommendations</li><li>Original products with manufacturer warranties</li><li>Secure checkout and flexible payment options</li><li>Friendly setup guidance whenever you need it</li></ul><a class="button aqua" href="#shop">Explore all products</a></div>
-  </div></section>
+  <section class="filter-showcase shell" aria-labelledby="filter-types-title">
+    <div class="section-title">
+      <p class="eyebrow">Syringe filter types</p>
+      <h2 id="filter-types-title">Choose the membrane for your method</h2>
+    </div>
+    <div class="filter-type-grid">
+      <article *ngFor="let filter of syringeFilters" class="filter-type-card" [style.--filter-color]="filter.color">
+        <div class="filter-type-visual" aria-hidden="true">
+          <span></span>
+        </div>
+        <div>
+          <small>{{ filter.tag }}</small>
+          <h3>{{ filter.name }}</h3>
+          <p>{{ filter.description }}</p>
+          <ul>
+            <li>{{ filter.format }}</li>
+            <li>{{ filter.pack }}</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </section>
 
-  <section class="products shell" id="shop"><div class="section-title"><p class="eyebrow">Shop by department</p><h2>Technology for every moment</h2></div><div class="loading" *ngIf="loading">Loading the collection…</div><div class="product-grid" *ngIf="!loading && products.length"><article class="card" *ngFor="let product of products.slice(0, 4)"><div class="product-art" [style.background]="product.accent"><div class="product-glyph">{{ product.category.charAt(0) }}</div></div><div class="card-body"><small>{{ product.category }}</small><h3>{{ product.name }}</h3><div class="rating">★★★★★ <span>{{ product.rating }}</span></div><div class="buy"><b>{{ product.price | currency }}</b><button (click)="addToCart()" [attr.aria-label]="'Add ' + product.name">+</button></div><a href="#shop">View product →</a></div></article></div><p class="loading" *ngIf="!loading && !products.length">Catalog unavailable. Start the API and refresh.</p><div class="pager">● ○ ○</div></section>
+  <section class="benefits" id="why">
+    <div class="shell benefit-layout">
+      <div class="benefit-cards" aria-label="Laboratory supply advantages">
+        <article><div class="line-icon">HPLC</div><b>Chromatography ready</b><p>Filters suited for routine HPLC sample preparation.</p><a href="#shop">Browse filters</a></article>
+        <article><div class="line-icon">4x</div><b>Multiple membranes</b><p>Nylon, PTFE, PVDF, and MCE options for different methods.</p><a href="#filter-types-title">See details</a></article>
+        <article><div class="line-icon">QR</div><b>Traceable waste bags</b><p>Customized biohazard bags with printed QR code series.</p><a href="#biohazard-bags">Review options</a></article>
+        <article><div class="line-icon">QA</div><b>Supplier assistance</b><p>Responsive support for product matching and repeat orders.</p><a href="#contact">Get support</a></article>
+      </div>
+      <div class="benefit-copy">
+        <p class="eyebrow">Laboratory supplier focus</p>
+        <h2>Supplies built around real lab workflows.</h2>
+        <p>Our catalog is centered on practical consumables that laboratories reorder often: syringe filters for HPLC preparation and customized biohazard bags for controlled disposal and tracking.</p>
+        <ul>
+          <li>Nylon, PTFE, PVDF, and MCE syringe filter options</li>
+          <li>Bulk pack support for procurement and recurring laboratory use</li>
+          <li>Biohazard bag printing with QR code attachment workflows</li>
+          <li>Clear product descriptions, SKU tracking, and purchasing support</li>
+        </ul>
+        <a class="button aqua" href="#contact">Request a quote</a>
+      </div>
+    </div>
+  </section>
 
-  <section class="impact"><div class="shell"><div class="impact-copy"><p class="eyebrow">Work from anywhere</p><h2>Powerful gear. Global possibilities.</h2><p>Build a setup that keeps up with your ideas—from the morning commute to your next big presentation.</p><a class="button dark" href="#shop">Build your setup</a></div><div class="world"><span>G</span><i></i><i></i><i></i></div></div></section>
+  <section class="products shell" id="shop">
+    <div class="section-title">
+      <p class="eyebrow">Product catalog</p>
+      <h2>Laboratory consumables and custom supplies</h2>
+    </div>
+    <div class="loading" *ngIf="loading">Loading the catalog...</div>
+    <div class="product-grid" *ngIf="!loading && products.length">
+      <article class="card" *ngFor="let product of products.slice(0, 4)">
+        <div class="product-art" [style.background]="product.imageUrl ? null : product.accent">
+          <img *ngIf="product.imageUrl" [src]="product.imageUrl" width="360" height="260" [alt]="product.name" loading="lazy" decoding="async">
+          <div *ngIf="!product.imageUrl" class="product-glyph">{{ product.category.charAt(0) }}</div>
+        </div>
+        <div class="card-body">
+          <small>{{ product.category }}</small>
+          <h3>{{ product.name }}</h3>
+          <p>{{ product.description }}</p>
+          <div class="rating">★★★★★ <span>{{ product.rating }}</span></div>
+          <div class="buy">
+            <b>{{ product.price | currency:currencyCode }}</b>
+            <button type="button" (click)="addToCart()" [attr.aria-label]="'Add ' + product.name">+</button>
+          </div>
+          <a href="#contact">Request product details</a>
+        </div>
+      </article>
+    </div>
+    <p class="loading" *ngIf="!loading && !products.length">Catalog unavailable. Start the API and refresh.</p>
+  </section>
 
-  <section class="split shell"><div class="photo-grid"><div class="photo p1">⌨</div><div class="photo p2">◉</div><div class="photo p3">⌁</div></div><div class="split-copy"><p class="eyebrow">Personal recommendations</p><h2>Find your perfect setup.</h2><p>Tell us how you work, create, and unwind. Our specialists will build a personal shortlist that fits your needs and budget.</p><div class="check-grid"><span>✓ Laptop and desktop setups</span><span>✓ Audio recommendations</span><span>✓ Gaming and creator gear</span><span>✓ Smart home essentials</span><span>✓ Workspace accessories</span><span>✓ After-purchase support</span></div><a class="button aqua" href="#contact">Talk to an expert</a></div></section>
+  <section class="impact" id="biohazard-bags">
+    <div class="shell">
+      <div class="impact-copy">
+        <p class="eyebrow">Customized biohazard bags</p>
+        <h2>Printed QR code series for traceable laboratory waste handling.</h2>
+        <p>Order customized biohazard bags with series-based printing and QR code attachments for internal tracking, receiving, or disposal documentation workflows.</p>
+        <a class="button dark" href="#contact">Discuss custom printing</a>
+      </div>
+      <div class="bag-visual" aria-hidden="true">
+        <div class="bio-bag"><span>BIOHAZARD</span><b>QR</b><i></i></div>
+      </div>
+    </div>
+  </section>
 
-  <section class="split reverse shell"><div class="split-copy"><p class="eyebrow">Experience that matters</p><h2>Over 20 years of practical tech expertise.</h2><p>We combine old-fashioned service with a sharp eye for what is next. No jargon, no pressure—just useful advice.</p><div class="stats"><div><b>20+</b><span>Years helping customers</span></div><div><b>4.9</b><span>Average customer rating</span></div><div><b>12k</b><span>Orders delivered</span></div></div><a class="button aqua" href="#why">Meet Gimo Tech</a></div><div class="portrait-collage"><div>TEAM</div><div>TESTED</div><div>TRUSTED</div></div></section>
+  <section class="split shell">
+    <div class="photo-grid" aria-hidden="true">
+      <div class="photo p1">SF</div>
+      <div class="photo p2">HPLC</div>
+      <div class="photo p3">0.45um</div>
+    </div>
+    <div class="split-copy">
+      <p class="eyebrow">Syringe filter selection</p>
+      <h2>Match membrane, diameter, and pore size to your method.</h2>
+      <p>Tell us your sample type, solvent system, and instrument workflow. We can help identify the syringe filter type and pack size that fits your laboratory process.</p>
+      <div class="check-grid">
+        <span>Nylon, PTFE, PVDF, and MCE filters</span>
+        <span>HPLC sample preparation</span>
+        <span>25mm filter formats</span>
+        <span>0.45um pore size options</span>
+        <span>Bulk canister packs</span>
+        <span>Repeat-order support</span>
+      </div>
+      <a class="button aqua" href="#contact">Ask for recommendations</a>
+    </div>
+  </section>
 
-  <section class="consult" id="contact"><div class="shell consult-inner"><div><p class="eyebrow">Free tech consultation</p><h2>Plan your setup with a product expert.</h2><p>Get a clear, personalized shortlist without spending hours comparing specifications.</p><div class="consult-icons"><span>◎<b>High-end gear</b></span><span>✦<b>Honest advice</b></span></div></div><form><h3>Book your free call</h3><input aria-label="Your name" placeholder="Your name*"><input type="email" aria-label="Email" placeholder="Email address*"><select aria-label="What are you shopping for"><option>What are you shopping for?</option><option>Work setup</option><option>Audio</option><option>Gaming</option><option>Smart home</option></select><button class="button dark" type="button">Request a call</button></form></div></section>
+  <section class="split reverse shell">
+    <div class="split-copy">
+      <p class="eyebrow">Custom labeling workflow</p>
+      <h2>Biohazard bag printing with QR code attachments.</h2>
+      <p>We support laboratories that need customized bag series, printed identifiers, QR code attachments, and purchasing coordination for repeat batches.</p>
+      <div class="stats">
+        <div><b>QR</b><span>Code attachments</span></div>
+        <div><b>ID</b><span>Series printing</span></div>
+        <div><b>PO</b><span>Procurement support</span></div>
+      </div>
+      <a class="button aqua" href="#contact">Start a custom order</a>
+    </div>
+    <div class="portrait-collage" aria-hidden="true">
+      <div>PRINT</div>
+      <div>SCAN</div>
+      <div>TRACK</div>
+    </div>
+  </section>
 
-  <section class="plans" id="plans"><div class="shell"><div class="section-title"><p class="eyebrow">Ready-made bundles</p><h2>Setup packs for every goal</h2></div><div class="plan-grid"><article><p>ESSENTIAL</p><h3><sup>$</sup>190</h3><span>Home Office Starter</span><ul><li>Wireless keyboard & mouse</li><li>USB-C desktop hub</li><li>HD video call light</li><li>Free setup guide</li></ul><a class="button aqua" href="#shop">Shop this kit</a></article><article class="featured"><em>MOST POPULAR</em><p>PRO</p><h3><sup>$</sup>390</h3><span>Productivity Upgrade</span><ul><li>Mechanical keyboard</li><li>Noise-canceling headset</li><li>Premium USB-C hub</li><li>Priority product support</li></ul><a class="button aqua" href="#shop">Shop this kit</a></article><article><p>CREATOR</p><h3><sup>$</sup>590</h3><span>Studio Essentials</span><ul><li>Studio-quality microphone</li><li>Monitoring headphones</li><li>Adjustable key light</li><li>Creator setup session</li></ul><a class="button aqua" href="#shop">Shop this kit</a></article></div></div></section>
+  <section class="consult" id="contact">
+    <div class="shell consult-inner">
+      <div>
+        <p class="eyebrow">Laboratory purchasing support</p>
+        <h2>Request product details or a custom quotation.</h2>
+        <p>Send your syringe filter requirements or biohazard bag printing details and we will help prepare the right product options.</p>
+        <div class="consult-icons"><span>SF<b>Syringe filters</b></span><span>QR<b>Custom bag series</b></span></div>
+      </div>
+      <form>
+        <h3>Request a quote</h3>
+        <label><span class="sr-only">Your name</span><input placeholder="Your name*" autocomplete="name"></label>
+        <label><span class="sr-only">Email address</span><input type="email" placeholder="Email address*" autocomplete="email"></label>
+        <label>
+          <span class="sr-only">Product interest</span>
+          <select>
+            <option>What do you need?</option>
+            <option>Syringe filters for HPLC</option>
+            <option>Customized biohazard bags with QR codes</option>
+            <option>Both product lines</option>
+          </select>
+        </label>
+        <button class="button dark" type="button">Request a quote</button>
+      </form>
+    </div>
+  </section>
 
-  <section class="location shell"><div class="store-card"><div class="brand"><i>G</i><b>GIMO</b><span>TECH</span></div><p>Visit our technology showroom</p><span>Monday–Saturday · 9:00 AM–6:00 PM</span><a href="#contact">Get directions →</a></div><div class="map-lines"><i></i><i></i><i></i><b>G</b></div></section>
-  <section class="cta"><div class="shell"><h3>Free delivery to your address</h3><a href="#shop">Shop the collection →</a></div></section>
+  <section class="plans" id="plans">
+    <div class="shell">
+      <div class="section-title">
+        <p class="eyebrow">Purchasing paths</p>
+        <h2>Supply options for laboratories</h2>
+      </div>
+      <div class="plan-grid">
+        <article><p>FILTERS</p><h3>HPLC</h3><span>Syringe Filter Supply</span><ul><li>Nylon, PTFE, PVDF, and MCE options</li><li>Common diameter and pore sizes</li><li>Bulk canister packs</li><li>Repeat procurement support</li></ul><a class="button aqua" href="#contact">Request filter quote</a></article>
+        <article class="featured"><em>MAIN PRODUCT</em><p>CANISTER</p><h3>100</h3><span>Routine Lab Packs</span><ul><li>Canister pack availability</li><li>Non-sterile lab-use options</li><li>SKU-based reordering</li><li>Fast shipping coordination</li></ul><a class="button aqua" href="#shop">View catalog</a></article>
+        <article><p>CUSTOM</p><h3>QR</h3><span>Biohazard Bag Printing</span><ul><li>Customized print layout</li><li>QR code attachments</li><li>Series-based identifiers</li><li>Batch order coordination</li></ul><a class="button aqua" href="#contact">Discuss printing</a></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="location shell">
+    <div class="store-card">
+      <picture class="store-logo">
+        <source srcset="/assets/brand/gimo-tech-supplies-logo-600.webp" type="image/webp">
+        <img src="/assets/brand/gimo-tech-supplies-logo-600.png" width="600" height="200" alt="Gimo Tech Supplies" loading="lazy" decoding="async">
+      </picture>
+      <p>Laboratory supply coordination</p>
+      <span>Syringe filters, custom biohazard bags, and QR code printing support</span>
+      <a href="#contact">Send requirements</a>
+    </div>
+    <div class="map-lines" aria-hidden="true"><i></i><i></i><i></i><b>G</b></div>
+  </section>
+
+  <section class="cta">
+    <div class="shell">
+      <h3>Need syringe filters or custom QR biohazard bags?</h3>
+      <a href="#contact">Request a quote</a>
+    </div>
+  </section>
 </main>
 
-<footer><div class="shell footer-grid"><div><a class="brand light" href="#"><i>G</i><b>GIMO</b><span>TECH</span></a><p>Better technology for modern life.</p><small>© 2026 Gimo Tech. All rights reserved.</small></div><div><h4>How we can help</h4><a href="#shop">Product discovery</a><a href="#contact">Personal consultation</a><a href="#why">Technology advice</a></div><div><h4>Services</h4><a href="#plans">Complete setup kits</a><a href="#contact">Business purchasing</a><a href="#contact">Product support</a></div><div><h4>Shopping help</h4><a href="#">Shipping & delivery</a><a href="#">Returns & warranty</a><a href="#">Secure payments</a></div></div></footer>
+<footer>
+  <div class="shell footer-grid">
+    <div><a class="brand footer-brand" href="/" aria-label="Gimo Tech Supplies home"><picture><source srcset="/assets/brand/gimo-tech-supplies-logo-600.webp" type="image/webp"><img src="/assets/brand/gimo-tech-supplies-logo-600.png" width="600" height="200" alt="Gimo Tech Supplies" loading="lazy" decoding="async"></picture></a><p>Laboratory supplies for HPLC sample preparation and custom biohazard bag workflows.</p><small>© 2026 Gimo Tech Supplies. All rights reserved.</small></div>
+    <div><h4>Products</h4><a href="#syringe-filters">Syringe filters</a><a href="#biohazard-bags">QR biohazard bags</a><a href="#shop">Product catalog</a></div>
+    <div><h4>Services</h4><a href="#contact">Custom printing</a><a href="#contact">QR code attachments</a><a href="#contact">Repeat supply orders</a></div>
+    <div><h4>Purchasing help</h4><a href="#contact">Request a quote</a><a href="#contact">Product matching</a><a href="#contact">Shipping support</a></div>
+  </div>
+</footer>

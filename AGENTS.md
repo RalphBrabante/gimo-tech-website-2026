@@ -11,7 +11,7 @@ These instructions apply to every file and feature in this repository. Treat SEO
 
 ## Project context
 
-- The storefront is an Angular single-page application in `client/`.
+- The storefront uses Angular in `client/`, but public website navigation must follow a multi-page architecture rather than SPA-style client routing.
 - The NestJS server and API are in `server/`.
 - Production NestJS serves the compiled Angular application.
 - Keep local development and Hostinger deployment working through the root `package.json` scripts.
@@ -44,7 +44,19 @@ All public pages and meaningful routes must:
 - Ensure product names, descriptions, prices, availability, and structured data use the same source of truth.
 - Prevent accidental indexing of private, account, cart, checkout, search-result, or duplicate-filter pages when those routes are introduced.
 - Update `robots.txt` and `sitemap.xml` when public routes are added or removed.
-- Prefer server rendering or prerendering for important landing, category, and product routes when the application grows beyond a single landing page.
+- Use server rendering, static generation, or prerendering for every public landing, category, product, service, and marketing route.
+
+## Multi-page navigation requirement
+
+- This website must not behave as a single-page application for public, indexable content.
+- Every primary navigation destination, category, product, service, and marketing page must have its own stable URL and independently indexable HTML document.
+- Clicking a public navigation link must perform a normal browser document request and refresh the page. Do not intercept these links with Angular Router, History API navigation, or custom JavaScript.
+- Use normal `<a href="/path">` links for page navigation. Do not use hash fragments such as `#shop` as substitutes for pages when the destination represents standalone content.
+- Each document must return the correct HTTP status and contain its own title, meta description, canonical URL, headings, body content, social metadata, and applicable structured data in the initial HTML response.
+- Prefer server rendering, static generation, or prerendered route output. Client-side JavaScript may enhance a page but must not be required for crawlers or users to receive its essential content.
+- Product and category URLs must remain directly loadable and refresh-safe.
+- Do not add a catch-all SPA fallback that returns the homepage with `200` for unknown public URLs. Unknown URLs must return a real `404` response and 404 document.
+- Cart interactions, filters, dialogs, and similar in-page enhancements may update without a full refresh when appropriate, but they must not convert public page navigation into SPA routing.
 
 ## Images and icons
 
@@ -94,7 +106,7 @@ Every new image or icon must be optimized before it is committed.
 - Use Angular title and meta services for route-specific metadata.
 - Avoid unsafe HTML injection.
 - Preserve loading, empty, success, and error states for API-driven UI.
-- Ensure internal navigation works with Angular routing and production SPA fallback.
+- Ensure public internal navigation uses normal document requests and remains usable without Angular client-side routing.
 
 ## NestJS and API standards
 

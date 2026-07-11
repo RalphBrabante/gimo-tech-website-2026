@@ -33,7 +33,7 @@ Use these settings if Hostinger does not fill them automatically:
 - Entry file: `server.js`
 - Output directory, if the **Other** preset requires one: `client/dist/client/browser`
 
-Set `NODE_ENV=production` in hPanel. Do not set `PORT`; Hostinger supplies it. The production NestJS process serves both the API and the compiled Angular single-page app, including client-side route fallback.
+Set `NODE_ENV=production` in hPanel. Do not set `PORT`; Hostinger supplies it. The production NestJS process serves both the API and independently indexable Angular page documents. Public navigation uses normal full-page requests rather than SPA-style client routing.
 
 Hostinger keeps server-side Node build files outside `public_html` and generates the routing `.htaccess` automatically. Do not manually deploy this application into `public_html`.
 

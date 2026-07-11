@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="theme-color" content="#153f70">
+  <title>Internal Sign In | Gimo Tech Supplies</title>
+  <meta name="description" content="Secure sign in for authorized Gimo Tech Supplies team members.">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/internal/internal.css">
+</head>
+<body>
+  <main class="login-page">
+    <section class="login-panel" aria-labelledby="login-title">
+      <a class="brand" href="/" aria-label="Gimo Tech Supplies home">
+        <picture>
+          <source srcset="/assets/brand/gimo-tech-supplies-logo-600.webp" type="image/webp">
+          <img src="/assets/brand/gimo-tech-supplies-logo-600.png" width="600" height="200" alt="Gimo Tech Supplies" decoding="async">
+        </picture>
+      </a>
+
+      <div class="login-copy">
+        <p class="eyebrow">Internal access</p>
+        <h1 id="login-title">Welcome back</h1>
+        <p>Sign in with your Gimo Tech team credentials.</p>
+      </div>
+
+      <form id="login-form" class="login-form" novalidate>
+        <div class="field">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required aria-describedby="username-error">
+          <p class="field-error" id="username-error" aria-live="polite"></p>
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required aria-describedby="password-error">
+          <p class="field-error" id="password-error" aria-live="polite"></p>
+        </div>
+
+        <button type="submit">Sign in</button>
+        <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+      </form>
+
+      <p class="support">Having trouble signing in? Contact your system administrator.</p>
+    </section>
+
+    <aside class="welcome-panel" aria-label="Gimo Tech internal portal">
+      <div class="welcome-content">
+        <span class="portal-mark" aria-hidden="true">G</span>
+        <p class="eyebrow">Gimo Tech portal</p>
+        <h2>Everything your team needs, in one secure place.</h2>
+        <p>This area is reserved for authorized Gimo Tech Supplies team members.</p>
+      </div>
+    </aside>
+  </main>
+  <script src="/internal/internal.js" defer></script>
+</body>
+</html>

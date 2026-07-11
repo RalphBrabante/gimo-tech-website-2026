@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap');
+
+:root {
+  color-scheme: light;
+  font-family: Manrope, Arial, sans-serif;
+  color: #183c6b;
+  background: #eef3f8;
+}
+
+* { box-sizing: border-box; }
+
+body { margin: 0; min-width: 320px; }
+
+button, input { font: inherit; }
+
+.login-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(420px, 1.1fr);
+  background: #fff;
+}
+
+.login-panel {
+  width: min(100%, 520px);
+  min-height: 100%;
+  margin-inline: auto;
+  padding: clamp(28px, 5vw, 64px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.brand { display: block; width: 190px; margin-bottom: clamp(48px, 9vh, 90px); }
+.brand img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 1; }
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: #168c8a;
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+h1, h2 { margin: 0; color: #183c6b; letter-spacing: -.035em; }
+h1 { font-size: clamp(2.25rem, 5vw, 3.25rem); line-height: 1.08; }
+h2 { max-width: 560px; font-size: clamp(2rem, 4vw, 3.25rem); line-height: 1.12; color: #fff; }
+
+.login-copy > p:last-child { margin: 16px 0 0; color: #60778d; line-height: 1.65; }
+.login-form { display: grid; gap: 20px; margin-top: 36px; }
+.field { display: grid; gap: 8px; }
+.field label { color: #234b71; font-size: .82rem; font-weight: 700; }
+
+.field input {
+  width: 100%;
+  min-height: 50px;
+  border: 1px solid #d6e0e8;
+  border-radius: 9px;
+  padding: 0 16px;
+  color: #183c6b;
+  background: #fff;
+  outline: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.field input:hover { border-color: #9eb2c3; }
+.field input:focus-visible { border-color: #087bdd; box-shadow: 0 0 0 3px #087bdd2e; }
+.field input[aria-invalid="true"] { border-color: #b3261e; }
+.field-error { min-height: 1.1em; margin: 0; color: #9b1c16; font-size: .75rem; }
+
+button {
+  min-height: 50px;
+  border: 0;
+  border-radius: 25px;
+  padding: 12px 24px;
+  color: #fff;
+  background: #153f70;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+button:hover { background: #087bdd; }
+button:active { transform: translateY(1px); }
+button:focus-visible { outline: 3px solid #29d3c1; outline-offset: 3px; }
+button:disabled { cursor: wait; opacity: .72; }
+.form-status { min-height: 1.5em; margin: -4px 0 0; color: #60778d; font-size: .78rem; line-height: 1.5; }
+.support { margin: auto 0 0; padding-top: 48px; color: #718799; font-size: .75rem; line-height: 1.6; }
+
+.welcome-panel {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  min-height: 100%;
+  padding: clamp(40px, 8vw, 110px);
+  color: #e3f4f4;
+  background: linear-gradient(145deg, #153f70, #087bdd 58%, #22c7c4);
+}
+
+.welcome-panel::before,
+.welcome-panel::after {
+  content: "";
+  position: absolute;
+  border: 1px solid #ffffff30;
+  border-radius: 50%;
+}
+
+.welcome-panel::before { width: 520px; height: 520px; right: -170px; top: -160px; }
+.welcome-panel::after { width: 360px; height: 360px; left: -150px; bottom: -160px; }
+.welcome-content { position: relative; z-index: 1; }
+.welcome-content .eyebrow { color: #8af1e6; }
+.welcome-content > p:last-child { max-width: 500px; margin: 22px 0 0; line-height: 1.75; }
+
+.portal-mark {
+  width: 72px;
+  height: 72px;
+  margin-bottom: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #ffffff80;
+  border-radius: 50% 50% 50% 16%;
+  color: #fff;
+  background: #ffffff16;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+@media (max-width: 760px) {
+  .login-page { grid-template-columns: 1fr; }
+  .login-panel { min-height: 100dvh; padding: 28px 20px; }
+  .brand { width: 170px; margin-bottom: 52px; }
+  .welcome-panel { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+}

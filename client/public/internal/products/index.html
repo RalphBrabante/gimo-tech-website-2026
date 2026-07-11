@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive"><meta name="theme-color" content="#153f70">
+  <title>Products | Gimo Tech Internal</title><link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/internal/assets/bootstrap.min.css"><link rel="stylesheet" href="/internal/assets/bootstrap-icons.css"><link rel="stylesheet" href="/internal/assets/internal.css"><link rel="stylesheet" href="/internal/assets/product-uploads.css">
+</head>
+<body>
+  <div id="loading" class="loading-overlay" role="status"><div class="spinner-border text-aqua" aria-hidden="true"></div></div>
+  <div id="page" class="d-none internal-shell">
+    <aside class="internal-sidebar" aria-label="Internal navigation">
+      <a class="internal-brand" href="/"><picture><source srcset="/assets/brand/gimo-tech-supplies-logo-600.webp" type="image/webp"><img src="/assets/brand/gimo-tech-supplies-logo-600.png" width="600" height="200" alt="Gimo Tech Supplies"></picture></a>
+      <nav class="internal-nav nav flex-column gap-1"><a class="nav-link" href="/internal/dashboard/"><i class="bi bi-grid-1x2"></i>Overview</a><a class="nav-link active" href="/internal/products/" aria-current="page"><i class="bi bi-box-seam"></i>Products</a><span class="nav-link disabled"><i class="bi bi-bag"></i>Orders</span><span class="nav-link disabled"><i class="bi bi-people"></i>Customers</span><a class="nav-link" href="/internal/settings/"><i class="bi bi-gear"></i>Settings</a></nav>
+      <div class="internal-sidebar-footer"><a class="nav-link" href="/"><i class="bi bi-shop"></i>View storefront</a><button id="logout" class="nav-link mt-2" type="button"><i class="bi bi-box-arrow-right"></i>Sign out</button></div>
+    </aside>
+    <main class="internal-content">
+      <header class="internal-header py-3 px-3 px-md-4"><p class="eyebrow">Catalog management</p><h1 class="page-title">Products</h1></header>
+      <div class="container-fluid p-3 p-md-4"><div class="row g-4">
+        <section class="col-lg-7 col-xl-8" aria-labelledby="catalog-title"><p class="eyebrow">Catalog management</p><h2 id="catalog-title" class="h4 fw-bold text-gimo">Your products</h2><p id="catalog-status" class="text-secondary" role="status">Loading products…</p><div id="product-list" class="row g-3"></div></section>
+        <aside class="col-lg-5 col-xl-4"><div class="card"><div class="card-body p-4"><p class="eyebrow">New product</p><h2 class="h4 fw-bold text-gimo">Add to catalog</h2>
+          <form id="product-form" class="mt-4" novalidate enctype="multipart/form-data">
+            <div class="mb-3"><label class="form-label fw-semibold" for="name">Product name</label><input class="form-control" id="name" name="name" required maxlength="160"></div>
+            <div class="mb-3"><label class="form-label fw-semibold" for="sku">SKU</label><input class="form-control text-uppercase" id="sku" name="sku" required maxlength="64" pattern="[A-Za-z0-9][A-Za-z0-9._-]*" placeholder="GIMO-KEYBOARD-001"></div>
+            <div class="mb-3"><label class="form-label fw-semibold" for="category">Category</label><input class="form-control" id="category" name="category" required maxlength="80" placeholder="Accessories"></div>
+            <div class="mb-3"><label class="form-label fw-semibold" for="description">Description</label><textarea class="form-control" id="description" name="description" required maxlength="4000" rows="4"></textarea></div>
+            <div class="row g-3 mb-3"><div class="col-6"><label class="form-label fw-semibold" for="price">Price (<span id="price-currency">…</span>)</label><input class="form-control" id="price" name="price" type="number" min="0" step="0.01" required></div><div class="col-6"><label class="form-label fw-semibold" for="rating">Rating</label><input class="form-control" id="rating" name="rating" type="number" min="0" max="5" step="0.1" value="0"></div></div>
+            <div class="mb-3"><label class="form-label fw-semibold" for="images">Product images</label><input class="form-control" id="images" name="images" type="file" accept="image/avif,image/jpeg,image/png,image/webp" multiple required aria-describedby="images-help"><div id="images-help" class="form-text">Upload 1–8 AVIF, JPEG, PNG, or WebP images. Maximum 5 MB each.</div><div id="image-preview" class="image-preview mt-2" aria-live="polite"></div></div>
+            <div class="form-check mb-3"><input class="form-check-input" id="isActive" name="isActive" type="checkbox" checked><label class="form-check-label fw-semibold" for="isActive">Visible in storefront</label></div>
+            <button class="btn btn-gimo w-100" type="submit">Create product</button><p id="form-status" class="small mt-3 mb-0" role="status"></p>
+          </form>
+        </div></div></aside>
+      </div></div>
+    </main>
+  </div>
+  <script src="/internal/products/products.js" defer></script>
+</body>
+</html>

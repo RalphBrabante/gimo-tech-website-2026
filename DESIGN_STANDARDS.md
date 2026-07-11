@@ -2,6 +2,16 @@
 
 This document preserves the established Gimo Tech visual system. Read it before creating or changing pages, forms, cards, navigation, dialogs, product displays, or responsive layouts.
 
+## Multi-page experience
+
+- The public website is a multi-page experience, not an SPA navigation experience.
+- Header, footer, breadcrumb, category, product, service, and marketing-page links must use normal `href` navigation and refresh the document.
+- Do not use Angular `routerLink`, JavaScript click navigation, or hash-only navigation for destinations that should be separate pages.
+- Preserve the same header, logo, navigation, footer, palette, typography, and spacing system across every page so full refreshes still feel cohesive.
+- Provide an active navigation state based on the current server-rendered or generated document.
+- Every page must remain useful when loaded directly, refreshed, shared, or opened in a new tab.
+- In-page controls such as accordions, galleries, cart buttons, filters, and dialogs may remain interactive without refreshing when they do not represent navigation to a separate indexable page.
+
 ## Design direction
 
 The storefront follows the supplied laboratory-services template translated into a modern technology retailer. The visual character is:

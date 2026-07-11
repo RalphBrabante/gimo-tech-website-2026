@@ -1,0 +1,13 @@
+.image-preview {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.image-preview img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border: 1px solid #d7e0e8;
+  border-radius: 0.4rem;
+}

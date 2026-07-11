@@ -8,9 +8,18 @@ Read this document before changing the API, server configuration, environment va
 - `server/src/main.ts` bootstraps the application.
 - `server/src/app.module.ts` is the root module.
 - Feature modules live in dedicated directories such as `server/src/products/`.
-- Production NestJS serves the compiled Angular application.
+- Production NestJS serves or routes to independently indexable Angular page documents.
 - Hostinger starts the compiled application through the root `server.js`.
-- Preserve `/health`, `/api/health`, Hostinger's assigned `PORT`, proxy trust, Helmet, CORS rules, SPA fallback, and shutdown hooks.
+- Preserve `/health`, `/api/health`, Hostinger's assigned `PORT`, proxy trust, Helmet, CORS rules, correct page/404 routing, and shutdown hooks.
+
+## Public page delivery
+
+- Public website routes must follow a multi-page architecture and return independently indexable HTML.
+- Do not configure a universal SPA fallback that serves the homepage for every unknown route.
+- Known public routes must return their own document with `200`; redirects must use an appropriate `3xx`; missing routes must return `404`.
+- Page refreshes and direct URL visits must work without relying on client-side route state.
+- NestJS may serve prerendered/static documents or render them on the server, but essential page content and metadata must be present in the initial response.
+- Static assets may use aggressive caching; HTML documents must use a cache policy that allows updates to propagate correctly.
 
 ## Module boundaries
 
@@ -130,7 +139,7 @@ feature/
 - Add controller or end-to-end tests for validation, authorization, status codes, and response contracts.
 - Test success, invalid input, not found, conflict, unauthorized, and forbidden behavior as relevant.
 - Mock only external boundaries; avoid tests that merely restate an implementation.
-- Preserve live checks for `/health`, `/api/products`, API `404` responses, and production SPA fallback.
+- Preserve live checks for `/health`, `/api/products`, API `404` responses, full-page document routes, and a real website `404` response.
 
 ## API documentation
 
@@ -143,7 +152,7 @@ feature/
 - `npm run build` at the repository root must compile NestJS and Angular.
 - `npm start` must launch the compiled NestJS server through `server.js`.
 - Do not make production depend on TypeScript execution or globally installed CLI tools.
-- Production must continue serving the Angular build and client-side route fallback.
+- Production must continue serving the Angular page build with correct full-document route and 404 behavior.
 - Use graceful shutdown hooks so Hostinger can replace application processes safely.
 
 ## API change checklist
@@ -158,4 +167,4 @@ Before handing off an API change, confirm:
 - Environment changes are reflected in `.env.example`.
 - Relevant unit or endpoint tests were added or updated.
 - `npm run build` passes.
-- Existing health routes, Angular serving, SPA fallback, and Hostinger startup still work.
+- Existing health routes, Angular page serving, full-page navigation, correct 404 responses, and Hostinger startup still work.

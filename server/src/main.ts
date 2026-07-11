@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import helmet from 'helmet';
+import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -24,8 +25,17 @@ async function bootstrap() {
   }));
 
   if (process.env.NODE_ENV !== 'production' || process.env.CLIENT_ORIGIN) {
-    app.enableCors({ origin: process.env.CLIENT_ORIGIN || 'http://localhost:4200' });
+    app.enableCors({
+      origin: process.env.CLIENT_ORIGIN || 'http://localhost:4200',
+      credentials: true
+    });
   }
+
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true
+  }));
 
   app.enableShutdownHooks();
   const port = Number(process.env.PORT) || 3000;

@@ -2,7 +2,14 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { InitialProductCatalog1760000000000 } from './migrations/1760000000000-initial-product-catalog';
+import { CreateUsers1783741200000 } from './migrations/1783741200000-create-users';
+import { ExpandProductsAndLinkUsers1783744800000 } from './migrations/1783744800000-expand-products-and-link-users';
+import { CreateAppSettings1783748400000 } from './migrations/1783748400000-create-app-settings';
+import { AppSettingsEntity } from '../settings/entities/app-settings.entity';
+import { ProductImageEntity } from '../products/entities/product-image.entity';
+import { CreateProductImages1783752000000 } from './migrations/1783752000000-create-product-images';
 import { ProductEntity } from '../products/entities/product.entity';
+import { UserEntity } from '../users/entities/user.entity';
 
 @Module({
   imports: [
@@ -17,8 +24,8 @@ import { ProductEntity } from '../products/entities/product.entity';
         password: config.getOrThrow<string>('DB_PASSWORD'),
         database: config.getOrThrow<string>('DB_NAME'),
         charset: 'utf8mb4',
-        entities: [ProductEntity],
-        migrations: [InitialProductCatalog1760000000000],
+        entities: [ProductEntity, ProductImageEntity, UserEntity, AppSettingsEntity],
+        migrations: [InitialProductCatalog1760000000000, CreateUsers1783741200000, ExpandProductsAndLinkUsers1783744800000, CreateAppSettings1783748400000, CreateProductImages1783752000000],
         migrationsRun: config.get<boolean>('DB_RUN_MIGRATIONS', true),
         synchronize: false,
         retryAttempts: 5,
