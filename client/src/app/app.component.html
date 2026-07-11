@@ -14,11 +14,7 @@
     </picture>
   </a>
   <nav aria-label="Primary navigation">
-    <a href="/">Home</a>
-    <a href="#syringe-filters">Syringe Filters</a>
-    <a href="#biohazard-bags">Biohazard Bags</a>
-    <a href="#shop">Catalog</a>
-    <a href="#contact">Contact</a>
+    <a *ngFor="let link of menus.header" [href]="link.href" [attr.target]="link.openInNewTab ? '_blank' : null" [attr.rel]="link.openInNewTab ? 'noopener' : null">{{ link.label }}</a>
   </nav>
   <button class="cart" aria-label="Shopping bag">Bag <span>{{ cartCount }}</span></button>
 </header>
@@ -27,15 +23,13 @@
   <section class="hero" id="syringe-filters">
     <div class="shell hero-inner">
       <div class="hero-copy">
-        <p class="eyebrow">Fast shipping laboratory supplies</p>
-        <h1>Syringe filters for reliable HPLC sample preparation.</h1>
-        <p>Gimo Tech Supplies provides multiple syringe filter membrane types for chromatographic workflows, including Nylon, PTFE, PVDF, and MCE options in common laboratory formats such as 25mm and 0.45um.</p>
+        <p class="eyebrow">{{ homepage.hero.eyebrow }}</p>
+        <h1>{{ homepage.hero.heading }}</h1>
+        <p>{{ homepage.hero.body }}</p>
         <div class="ticks">
-          <span>HPLC sample prep and laboratory filtration</span>
-          <span>Bulk canister packs and routine-use supply options</span>
-          <span>Authentic lab supplies with responsive purchasing support</span>
+          <span *ngFor="let tick of homepage.hero.ticks">{{ tick }}</span>
         </div>
-        <a class="button dark" href="#shop">View syringe filters</a>
+        <a class="button dark" [href]="homepage.hero.ctaHref">{{ homepage.hero.ctaLabel }}</a>
       </div>
       <div class="hero-visual" aria-label="Nylon syringe filter canister">
         <img src="/assets/products/syringe-filter-hero.svg" width="640" height="520" alt="Canister of nylon syringe filters for HPLC sample preparation" fetchpriority="high" decoding="async">
@@ -50,11 +44,11 @@
 
   <section class="filter-showcase shell" aria-labelledby="filter-types-title">
     <div class="section-title">
-      <p class="eyebrow">Syringe filter types</p>
-      <h2 id="filter-types-title">Choose the membrane for your method</h2>
+      <p class="eyebrow">{{ homepage.filter_types.eyebrow }}</p>
+      <h2 id="filter-types-title">{{ homepage.filter_types.heading }}</h2>
     </div>
     <div class="filter-type-grid">
-      <article *ngFor="let filter of syringeFilters" class="filter-type-card" [style.--filter-color]="filter.color">
+      <article *ngFor="let filter of homepage.filter_types.items" class="filter-type-card" [style.--filter-color]="filter.color">
         <div class="filter-type-visual" aria-hidden="true">
           <span></span>
         </div>
@@ -74,22 +68,16 @@
   <section class="benefits" id="why">
     <div class="shell benefit-layout">
       <div class="benefit-cards" aria-label="Laboratory supply advantages">
-        <article><div class="line-icon">HPLC</div><b>Chromatography ready</b><p>Filters suited for routine HPLC sample preparation.</p><a href="#shop">Browse filters</a></article>
-        <article><div class="line-icon">4x</div><b>Multiple membranes</b><p>Nylon, PTFE, PVDF, and MCE options for different methods.</p><a href="#filter-types-title">See details</a></article>
-        <article><div class="line-icon">QR</div><b>Traceable waste bags</b><p>Customized biohazard bags with printed QR code series.</p><a href="#biohazard-bags">Review options</a></article>
-        <article><div class="line-icon">QA</div><b>Supplier assistance</b><p>Responsive support for product matching and repeat orders.</p><a href="#contact">Get support</a></article>
+        <article *ngFor="let card of homepage.benefits.cards"><div class="line-icon">{{ card.icon }}</div><b>{{ card.title }}</b><p>{{ card.body }}</p><a [href]="card.linkHref">{{ card.linkLabel }}</a></article>
       </div>
       <div class="benefit-copy">
-        <p class="eyebrow">Laboratory supplier focus</p>
-        <h2>Supplies built around real lab workflows.</h2>
-        <p>Our catalog is centered on practical consumables that laboratories reorder often: syringe filters for HPLC preparation and customized biohazard bags for controlled disposal and tracking.</p>
+        <p class="eyebrow">{{ homepage.benefits.eyebrow }}</p>
+        <h2>{{ homepage.benefits.heading }}</h2>
+        <p>{{ homepage.benefits.body }}</p>
         <ul>
-          <li>Nylon, PTFE, PVDF, and MCE syringe filter options</li>
-          <li>Bulk pack support for procurement and recurring laboratory use</li>
-          <li>Biohazard bag printing with QR code attachment workflows</li>
-          <li>Clear product descriptions, SKU tracking, and purchasing support</li>
+          <li *ngFor="let bullet of homepage.benefits.bullets">{{ bullet }}</li>
         </ul>
-        <a class="button aqua" href="#contact">Request a quote</a>
+        <a class="button aqua" [href]="homepage.benefits.ctaHref">{{ homepage.benefits.ctaLabel }}</a>
       </div>
     </div>
   </section>
@@ -125,10 +113,10 @@
   <section class="impact" id="biohazard-bags">
     <div class="shell">
       <div class="impact-copy">
-        <p class="eyebrow">Customized biohazard bags</p>
-        <h2>Printed QR code series for traceable laboratory waste handling.</h2>
-        <p>Order customized biohazard bags with series-based printing and QR code attachments for internal tracking, receiving, or disposal documentation workflows.</p>
-        <a class="button dark" href="#contact">Discuss custom printing</a>
+        <p class="eyebrow">{{ homepage.impact_banner.eyebrow }}</p>
+        <h2>{{ homepage.impact_banner.heading }}</h2>
+        <p>{{ homepage.impact_banner.body }}</p>
+        <a class="button dark" [href]="homepage.impact_banner.ctaHref">{{ homepage.impact_banner.ctaLabel }}</a>
       </div>
       <div class="bag-visual" aria-hidden="true">
         <div class="bio-bag"><span>BIOHAZARD</span><b>QR</b><i></i></div>
@@ -143,32 +131,25 @@
       <div class="photo p3">0.45um</div>
     </div>
     <div class="split-copy">
-      <p class="eyebrow">Syringe filter selection</p>
-      <h2>Match membrane, diameter, and pore size to your method.</h2>
-      <p>Tell us your sample type, solvent system, and instrument workflow. We can help identify the syringe filter type and pack size that fits your laboratory process.</p>
+      <p class="eyebrow">{{ homepage.split_1.eyebrow }}</p>
+      <h2>{{ homepage.split_1.heading }}</h2>
+      <p>{{ homepage.split_1.body }}</p>
       <div class="check-grid">
-        <span>Nylon, PTFE, PVDF, and MCE filters</span>
-        <span>HPLC sample preparation</span>
-        <span>25mm filter formats</span>
-        <span>0.45um pore size options</span>
-        <span>Bulk canister packs</span>
-        <span>Repeat-order support</span>
+        <span *ngFor="let item of homepage.split_1.checklist">{{ item }}</span>
       </div>
-      <a class="button aqua" href="#contact">Ask for recommendations</a>
+      <a class="button aqua" [href]="homepage.split_1.ctaHref">{{ homepage.split_1.ctaLabel }}</a>
     </div>
   </section>
 
   <section class="split reverse shell">
     <div class="split-copy">
-      <p class="eyebrow">Custom labeling workflow</p>
-      <h2>Biohazard bag printing with QR code attachments.</h2>
-      <p>We support laboratories that need customized bag series, printed identifiers, QR code attachments, and purchasing coordination for repeat batches.</p>
+      <p class="eyebrow">{{ homepage.split_2.eyebrow }}</p>
+      <h2>{{ homepage.split_2.heading }}</h2>
+      <p>{{ homepage.split_2.body }}</p>
       <div class="stats">
-        <div><b>QR</b><span>Code attachments</span></div>
-        <div><b>ID</b><span>Series printing</span></div>
-        <div><b>PO</b><span>Procurement support</span></div>
+        <div *ngFor="let stat of homepage.split_2.stats"><b>{{ stat.value }}</b><span>{{ stat.label }}</span></div>
       </div>
-      <a class="button aqua" href="#contact">Start a custom order</a>
+      <a class="button aqua" [href]="homepage.split_2.ctaHref">{{ homepage.split_2.ctaLabel }}</a>
     </div>
     <div class="portrait-collage" aria-hidden="true">
       <div>PRINT</div>
@@ -180,9 +161,9 @@
   <section class="consult" id="contact">
     <div class="shell consult-inner">
       <div>
-        <p class="eyebrow">Laboratory purchasing support</p>
-        <h2>Request product details or a custom quotation.</h2>
-        <p>Send your syringe filter requirements or biohazard bag printing details and we will help prepare the right product options.</p>
+        <p class="eyebrow">{{ homepage.consult_intro.eyebrow }}</p>
+        <h2>{{ homepage.consult_intro.heading }}</h2>
+        <p>{{ homepage.consult_intro.body }}</p>
         <div class="consult-icons"><span>SF<b>Syringe filters</b></span><span>QR<b>Custom bag series</b></span></div>
       </div>
       <form>
@@ -206,13 +187,20 @@
   <section class="plans" id="plans">
     <div class="shell">
       <div class="section-title">
-        <p class="eyebrow">Purchasing paths</p>
-        <h2>Supply options for laboratories</h2>
+        <p class="eyebrow">{{ homepage.plans.eyebrow }}</p>
+        <h2>{{ homepage.plans.heading }}</h2>
       </div>
       <div class="plan-grid">
-        <article><p>FILTERS</p><h3>HPLC</h3><span>Syringe Filter Supply</span><ul><li>Nylon, PTFE, PVDF, and MCE options</li><li>Common diameter and pore sizes</li><li>Bulk canister packs</li><li>Repeat procurement support</li></ul><a class="button aqua" href="#contact">Request filter quote</a></article>
-        <article class="featured"><em>MAIN PRODUCT</em><p>CANISTER</p><h3>100</h3><span>Routine Lab Packs</span><ul><li>Canister pack availability</li><li>Non-sterile lab-use options</li><li>SKU-based reordering</li><li>Fast shipping coordination</li></ul><a class="button aqua" href="#shop">View catalog</a></article>
-        <article><p>CUSTOM</p><h3>QR</h3><span>Biohazard Bag Printing</span><ul><li>Customized print layout</li><li>QR code attachments</li><li>Series-based identifiers</li><li>Batch order coordination</li></ul><a class="button aqua" href="#contact">Discuss printing</a></article>
+        <article *ngFor="let card of homepage.plans.cards" [class.featured]="card.featured">
+          <em *ngIf="card.featured">MAIN PRODUCT</em>
+          <p>{{ card.eyebrow }}</p>
+          <h3>{{ card.title }}</h3>
+          <span>{{ card.subtitle }}</span>
+          <ul>
+            <li *ngFor="let bullet of card.bullets">{{ bullet }}</li>
+          </ul>
+          <a class="button aqua" [href]="card.ctaHref">{{ card.ctaLabel }}</a>
+        </article>
       </div>
     </div>
   </section>
@@ -223,26 +211,26 @@
         <source srcset="/assets/brand/gimo-tech-supplies-logo-600.webp" type="image/webp">
         <img src="/assets/brand/gimo-tech-supplies-logo-600.png" width="600" height="200" alt="Gimo Tech Supplies" loading="lazy" decoding="async">
       </picture>
-      <p>Laboratory supply coordination</p>
-      <span>Syringe filters, custom biohazard bags, and QR code printing support</span>
-      <a href="#contact">Send requirements</a>
+      <p>{{ homepage.location.tagline }}</p>
+      <span>{{ homepage.location.description }}</span>
+      <a [href]="homepage.location.ctaHref">{{ homepage.location.ctaLabel }}</a>
     </div>
     <div class="map-lines" aria-hidden="true"><i></i><i></i><i></i><b>G</b></div>
   </section>
 
   <section class="cta">
     <div class="shell">
-      <h3>Need syringe filters or custom QR biohazard bags?</h3>
-      <a href="#contact">Request a quote</a>
+      <h3>{{ homepage.cta_banner.heading }}</h3>
+      <a [href]="homepage.cta_banner.ctaHref">{{ homepage.cta_banner.ctaLabel }}</a>
     </div>
   </section>
 </main>
 
 <footer>
   <div class="shell footer-grid">
-    <div><a class="brand footer-brand" href="/" aria-label="Gimo Tech Supplies home"><picture><source srcset="/assets/brand/gimo-tech-supplies-logo-600.webp" type="image/webp"><img src="/assets/brand/gimo-tech-supplies-logo-600.png" width="600" height="200" alt="Gimo Tech Supplies" loading="lazy" decoding="async"></picture></a><p>Laboratory supplies for HPLC sample preparation and custom biohazard bag workflows.</p><small>© 2026 Gimo Tech Supplies. All rights reserved.</small></div>
-    <div><h4>Products</h4><a href="#syringe-filters">Syringe filters</a><a href="#biohazard-bags">QR biohazard bags</a><a href="#shop">Product catalog</a></div>
-    <div><h4>Services</h4><a href="#contact">Custom printing</a><a href="#contact">QR code attachments</a><a href="#contact">Repeat supply orders</a></div>
-    <div><h4>Purchasing help</h4><a href="#contact">Request a quote</a><a href="#contact">Product matching</a><a href="#contact">Shipping support</a></div>
+    <div><a class="brand footer-brand" href="/" aria-label="Gimo Tech Supplies home"><picture><source srcset="/assets/brand/gimo-tech-supplies-logo-600.webp" type="image/webp"><img src="/assets/brand/gimo-tech-supplies-logo-600.png" width="600" height="200" alt="Gimo Tech Supplies" loading="lazy" decoding="async"></picture></a><p>{{ homepage.footer_brand.blurb }}</p><small>{{ homepage.footer_brand.copyrightLine }}</small></div>
+    <div><h4>Products</h4><a *ngFor="let link of menus.footer.products" [href]="link.href" [attr.target]="link.openInNewTab ? '_blank' : null" [attr.rel]="link.openInNewTab ? 'noopener' : null">{{ link.label }}</a></div>
+    <div><h4>Services</h4><a *ngFor="let link of menus.footer.services" [href]="link.href" [attr.target]="link.openInNewTab ? '_blank' : null" [attr.rel]="link.openInNewTab ? 'noopener' : null">{{ link.label }}</a></div>
+    <div><h4>Purchasing help</h4><a *ngFor="let link of menus.footer.purchasing" [href]="link.href" [attr.target]="link.openInNewTab ? '_blank' : null" [attr.rel]="link.openInNewTab ? 'noopener' : null">{{ link.label }}</a></div>
   </div>
 </footer>

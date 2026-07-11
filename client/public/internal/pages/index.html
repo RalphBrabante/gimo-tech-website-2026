@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive"><meta name="theme-color" content="#153f70">
+  <title>Pages | Gimo Tech Internal</title><link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/internal/assets/bootstrap.min.css"><link rel="stylesheet" href="/internal/assets/bootstrap-icons.css"><link rel="stylesheet" href="/internal/assets/internal.css">
+  <style>.block-card{border:1px solid #e2e8f0;border-radius:.5rem;padding:1rem;margin-bottom:.75rem}</style>
+</head>
+<body>
+  <div id="loading" class="loading-overlay" role="status"><div class="spinner-border text-aqua" aria-hidden="true"></div></div>
+  <div id="page" class="d-none internal-shell">
+    <aside class="internal-sidebar" aria-label="Internal navigation">
+      <a class="internal-brand" href="/"><picture><source srcset="/assets/brand/gimo-tech-supplies-logo-600.webp" type="image/webp"><img src="/assets/brand/gimo-tech-supplies-logo-600.png" width="600" height="200" alt="Gimo Tech Supplies"></picture></a>
+      <nav class="internal-nav nav flex-column gap-1"><a class="nav-link" href="/internal/dashboard/"><i class="bi bi-grid-1x2"></i>Overview</a><a class="nav-link" href="/internal/products/"><i class="bi bi-box-seam"></i>Products</a><a class="nav-link" href="/internal/homepage/"><i class="bi bi-window"></i>Homepage</a><a class="nav-link active" href="/internal/pages/" aria-current="page"><i class="bi bi-file-earmark-text"></i>Pages</a><a class="nav-link" href="/internal/menus/"><i class="bi bi-list"></i>Menus</a><span class="nav-link disabled"><i class="bi bi-bag"></i>Orders</span><span class="nav-link disabled"><i class="bi bi-people"></i>Customers</span><a class="nav-link" href="/internal/settings/"><i class="bi bi-gear"></i>Settings</a></nav>
+      <div class="internal-sidebar-footer"><a class="nav-link" href="/"><i class="bi bi-shop"></i>View storefront</a><button id="logout" class="nav-link mt-2" type="button"><i class="bi bi-box-arrow-right"></i>Sign out</button></div>
+    </aside>
+    <main class="internal-content">
+      <header class="internal-header py-3 px-3 px-md-4"><p class="eyebrow">Content management</p><h1 class="page-title">Pages</h1></header>
+      <div class="container-fluid p-3 p-md-4"><div class="row g-4">
+        <section class="col-lg-5 col-xl-4" aria-labelledby="pages-list-title"><p class="eyebrow">All pages</p><h2 id="pages-list-title" class="h4 fw-bold text-gimo">Your pages</h2><p id="pages-status" class="text-secondary" role="status">Loading pages…</p><div id="pages-list" class="d-grid gap-2"></div></section>
+        <aside class="col-lg-7 col-xl-8"><div class="card"><div class="card-body p-4">
+          <p class="eyebrow" id="form-eyebrow">New page</p><h2 id="form-title" class="h4 fw-bold text-gimo">Create a page</h2>
+          <form id="page-form" class="mt-4" novalidate>
+            <div class="row g-3 mb-3">
+              <div class="col-md-7"><label class="form-label fw-semibold" for="title">Title</label><input class="form-control" id="title" required maxlength="200"></div>
+              <div class="col-md-5"><label class="form-label fw-semibold" for="slug">Slug</label><input class="form-control" id="slug" required maxlength="160" pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="about-us"></div>
+            </div>
+            <div class="mb-3"><label class="form-label fw-semibold" for="metaDescription">Meta description</label><textarea class="form-control" id="metaDescription" rows="2" maxlength="300"></textarea></div>
+            <div class="row g-3 mb-3">
+              <div class="col-md-6"><label class="form-label fw-semibold" for="status">Status</label><select class="form-select" id="status"><option value="draft">Draft</option><option value="published">Published</option></select></div>
+              <div class="col-md-6"><label class="form-label fw-semibold" for="ogImageUrl">Social image URL</label><input class="form-control" id="ogImageUrl" maxlength="2048"></div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-4 mb-2"><h3 class="h6 fw-bold text-gimo mb-0">Content blocks</h3><div class="btn-group btn-group-sm"><button type="button" class="btn btn-outline-secondary" data-add-block="heading">+ Heading</button><button type="button" class="btn btn-outline-secondary" data-add-block="paragraph">+ Paragraph</button><button type="button" class="btn btn-outline-secondary" data-add-block="image">+ Image</button><button type="button" class="btn btn-outline-secondary" data-add-block="button">+ Button</button></div></div>
+            <div id="blocks" class="mb-3"></div>
+            <p id="blocks-status" class="small text-secondary">Add at least one block.</p>
+
+            <div class="d-flex gap-2"><button class="btn btn-gimo flex-grow-1" type="submit">Create page</button><button id="cancel-edit" class="btn btn-outline-secondary d-none" type="button">Cancel</button></div>
+            <p id="form-status" class="small mt-3 mb-0" role="status"></p>
+          </form>
+        </div></div></aside>
+      </div></div>
+    </main>
+  </div>
+  <script src="/internal/pages/pages.js" defer></script>
+</body>
+</html>

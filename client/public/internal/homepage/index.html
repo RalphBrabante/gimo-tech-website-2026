@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive"><meta name="theme-color" content="#153f70">
+  <title>Homepage | Gimo Tech Internal</title><link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/internal/assets/bootstrap.min.css"><link rel="stylesheet" href="/internal/assets/bootstrap-icons.css"><link rel="stylesheet" href="/internal/assets/internal.css">
+</head>
+<body>
+  <div id="loading" class="loading-overlay" role="status"><div class="spinner-border text-aqua" aria-hidden="true"></div></div>
+  <div id="page" class="d-none internal-shell">
+    <aside class="internal-sidebar" aria-label="Internal navigation">
+      <a class="internal-brand" href="/"><picture><source srcset="/assets/brand/gimo-tech-supplies-logo-600.webp" type="image/webp"><img src="/assets/brand/gimo-tech-supplies-logo-600.png" width="600" height="200" alt="Gimo Tech Supplies"></picture></a>
+      <nav class="internal-nav nav flex-column gap-1"><a class="nav-link" href="/internal/dashboard/"><i class="bi bi-grid-1x2"></i>Overview</a><a class="nav-link" href="/internal/products/"><i class="bi bi-box-seam"></i>Products</a><a class="nav-link active" href="/internal/homepage/" aria-current="page"><i class="bi bi-window"></i>Homepage</a><a class="nav-link" href="/internal/pages/"><i class="bi bi-file-earmark-text"></i>Pages</a><a class="nav-link" href="/internal/menus/"><i class="bi bi-list"></i>Menus</a><span class="nav-link disabled"><i class="bi bi-bag"></i>Orders</span><span class="nav-link disabled"><i class="bi bi-people"></i>Customers</span><a class="nav-link" href="/internal/settings/"><i class="bi bi-gear"></i>Settings</a></nav>
+      <div class="internal-sidebar-footer"><a class="nav-link" href="/"><i class="bi bi-shop"></i>View storefront</a><button id="logout" class="nav-link mt-2" type="button"><i class="bi bi-box-arrow-right"></i>Sign out</button></div>
+    </aside>
+    <main class="internal-content">
+      <header class="internal-header py-3 px-3 px-md-4"><p class="eyebrow">Content management</p><h1 class="page-title">Homepage sections</h1></header>
+      <div class="container-fluid p-3 p-md-4">
+        <p class="text-secondary">Edit the copy for each section of the public homepage. Fields marked "JSON array" hold a list of small objects (cards, items) &mdash; keep the same field names when editing.</p>
+        <div id="sections" class="accordion" aria-label="Homepage sections"></div>
+      </div>
+    </main>
+  </div>
+  <script src="/internal/homepage/homepage.js" defer></script>
+</body>
+</html>

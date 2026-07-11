@@ -11,8 +11,12 @@ import { AuthModule } from './auth/auth.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { SettingsModule } from './settings/settings.module';
 import { productUploadsPath } from './products/product-upload.config';
-
-const storefrontPath = resolve(__dirname, '../../client/dist/client/browser');
+import { HomepageModule } from './homepage/homepage.module';
+import { MediaModule } from './media/media.module';
+import { MenusModule } from './menus/menus.module';
+import { PagesModule } from './pages/pages.module';
+import { contentUploadsPath } from './media/media-upload.config';
+import { storefrontPath } from './storefront-path';
 
 @Module({
   imports: [
@@ -38,8 +42,13 @@ const storefrontPath = resolve(__dirname, '../../client/dist/client/browser');
     AuthModule,
     SettingsModule,
     ProductsModule,
+    HomepageModule,
+    MediaModule,
+    MenusModule,
     ServeStaticModule.forRoot({
       rootPath: storefrontPath,
+      renderPath: '/',
+      serveStaticOptions: { index: false },
       exclude: [
         '/api/{*splat}',
         '/health',
@@ -52,14 +61,32 @@ const storefrontPath = resolve(__dirname, '../../client/dist/client/browser');
         '/internal/products/{*splat}',
         '/internal/settings',
         '/internal/settings/',
-        '/internal/settings/{*splat}'
+        '/internal/settings/{*splat}',
+        '/internal/homepage',
+        '/internal/homepage/',
+        '/internal/homepage/{*splat}',
+        '/internal/pages',
+        '/internal/pages/',
+        '/internal/pages/{*splat}',
+        '/internal/menus',
+        '/internal/menus/',
+        '/internal/menus/{*splat}'
       ]
     }),
     ServeStaticModule.forRoot({
       rootPath: productUploadsPath,
       serveRoot: '/uploads/products',
       serveStaticOptions: { maxAge: '30d', fallthrough: false }
-    })
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: contentUploadsPath,
+      serveRoot: '/uploads/content',
+      serveStaticOptions: { maxAge: '30d', fallthrough: false }
+    }),
+    // PagesModule must be the last import: its PagesViewController owns every path not
+    // already claimed above (a published CMS page, or a real 404), so anything registered
+    // after it would be unreachable.
+    PagesModule
   ],
   controllers: [HealthController],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }]

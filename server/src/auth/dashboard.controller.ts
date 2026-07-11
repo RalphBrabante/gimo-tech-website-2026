@@ -61,4 +61,43 @@ export class DashboardController {
     response.type('text/javascript');
     response.sendFile(internalFile('settings/settings.js'));
   }
+
+  @Get(['internal/homepage', 'internal/homepage/'])
+  homepage(@Req() request: Request, @Res() response: Response): void {
+    this.auth.userFromRequest(request);
+    response.setHeader('Cache-Control', 'private, no-store');
+    response.sendFile(internalFile('homepage/index.html'));
+  }
+
+  @Get('internal/homepage/homepage.js')
+  homepageScript(@Res() response: Response): void {
+    response.type('text/javascript');
+    response.sendFile(internalFile('homepage/homepage.js'));
+  }
+
+  @Get(['internal/pages', 'internal/pages/'])
+  pages(@Req() request: Request, @Res() response: Response): void {
+    this.auth.userFromRequest(request);
+    response.setHeader('Cache-Control', 'private, no-store');
+    response.sendFile(internalFile('pages/index.html'));
+  }
+
+  @Get('internal/pages/pages.js')
+  pagesScript(@Res() response: Response): void {
+    response.type('text/javascript');
+    response.sendFile(internalFile('pages/pages.js'));
+  }
+
+  @Get(['internal/menus', 'internal/menus/'])
+  menus(@Req() request: Request, @Res() response: Response): void {
+    this.auth.userFromRequest(request);
+    response.setHeader('Cache-Control', 'private, no-store');
+    response.sendFile(internalFile('menus/index.html'));
+  }
+
+  @Get('internal/menus/menus.js')
+  menusScript(@Res() response: Response): void {
+    response.type('text/javascript');
+    response.sendFile(internalFile('menus/menus.js'));
+  }
 }

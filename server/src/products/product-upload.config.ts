@@ -49,3 +49,8 @@ export async function saveProductImages(files: Express.Multer.File[]): Promise<{
 export async function removeProductImages(paths: string[]): Promise<void> {
   await Promise.all(paths.map((path) => unlink(path).catch(() => undefined)));
 }
+
+export function productImagePathFromUrl(url: string): string {
+  const filename = url.split('/').pop() ?? '';
+  return resolve(productUploadsPath, filename);
+}

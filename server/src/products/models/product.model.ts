@@ -9,4 +9,6 @@ export interface Product {
   accent: string;
   imageUrl: string | null;
   imageUrls: string[];
+  images: { id: number; url: string }[];
+  isActive: boolean;
 }
