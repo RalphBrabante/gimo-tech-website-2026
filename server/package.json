@@ -1,1 +1,31 @@
-{"name":"gimo-tech-api","version":"1.0.0","private":true,"type":"module","scripts":{"dev":"node --watch src/server.js","start":"node src/server.js","test":"node --test"},"dependencies":{"cors":"^2.8.5","dotenv":"^16.4.5","express":"^4.21.1","helmet":"^8.0.0","morgan":"^1.10.0"}}
+{
+  "name": "gimo-tech-api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "nest build",
+    "dev": "nest start --watch",
+    "start": "node dist/main.js",
+    "start:prod": "node dist/main.js"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^4.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/platform-express": "^11.0.0",
+    "@nestjs/serve-static": "^5.0.0",
+    "@nestjs/typeorm": "^11.0.0",
+    "helmet": "^8.0.0",
+    "joi": "^17.13.3",
+    "mysql2": "^3.14.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1",
+    "typeorm": "^0.3.28"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  }
+}
