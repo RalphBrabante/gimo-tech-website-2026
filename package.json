@@ -1,0 +1,23 @@
+{
+  "name": "gimo-tech-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "server.js",
+  "engines": { "node": "20.x || 22.x", "npm": ">=10" },
+  "scripts": {
+    "install:all": "npm install --prefix server && npm install --prefix client",
+    "dev": "concurrently -n API,WEB -c blue,magenta \"npm run dev --prefix server\" \"npm start --prefix client\"",
+    "build": "npm ci --prefix client --include=dev && npm run build --prefix client",
+    "start": "node server.js",
+    "verify": "npm run build"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "helmet": "^8.0.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": { "concurrently": "^9.0.1" }
+}
