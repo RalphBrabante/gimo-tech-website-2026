@@ -30,10 +30,11 @@ export class PageRendererService {
       title: page.title,
       description,
       canonicalUrl,
-      ogImage: page.ogImageUrl,
+      ogImage: this.absoluteHttpUrl(page.ogImageUrl, origin),
       headerLinks: nav.header,
       footerColumns: nav.footerColumns,
       bodyHtml,
+      robots: null,
       jsonLd: {
         '@context': 'https://schema.org',
         '@type': 'WebPage',
@@ -49,11 +50,12 @@ export class PageRendererService {
     return this.shell({
       title: 'Page not found',
       description: 'The page you requested could not be found.',
-      canonicalUrl: `${origin}/`,
+      canonicalUrl: null,
       ogImage: null,
       headerLinks: nav.header,
       footerColumns: nav.footerColumns,
       bodyHtml: '<h1>Page not found</h1><p>The page you requested does not exist or is no longer available.</p><a class="button dark" href="/">Return home</a>',
+      robots: 'noindex,follow',
       jsonLd: null
     });
   }
@@ -114,11 +116,12 @@ export class PageRendererService {
   private shell(options: {
     title: string;
     description: string;
-    canonicalUrl: string;
+    canonicalUrl: string | null;
     ogImage: string | null;
     headerLinks: NavLink[];
     footerColumns: FooterColumn[];
     bodyHtml: string;
+    robots: string | null;
     jsonLd: Record<string, unknown> | null;
   }): string {
     const link = (item: NavLink) =>
@@ -133,6 +136,10 @@ export class PageRendererService {
       ? `<script type="application/ld+json">${JSON.stringify(options.jsonLd)}</script>`
       : '';
     const ogImageTag = options.ogImage ? `<meta property="og:image" content="${escapeHtml(options.ogImage)}">` : '';
+    const twitterImageTag = options.ogImage ? `<meta name="twitter:image" content="${escapeHtml(options.ogImage)}">` : '';
+    const canonicalTag = options.canonicalUrl ? `<link rel="canonical" href="${escapeHtml(options.canonicalUrl)}">` : '';
+    const robotsTag = options.robots ? `<meta name="robots" content="${escapeHtml(options.robots)}">` : '';
+    const ogUrlTag = options.canonicalUrl ? `<meta property="og:url" content="${escapeHtml(options.canonicalUrl)}">` : '';
     const title = escapeHtml(`${options.title} | Gimo Tech Supplies`);
 
     return `<!doctype html>
@@ -142,16 +149,22 @@ export class PageRendererService {
 <title>${title}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="${escapeHtml(options.description)}">
-<link rel="canonical" href="${escapeHtml(options.canonicalUrl)}">
+${canonicalTag}
+${robotsTag}
 <meta name="theme-color" content="#153f70">
 <meta property="og:type" content="website">
+${ogUrlTag}
+<meta property="og:site_name" content="Gimo Tech Supplies">
 <meta property="og:title" content="${escapeHtml(options.title)}">
 <meta property="og:description" content="${escapeHtml(options.description)}">
 ${ogImageTag}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${escapeHtml(options.title)}">
 <meta name="twitter:description" content="${escapeHtml(options.description)}">
+${twitterImageTag}
+<link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/assets/site-shell.css">
 ${jsonLdScript}
 </head>
@@ -164,5 +177,15 @@ ${jsonLdScript}
 <footer class="site-footer"><div class="footer-grid">${footerColumns}</div></footer>
 </body>
 </html>`;
+  }
+
+  private absoluteHttpUrl(value: string | null, origin: string): string | null {
+    if (!value) return null;
+    try {
+      const url = new URL(value, `${origin}/`);
+      return url.protocol === 'http:' || url.protocol === 'https:' ? url.toString() : null;
+    } catch {
+      return null;
+    }
   }
 }

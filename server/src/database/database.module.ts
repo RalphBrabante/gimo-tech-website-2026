@@ -20,6 +20,7 @@ import { MenuItemEntity } from '../menus/entities/menu-item.entity';
 import { CreateMenuItems1783766400000 } from './migrations/1783766400000-create-menu-items';
 import { SeedMenuItems1783770000000 } from './migrations/1783770000000-seed-menu-items';
 import { IntegrateBusinessLocation1783773600000 } from './migrations/1783773600000-integrate-business-location';
+import { AddSeoLandingPages1784257200000 } from './migrations/1784257200000-add-seo-landing-pages';
 
 @Module({
   imports: [
@@ -46,7 +47,8 @@ import { IntegrateBusinessLocation1783773600000 } from './migrations/17837736000
           CreatePageBlocks1783762800000,
           CreateMenuItems1783766400000,
           SeedMenuItems1783770000000,
-          IntegrateBusinessLocation1783773600000
+          IntegrateBusinessLocation1783773600000,
+          AddSeoLandingPages1784257200000
         ],
         migrationsRun: config.get<boolean>('DB_RUN_MIGRATIONS', true),
         synchronize: false,

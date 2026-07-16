@@ -2,7 +2,7 @@
   <div class="shell">
     <span *ngIf="freeShippingThreshold !== null">Free shipping over {{ freeShippingThreshold | currency:currencyCode }}</span>
     <span>Laboratory supply support</span>
-    <span>Support: hello&#64;gimotech.com</span>
+    <a href="mailto:gimotechsupplies@gmail.com">gimotechsupplies&#64;gmail.com</a>
   </div>
 </div>
 
@@ -16,7 +16,7 @@
   <nav aria-label="Primary navigation">
     <a *ngFor="let link of menus.header" [href]="link.href" [attr.target]="link.openInNewTab ? '_blank' : null" [attr.rel]="link.openInNewTab ? 'noopener' : null">{{ link.label }}</a>
   </nav>
-  <button class="cart" aria-label="Shopping bag">Bag <span>{{ cartCount }}</span></button>
+  <button class="cart" type="button" disabled aria-describedby="commerce-coming-soon">Bag <span>{{ cartCount }}</span></button>
 </header>
 
 <main>
@@ -31,13 +31,15 @@
         </div>
         <a class="button dark" [href]="homepage.hero.ctaHref">{{ homepage.hero.ctaLabel }}</a>
       </div>
-      <div class="hero-visual" aria-label="Nylon syringe filter canister">
-        <img src="/assets/products/syringe-filter-hero.svg" width="640" height="520" alt="Canister of nylon syringe filters for HPLC sample preparation" fetchpriority="high" decoding="async">
-        <div class="float-label">
-          <small>FEATURED SUPPLY</small>
-          <b>Multiple Syringe Filter Types</b>
-          <span>Nylon, PTFE, PVDF, and MCE options for laboratory sample preparation.</span>
-        </div>
+      <div class="hero-visual">
+        <a class="hero-product-link" href="https://www.lazada.com.ph/products/i3969520270.html" target="_blank" rel="noopener noreferrer" aria-label="Buy GIMO Nylon syringe filters on Lazada">
+          <picture>
+            <source
+              srcset="/assets/products/nylon-syringe-filter-hero-640.jpg 640w, /assets/products/nylon-syringe-filter-hero-1280.jpg 1280w"
+              sizes="(max-width: 900px) calc(100vw - 40px), 640px">
+            <img src="/assets/products/nylon-syringe-filter-hero-640.jpg" width="640" height="512" alt="GIMO Nylon syringe filters, 25 mm and 0.45 micrometre, supplied as a non-sterile 100-piece canister pack" fetchpriority="high" decoding="async">
+          </picture>
+        </a>
       </div>
     </div>
   </section>
@@ -87,6 +89,16 @@
       <p class="eyebrow">Product catalog</p>
       <h2>Laboratory consumables and custom supplies</h2>
     </div>
+    <aside class="commerce-notice" id="commerce-coming-soon" aria-labelledby="commerce-coming-soon-title">
+      <div>
+        <strong id="commerce-coming-soon-title">Online cart and quotation requests are coming soon.</strong>
+        <p>For now, purchase our featured Nylon syringe filters through Lazada or email us for product details and quotations.</p>
+      </div>
+      <div class="commerce-notice-actions">
+        <a href="https://www.lazada.com.ph/products/i3969520270.html" target="_blank" rel="noopener noreferrer">Buy on Lazada <span aria-hidden="true">↗</span></a>
+        <a href="mailto:gimotechsupplies@gmail.com?subject=Product%20quotation">Request by email</a>
+      </div>
+    </aside>
     <div class="loading" *ngIf="loading">Loading the catalog...</div>
     <div class="product-grid" *ngIf="!loading && products.length">
       <article class="card" *ngFor="let product of products.slice(0, 4)">
@@ -101,7 +113,7 @@
           <div class="rating">★★★★★ <span>{{ product.rating }}</span></div>
           <div class="buy">
             <b>{{ product.price | currency:currencyCode }}</b>
-            <button type="button" (click)="addToCart()" [attr.aria-label]="'Add ' + product.name">+</button>
+            <button type="button" disabled [attr.aria-label]="'Add ' + product.name + ' to cart — coming soon'">+</button>
           </div>
           <a href="#contact">Request product details</a>
         </div>
@@ -166,21 +178,12 @@
         <p>{{ homepage.consult_intro.body }}</p>
         <div class="consult-icons"><span>SF<b>Syringe filters</b></span><span>QR<b>Custom bag series</b></span></div>
       </div>
-      <form>
-        <h3>Request a quote</h3>
-        <label><span class="sr-only">Your name</span><input placeholder="Your name*" autocomplete="name"></label>
-        <label><span class="sr-only">Email address</span><input type="email" placeholder="Email address*" autocomplete="email"></label>
-        <label>
-          <span class="sr-only">Product interest</span>
-          <select>
-            <option>What do you need?</option>
-            <option>Syringe filters for HPLC</option>
-            <option>Customized biohazard bags with QR codes</option>
-            <option>Both product lines</option>
-          </select>
-        </label>
-        <button class="button dark" type="button">Request a quote</button>
-      </form>
+      <div class="contact-card">
+        <p class="contact-label">Quotes and product enquiries</p>
+        <h3>Email our supply team</h3>
+        <p>Send your product requirements, quantities, and preferred delivery schedule to:</p>
+        <a href="mailto:gimotechsupplies@gmail.com?subject=Quote%20request">gimotechsupplies&#64;gmail.com</a>
+      </div>
     </div>
   </section>
 
@@ -202,6 +205,17 @@
           <a class="button aqua" [href]="card.ctaHref">{{ card.ctaLabel }}</a>
         </article>
       </div>
+    </div>
+  </section>
+
+  <section class="marketplace shell" aria-labelledby="lazada-shop-title">
+    <div class="lazada-card">
+      <div>
+        <img class="lazada-logo" src="/assets/marketplaces/lazada-logo.svg" width="132" height="28" alt="Lazada" loading="lazy" decoding="async">
+        <h2 id="lazada-shop-title">Shop GIMO Laboratory Supplies on Lazada</h2>
+        <p>Browse our laboratory supplies and order conveniently through our official Lazada shop.</p>
+      </div>
+      <a class="button" href="https://www.lazada.com.ph/shop/gimo-laboratory-supplies/" target="_blank" rel="noopener noreferrer">Visit our Lazada shop <span aria-hidden="true">↗</span></a>
     </div>
   </section>
 

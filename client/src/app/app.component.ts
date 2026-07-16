@@ -141,26 +141,26 @@ const FALLBACK_HOMEPAGE_CONTENT: HomepageContent = {
 const FALLBACK_MENUS: PublicMenus = {
   header: [
     { label: 'Home', href: '/', openInNewTab: false },
-    { label: 'Syringe Filters', href: '#syringe-filters', openInNewTab: false },
-    { label: 'Biohazard Bags', href: '#biohazard-bags', openInNewTab: false },
-    { label: 'Catalog', href: '#shop', openInNewTab: false },
-    { label: 'Contact', href: '#contact', openInNewTab: false }
+    { label: 'Syringe Filters', href: '/syringe-filters', openInNewTab: false },
+    { label: 'Biohazard Bags', href: '/biohazard-bags', openInNewTab: false },
+    { label: 'Lazada Shop', href: '/lazada-shop', openInNewTab: false },
+    { label: 'Contact', href: '/#contact', openInNewTab: false }
   ],
   footer: {
     products: [
-      { label: 'Syringe filters', href: '#syringe-filters', openInNewTab: false },
-      { label: 'QR biohazard bags', href: '#biohazard-bags', openInNewTab: false },
-      { label: 'Product catalog', href: '#shop', openInNewTab: false }
+      { label: 'Syringe filters', href: '/syringe-filters', openInNewTab: false },
+      { label: 'QR biohazard bags', href: '/biohazard-bags', openInNewTab: false },
+      { label: 'Lazada shop', href: '/lazada-shop', openInNewTab: false }
     ],
     services: [
-      { label: 'Custom printing', href: '#contact', openInNewTab: false },
-      { label: 'QR code attachments', href: '#contact', openInNewTab: false },
-      { label: 'Repeat supply orders', href: '#contact', openInNewTab: false }
+      { label: 'Custom printing', href: '/biohazard-bags', openInNewTab: false },
+      { label: 'QR code attachments', href: '/biohazard-bags', openInNewTab: false },
+      { label: 'Repeat supply orders', href: '/#contact', openInNewTab: false }
     ],
     purchasing: [
-      { label: 'Request a quote', href: '#contact', openInNewTab: false },
-      { label: 'Product matching', href: '#contact', openInNewTab: false },
-      { label: 'Shipping support', href: '#contact', openInNewTab: false }
+      { label: 'Request a quote', href: '/#contact', openInNewTab: false },
+      { label: 'Product matching', href: '/syringe-filters', openInNewTab: false },
+      { label: 'Shipping support', href: '/#contact', openInNewTab: false }
     ]
   }
 };
@@ -192,5 +192,4 @@ export class AppComponent implements OnInit {
     });
   }
 
-  addToCart(): void { this.cartCount++; }
 }

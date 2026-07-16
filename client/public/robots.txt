@@ -3,4 +3,4 @@ Disallow: /internal/
 Disallow: /api/
 Allow: /
 
-Sitemap: /sitemap.xml
+Sitemap: https://gimosupplies.com/sitemap.xml

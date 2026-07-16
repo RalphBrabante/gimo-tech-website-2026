@@ -7,6 +7,7 @@ import { AppModule } from './app.module';
 import { storefrontPath } from './storefront-path';
 
 const hashedAssetPattern = /-[A-Z0-9]{8,}\.(?:css|js)$/i;
+const cacheableAssetPattern = /[\\/]assets[\\/]/;
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -39,7 +40,9 @@ async function bootstrap() {
         'Cache-Control',
         hashedAssetPattern.test(assetPath)
           ? 'public, max-age=31536000, immutable'
-          : 'public, max-age=3600'
+          : cacheableAssetPattern.test(assetPath)
+            ? 'public, max-age=604800, stale-while-revalidate=86400'
+            : 'public, max-age=3600'
       );
     }
   });
