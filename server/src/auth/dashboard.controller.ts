@@ -23,6 +23,12 @@ function internalFile(name: string): string {
 export class DashboardController {
   constructor(private readonly auth: AuthService) {}
 
+  @Get(['internal', 'internal/'])
+  login(@Res() response: Response): void {
+    response.setHeader('Cache-Control', 'private, no-store');
+    response.sendFile(internalFile('index.html'));
+  }
+
   @Get(['internal/dashboard', 'internal/dashboard/'])
   dashboard(@Req() request: Request, @Res() response: Response): void {
     this.auth.userFromRequest(request);
