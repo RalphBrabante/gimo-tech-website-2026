@@ -16,7 +16,6 @@ import { MediaModule } from './media/media.module';
 import { MenusModule } from './menus/menus.module';
 import { PagesModule } from './pages/pages.module';
 import { contentUploadsPath } from './media/media-upload.config';
-import { storefrontPath } from './storefront-path';
 
 @Module({
   imports: [
@@ -45,34 +44,6 @@ import { storefrontPath } from './storefront-path';
     HomepageModule,
     MediaModule,
     MenusModule,
-    ServeStaticModule.forRoot({
-      rootPath: storefrontPath,
-      renderPath: '/',
-      serveStaticOptions: { index: false },
-      exclude: [
-        '/api/{*splat}',
-        '/health',
-        '/uploads/{*splat}',
-        '/internal/dashboard',
-        '/internal/dashboard/',
-        '/internal/dashboard/{*splat}',
-        '/internal/products',
-        '/internal/products/',
-        '/internal/products/{*splat}',
-        '/internal/settings',
-        '/internal/settings/',
-        '/internal/settings/{*splat}',
-        '/internal/homepage',
-        '/internal/homepage/',
-        '/internal/homepage/{*splat}',
-        '/internal/pages',
-        '/internal/pages/',
-        '/internal/pages/{*splat}',
-        '/internal/menus',
-        '/internal/menus/',
-        '/internal/menus/{*splat}'
-      ]
-    }),
     ServeStaticModule.forRoot({
       rootPath: productUploadsPath,
       serveRoot: '/uploads/products',

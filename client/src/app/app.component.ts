@@ -122,10 +122,10 @@ const FALLBACK_HOMEPAGE_CONTENT: HomepageContent = {
     ]
   },
   location: {
-    tagline: 'Laboratory supply coordination',
-    description: 'Syringe filters, custom biohazard bags, and QR code printing support',
-    ctaLabel: 'Send requirements',
-    ctaHref: '#contact'
+    tagline: 'Visit GIMO Laboratory Supplies',
+    description: 'B2 L26 Diamond St., South 1 Camella Homes Annex, Brgy., San Pedro, Laguna 4023',
+    ctaLabel: 'View on Google Maps',
+    ctaHref: 'https://www.google.com/maps/place/GIMO+Laboratory+Supplies/@14.3808892,121.0679065,15z/data=!4m6!3m5!1s0x3397d1d871eba07b:0x8ca7e1b4bd2d5c7a!8m2!3d14.3723706!4d121.0582515!16s%2Fg%2F11jgc0gmss?entry=ttu'
   },
   cta_banner: {
     heading: 'Need syringe filters or custom QR biohazard bags?',

@@ -213,9 +213,17 @@
       </picture>
       <p>{{ homepage.location.tagline }}</p>
       <span>{{ homepage.location.description }}</span>
-      <a [href]="homepage.location.ctaHref">{{ homepage.location.ctaLabel }}</a>
+      <a [href]="homepage.location.ctaHref" target="_blank" rel="noopener noreferrer">{{ homepage.location.ctaLabel }} <span aria-hidden="true">↗</span></a>
     </div>
-    <div class="map-lines" aria-hidden="true"><i></i><i></i><i></i><b>G</b></div>
+    <div class="map-embed">
+      <iframe
+        title="Map showing GIMO Laboratory Supplies"
+        src="https://www.google.com/maps?q=GIMO+Laboratory+Supplies&amp;z=16&amp;output=embed"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen>
+      </iframe>
+    </div>
   </section>
 
   <section class="cta">

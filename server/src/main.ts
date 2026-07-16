@@ -4,6 +4,9 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import helmet from 'helmet';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { storefrontPath } from './storefront-path';
+
+const hashedAssetPattern = /-[A-Z0-9]{8,}\.(?:css|js)$/i;
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -19,10 +22,27 @@ async function bootstrap() {
         styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
         fontSrc: ["'self'", 'https://fonts.gstatic.com'],
         imgSrc: ["'self'", 'data:'],
-        scriptSrc: ["'self'"]
+        scriptSrc: ["'self'"],
+        frameSrc: ["'self'", 'https://www.google.com', 'https://maps.google.com']
       }
     }
   }));
+
+  // Register storefront files directly on Express before Nest installs controller
+  // routes. Otherwise the CMS catch-all controller can claim asset requests and
+  // return its HTML 404 page, leaving the Angular shell unable to bootstrap.
+  app.useStaticAssets(storefrontPath, {
+    index: false,
+    fallthrough: true,
+    setHeaders: (response, assetPath) => {
+      response.setHeader(
+        'Cache-Control',
+        hashedAssetPattern.test(assetPath)
+          ? 'public, max-age=31536000, immutable'
+          : 'public, max-age=3600'
+      );
+    }
+  });
 
   if (process.env.NODE_ENV !== 'production' || process.env.CLIENT_ORIGIN) {
     app.enableCors({
