@@ -10,9 +10,11 @@ const submitButton = form.querySelector('button[type="submit"]');
 const cancelEditButton = document.querySelector('#cancel-edit');
 const imagesInput = document.querySelector('#images');
 const imagePreview = document.querySelector('#image-preview');
+const imageDropzone = document.querySelector('#image-dropzone');
 const existingImagesGroup = document.querySelector('#existing-images-group');
 const existingImagesContainer = document.querySelector('#existing-images');
 let previewUrls = [];
+const selectedImageItems = new Map();
 let currencyCode = 'USD';
 let priceFormatter = new Intl.NumberFormat(undefined, { style: 'currency', currency: currencyCode });
 let editingProduct = null;
@@ -30,6 +32,7 @@ async function loadCurrency() {
 function clearImagePreview() {
   previewUrls.forEach((url) => URL.revokeObjectURL(url));
   previewUrls = [];
+  selectedImageItems.clear();
   imagePreview.replaceChildren();
 }
 
@@ -41,18 +44,59 @@ function validateImages(files) {
   return null;
 }
 
-imagesInput.addEventListener('change', () => {
+function renderSelectedImages(files) {
   clearImagePreview();
-  const files = Array.from(imagesInput.files ?? []);
-  const error = validateImages(files);
-  formStatus.textContent = error ?? '';
-  if (error) return;
   files.forEach((file) => {
     const url = URL.createObjectURL(file); previewUrls.push(url);
+    const item = document.createElement('article'); item.className = 'image-upload-item';
     const image = document.createElement('img'); image.src = url; image.alt = `Preview of ${file.name}`;
-    imagePreview.append(image);
+    const details = document.createElement('div'); details.className = 'image-upload-details';
+    const name = document.createElement('p'); name.className = 'image-upload-name'; name.textContent = file.name;
+    const progress = document.createElement('div'); progress.className = 'image-upload-progress'; progress.setAttribute('role', 'progressbar'); progress.setAttribute('aria-label', `Upload progress for ${file.name}`); progress.setAttribute('aria-valuemin', '0'); progress.setAttribute('aria-valuemax', '100'); progress.setAttribute('aria-valuenow', '0');
+    const indicator = document.createElement('span'); indicator.className = 'image-upload-progress-value'; indicator.style.width = '0%';
+    progress.append(indicator);
+    const status = document.createElement('p'); status.className = 'image-upload-status'; status.textContent = 'Ready to upload';
+    details.append(name, progress, status); item.append(image, details); imagePreview.append(item); selectedImageItems.set(file, item);
   });
+}
+
+function setSelectedImages(files) {
+  const selected = Array.from(files ?? []);
+  const error = validateImages(selected);
+  if (error) { formStatus.textContent = error; return; }
+  const transfer = new DataTransfer();
+  selected.forEach((file) => transfer.items.add(file));
+  imagesInput.files = transfer.files;
+  formStatus.textContent = '';
+  renderSelectedImages(selected);
+}
+
+function updateUploadProgress(file, percent, statusText, failed = false) {
+  const item = selectedImageItems.get(file);
+  if (!item) return;
+  const progress = item.querySelector('.image-upload-progress');
+  const indicator = item.querySelector('.image-upload-progress-value');
+  const status = item.querySelector('.image-upload-status');
+  const roundedPercent = Math.min(100, Math.max(0, Math.round(percent)));
+  progress.setAttribute('aria-valuenow', String(roundedPercent));
+  indicator.style.width = `${roundedPercent}%`;
+  status.textContent = statusText;
+  item.classList.toggle('upload-failed', failed);
+  item.classList.toggle('upload-complete', roundedPercent === 100 && !failed);
+}
+
+imagesInput.addEventListener('change', () => setSelectedImages(imagesInput.files));
+imageDropzone.addEventListener('click', () => imagesInput.click());
+imageDropzone.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); imagesInput.click(); }
 });
+['dragenter', 'dragover'].forEach((eventName) => imageDropzone.addEventListener(eventName, (event) => {
+  event.preventDefault(); imageDropzone.classList.add('is-dragging');
+}));
+['dragleave', 'drop'].forEach((eventName) => imageDropzone.addEventListener(eventName, (event) => {
+  event.preventDefault(); imageDropzone.classList.remove('is-dragging');
+}));
+imageDropzone.addEventListener('drop', (event) => setSelectedImages(event.dataTransfer?.files));
 
 function renderExistingImages(product) {
   removedImageIds = new Set();
@@ -177,6 +221,40 @@ async function deleteProduct(product) {
   }
 }
 
+function productData(file, includeRemovedImages) {
+  const data = new FormData(form);
+  const priceCents = Math.round(Number(data.get('price')) * 100);
+  const ratingTenths = Math.round(Number(data.get('rating')) * 10);
+  if (!Number.isSafeInteger(priceCents) || priceCents < 0) throw new Error('Enter a valid price.');
+  data.delete('images'); data.delete('price'); data.delete('rating'); data.delete('isActive');
+  data.set('priceCents', String(priceCents));
+  data.set('ratingTenths', String(ratingTenths));
+  data.set('isActive', String(document.querySelector('#isActive').checked));
+  if (includeRemovedImages && editingProduct && removedImageIds.size) data.set('removeImageIds', Array.from(removedImageIds).join(','));
+  if (file) data.append('images', file);
+  return data;
+}
+
+function sendProductRequest(url, method, data, file) {
+  return new Promise((resolve, reject) => {
+    const request = new XMLHttpRequest();
+    request.open(method, url);
+    request.withCredentials = true;
+    request.upload.addEventListener('progress', (event) => {
+      if (event.lengthComputable && file) updateUploadProgress(file, event.loaded / event.total * 100, `Uploading ${Math.round(event.loaded / event.total * 100)}%`);
+    });
+    request.addEventListener('error', () => reject(new Error('Network error while uploading image.')));
+    request.addEventListener('load', () => {
+      let result = {};
+      try { result = request.responseText ? JSON.parse(request.responseText) : {}; } catch { result = {}; }
+      if (request.status < 200 || request.status >= 300) { reject(new Error(result.message || 'Unable to save product image.')); return; }
+      if (file) updateUploadProgress(file, 100, 'Uploaded');
+      resolve(result);
+    });
+    request.send(data);
+  });
+}
+
 async function boot() {
   try {
     const session = await fetch('/api/auth/session', { credentials: 'same-origin' });
@@ -197,26 +275,29 @@ form.addEventListener('submit', async (event) => {
   if (existingCount + files.length < 1) { formStatus.textContent = 'A product needs at least one image.'; return; }
   if (existingCount + files.length > 8) { formStatus.textContent = 'A product can have at most 8 images.'; return; }
 
-  const data = new FormData(form);
-  const priceCents = Math.round(Number(data.get('price')) * 100);
-  const ratingTenths = Math.round(Number(data.get('rating')) * 10);
-  if (!Number.isSafeInteger(priceCents) || priceCents < 0) { formStatus.textContent = 'Enter a valid price.'; return; }
-  data.delete('price'); data.delete('rating'); data.delete('isActive');
-  data.set('priceCents', String(priceCents));
-  data.set('ratingTenths', String(ratingTenths));
-  data.set('isActive', String(document.querySelector('#isActive').checked));
-  if (editingProduct && removedImageIds.size) data.set('removeImageIds', Array.from(removedImageIds).join(','));
-
   const isEdit = Boolean(editingProduct);
   submitButton.disabled = true; submitButton.textContent = isEdit ? 'Updating…' : 'Creating…';
   try {
-    const response = await fetch(isEdit ? `/api/internal/products/${editingProduct.id}` : '/api/internal/products', {
-      method: isEdit ? 'PATCH' : 'POST',
-      credentials: 'same-origin',
-      body: data
-    });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.message || `Unable to ${isEdit ? 'update' : 'create'} product`);
+    let savedProduct = editingProduct;
+    let firstUpload = true;
+    if (!isEdit) {
+      const firstFile = files.shift();
+      savedProduct = await sendProductRequest('/api/internal/products', 'POST', productData(firstFile, false), firstFile);
+      firstUpload = false;
+    }
+    if (isEdit && !files.length) {
+      savedProduct = await sendProductRequest(`/api/internal/products/${savedProduct.id}`, 'PATCH', productData(null, true));
+      firstUpload = false;
+    }
+    for (const file of files) {
+      try {
+        savedProduct = await sendProductRequest(`/api/internal/products/${savedProduct.id}`, 'PATCH', productData(file, firstUpload), file);
+        firstUpload = false;
+      } catch (error) {
+        updateUploadProgress(file, 0, error.message || 'Upload failed', true);
+        throw error;
+      }
+    }
     exitEditMode();
     formStatus.textContent = isEdit ? 'Product updated.' : 'Product created.';
     await loadProducts();

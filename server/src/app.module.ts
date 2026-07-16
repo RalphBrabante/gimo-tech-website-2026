@@ -16,6 +16,7 @@ import { MediaModule } from './media/media.module';
 import { MenusModule } from './menus/menus.module';
 import { PagesModule } from './pages/pages.module';
 import { contentUploadsPath } from './media/media-upload.config';
+import { QuotationsModule } from './quotations/quotations.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { contentUploadsPath } from './media/media-upload.config';
     AuthModule,
     SettingsModule,
     ProductsModule,
+    QuotationsModule,
     HomepageModule,
     MediaModule,
     MenusModule,

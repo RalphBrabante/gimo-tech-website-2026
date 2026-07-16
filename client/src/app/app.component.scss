@@ -21,5 +21,6 @@
 .filter-type-card li{margin:8px 0;color:#234b71;font-size:.68rem}
 .filter-type-card li:before{content:"✓";margin-right:8px;color:var(--filter-color);font-weight:800}
 
+
 @media(max-width:900px){.filter-type-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.filter-showcase{padding:58px 0 68px}.filter-type-grid{grid-template-columns:1fr}.filter-type-card{min-height:auto}}

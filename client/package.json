@@ -6,7 +6,7 @@
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "npm run build:internal-assets && ng build",
     "build:internal-assets": "mkdir -p public/internal/assets/fonts && cp node_modules/bootstrap/dist/css/bootstrap.min.css public/internal/assets/bootstrap.min.css && cp node_modules/bootstrap-icons/font/bootstrap-icons.css public/internal/assets/bootstrap-icons.css && cp node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff2 public/internal/assets/fonts/ && cp node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff public/internal/assets/fonts/",
-    "watch": "ng build --watch --configuration development",
+    "watch": "npm run build:internal-assets && ng build --watch --configuration development",
     "test": "ng test"
   },
   "private": true,

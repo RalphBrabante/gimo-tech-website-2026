@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { catchError, forkJoin, of } from 'rxjs';
 
-interface Product { id: number; name: string; category: string; description: string; price: number; rating: number; accent: string; imageUrl: string | null; }
+interface Product { id: number; name: string; sku: string; category: string; description: string; price: number; rating: number; accent: string; imageUrl: string | null; }
+interface QuoteCartItem { product: Product; quantity: number; }
 interface StoreSettings { currencyCode: string; freeShippingThresholdCents: number | null; }
 
 interface FilterTypeItem { name: string; tag: string; description: string; format: string; pack: string; color: string; }
@@ -167,13 +168,19 @@ const FALLBACK_MENUS: PublicMenus = {
 
 @Component({ selector: 'app-root', standalone: true, imports: [CommonModule], templateUrl: './app.component.html', styleUrl: './app.component.scss' })
 export class AppComponent implements OnInit {
-  products: Product[] = []; loading = true; cartCount = 0; currencyCode = 'USD'; freeShippingThreshold: number | null = null;
+  products: Product[] = []; loading = true; currencyCode = 'USD'; freeShippingThreshold: number | null = null;
   homepage: HomepageContent = FALLBACK_HOMEPAGE_CONTENT;
   menus: PublicMenus = FALLBACK_MENUS;
+  quoteCart: QuoteCartItem[] = [];
+  cartOpen = false;
+  quoteFormOpen = false;
+  quoteStatus = '';
+  quoteSubmitting = false;
 
   constructor(private readonly http: HttpClient) {}
 
   ngOnInit(): void {
+    this.loadQuoteCart();
     forkJoin({
       settings: this.http.get<StoreSettings>('/api/settings').pipe(catchError(() => of({ currencyCode: 'USD', freeShippingThresholdCents: null }))),
       products: this.http.get<Product[]>('/api/products'),
@@ -186,10 +193,91 @@ export class AppComponent implements OnInit {
         this.products = products;
         this.homepage = homepage;
         this.menus = menus;
+        this.addQuoteProductFromLocation(products);
         this.loading = false;
       },
       error: () => { this.loading = false; }
     });
+  }
+
+  get cartCount(): number {
+    return this.quoteCart.reduce((total, item) => total + item.quantity, 0);
+  }
+
+  addToQuoteCart(product: Product): void {
+    const existing = this.quoteCart.find((item) => item.product.id === product.id);
+    if (existing) existing.quantity += 1;
+    else this.quoteCart = [...this.quoteCart, { product, quantity: 1 }];
+    this.saveQuoteCart();
+    this.cartOpen = true;
+    this.quoteFormOpen = false;
+  }
+
+  private addQuoteProductFromLocation(products: Product[]): void {
+    const productId = Number(new URLSearchParams(window.location.search).get('add-to-quote'));
+    if (!Number.isInteger(productId) || productId < 1) return;
+
+    const product = products.find((candidate) => candidate.id === productId);
+    if (!product) return;
+
+    this.addToQuoteCart(product);
+    window.history.replaceState({}, '', `${window.location.pathname}${window.location.hash}`);
+  }
+
+  changeQuantity(productId: number, change: number): void {
+    const item = this.quoteCart.find((candidate) => candidate.product.id === productId);
+    if (!item) return;
+    item.quantity += change;
+    if (item.quantity < 1) this.quoteCart = this.quoteCart.filter((candidate) => candidate.product.id !== productId);
+    else this.quoteCart = [...this.quoteCart];
+    this.saveQuoteCart();
+  }
+
+  removeFromQuoteCart(productId: number): void {
+    this.quoteCart = this.quoteCart.filter((item) => item.product.id !== productId);
+    this.saveQuoteCart();
+  }
+
+  openCart(): void { this.cartOpen = true; this.quoteFormOpen = false; this.quoteStatus = ''; }
+  closeCart(): void { this.cartOpen = false; this.quoteFormOpen = false; }
+  openQuoteForm(): void { if (this.quoteCart.length) { this.quoteFormOpen = true; this.quoteStatus = ''; } }
+  backToCart(): void { this.quoteFormOpen = false; this.quoteStatus = ''; }
+
+  submitQuoteRequest(event: SubmitEvent, name: string, company: string, email: string, phone: string, notes: string): void {
+    event.preventDefault();
+    if (this.quoteSubmitting || !this.quoteCart.length) return;
+    this.quoteSubmitting = true;
+    this.quoteStatus = 'Saving your quotation request…';
+    this.http.post<{ requestNumber: string }>('/api/quotation-requests', {
+      name, company: company || undefined, email, phone: phone || undefined, notes: notes || undefined,
+      items: this.quoteCart.map((item) => ({ productId: item.product.id, quantity: item.quantity }))
+    }).subscribe({
+      next: ({ requestNumber }) => {
+        this.quoteCart = [];
+        this.saveQuoteCart();
+        window.location.assign(`/quotation-request-received?request=${encodeURIComponent(requestNumber)}`);
+      },
+      error: () => {
+        this.quoteSubmitting = false;
+        this.quoteStatus = 'We could not save your request. Please try again or email gimotechsupplies@gmail.com.';
+      }
+    });
+  }
+
+  @HostListener('document:keydown.escape')
+  handleEscape(): void { if (this.cartOpen) this.closeCart(); }
+
+  private loadQuoteCart(): void {
+    try {
+      const saved = localStorage.getItem('gimo-quote-cart');
+      if (!saved) return;
+      const parsed = JSON.parse(saved) as QuoteCartItem[];
+      if (Array.isArray(parsed)) this.quoteCart = parsed.filter((item) => item?.product?.id && Number.isInteger(item.quantity) && item.quantity > 0);
+    } catch { this.quoteCart = []; }
+  }
+
+  private saveQuoteCart(): void {
+    try { localStorage.setItem('gimo-quote-cart', JSON.stringify(this.quoteCart)); } catch { /* Keep the cart available for this visit. */ }
   }
 
 }

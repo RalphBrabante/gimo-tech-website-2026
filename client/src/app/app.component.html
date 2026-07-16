@@ -16,7 +16,7 @@
   <nav aria-label="Primary navigation">
     <a *ngFor="let link of menus.header" [href]="link.href" [attr.target]="link.openInNewTab ? '_blank' : null" [attr.rel]="link.openInNewTab ? 'noopener' : null">{{ link.label }}</a>
   </nav>
-  <button class="cart" type="button" disabled aria-describedby="commerce-coming-soon">Bag <span>{{ cartCount }}</span></button>
+  <button class="cart" type="button" (click)="openCart()" [attr.aria-label]="'Open quotation bag, ' + cartCount + ' items'">Quote bag <span>{{ cartCount }}</span></button>
 </header>
 
 <main>
@@ -89,33 +89,33 @@
       <p class="eyebrow">Product catalog</p>
       <h2>Laboratory consumables and custom supplies</h2>
     </div>
-    <aside class="commerce-notice" id="commerce-coming-soon" aria-labelledby="commerce-coming-soon-title">
+    <aside class="commerce-notice" aria-labelledby="commerce-notice-title">
       <div>
-        <strong id="commerce-coming-soon-title">Online cart and quotation requests are coming soon.</strong>
-        <p>For now, purchase our featured Nylon syringe filters through Lazada or email us for product details and quotations.</p>
+        <strong id="commerce-notice-title">Build a quotation request like a shopping bag.</strong>
+        <p>Add products, set the quantities your laboratory needs, then send the completed bag to our supply team for pricing and availability.</p>
       </div>
       <div class="commerce-notice-actions">
         <a href="https://www.lazada.com.ph/products/i3969520270.html" target="_blank" rel="noopener noreferrer">Buy on Lazada <span aria-hidden="true">↗</span></a>
-        <a href="mailto:gimotechsupplies@gmail.com?subject=Product%20quotation">Request by email</a>
+        <button type="button" (click)="openCart()">Open quote bag</button>
       </div>
     </aside>
     <div class="loading" *ngIf="loading">Loading the catalog...</div>
     <div class="product-grid" *ngIf="!loading && products.length">
       <article class="card" *ngFor="let product of products.slice(0, 4)">
-        <div class="product-art" [style.background]="product.imageUrl ? null : product.accent">
+        <a class="product-art" [href]="'/product/' + product.id" [attr.aria-label]="'View ' + product.name">
           <img *ngIf="product.imageUrl" [src]="product.imageUrl" width="360" height="260" [alt]="product.name" loading="lazy" decoding="async">
           <div *ngIf="!product.imageUrl" class="product-glyph">{{ product.category.charAt(0) }}</div>
-        </div>
+        </a>
         <div class="card-body">
           <small>{{ product.category }}</small>
-          <h3>{{ product.name }}</h3>
+          <h3><a [href]="'/product/' + product.id">{{ product.name }}</a></h3>
           <p>{{ product.description }}</p>
           <div class="rating">★★★★★ <span>{{ product.rating }}</span></div>
           <div class="buy">
             <b>{{ product.price | currency:currencyCode }}</b>
-            <button type="button" disabled [attr.aria-label]="'Add ' + product.name + ' to cart — coming soon'">+</button>
+            <button type="button" (click)="addToQuoteCart(product)" [attr.aria-label]="'Add ' + product.name + ' to quotation bag'">+</button>
           </div>
-          <a href="#contact">Request product details</a>
+          <a [href]="'/product/' + product.id">View product details</a>
         </div>
       </article>
     </div>
@@ -247,6 +247,37 @@
     </div>
   </section>
 </main>
+
+<div class="quote-overlay" *ngIf="cartOpen" (click)="closeCart()" aria-hidden="true"></div>
+<aside class="quote-drawer" *ngIf="cartOpen" role="dialog" aria-modal="true" [attr.aria-labelledby]="quoteFormOpen ? 'quote-form-title' : 'quote-bag-title'">
+  <header class="quote-drawer-header">
+    <div><p class="eyebrow">Quotation request</p><h2 id="quote-bag-title" *ngIf="!quoteFormOpen">Your quote bag</h2><h2 id="quote-form-title" *ngIf="quoteFormOpen">Your request details</h2></div>
+    <button class="quote-close" type="button" (click)="closeCart()" aria-label="Close quotation bag">×</button>
+  </header>
+
+  <ng-container *ngIf="!quoteFormOpen">
+    <div class="quote-empty" *ngIf="!quoteCart.length"><h3>Your quote bag is empty.</h3><p>Add products from the catalog to request a tailored quotation.</p><button class="button dark" type="button" (click)="closeCart()">Browse products</button></div>
+    <div class="quote-items" *ngIf="quoteCart.length">
+      <article class="quote-item" *ngFor="let item of quoteCart">
+        <div class="quote-item-image" [style.background]="item.product.imageUrl ? null : item.product.accent"><img *ngIf="item.product.imageUrl" [src]="item.product.imageUrl" [alt]="item.product.name"></div>
+        <div class="quote-item-details"><h3>{{ item.product.name }}</h3><p>{{ item.product.sku || item.product.category }}</p><div class="quantity-control" [attr.aria-label]="'Quantity for ' + item.product.name"><button type="button" (click)="changeQuantity(item.product.id, -1)" [attr.aria-label]="'Decrease quantity for ' + item.product.name">−</button><span>{{ item.quantity }}</span><button type="button" (click)="changeQuantity(item.product.id, 1)" [attr.aria-label]="'Increase quantity for ' + item.product.name">+</button></div></div>
+        <button class="quote-remove" type="button" (click)="removeFromQuoteCart(item.product.id)" [attr.aria-label]="'Remove ' + item.product.name + ' from quotation bag'">Remove</button>
+      </article>
+    </div>
+    <footer class="quote-drawer-footer" *ngIf="quoteCart.length"><p><strong>{{ cartCount }} item{{ cartCount === 1 ? '' : 's' }} selected</strong>Pricing, availability, and delivery will be confirmed in your quotation.</p><button class="button dark" type="button" (click)="openQuoteForm()">Request quotation</button></footer>
+  </ng-container>
+
+  <form class="quote-form" *ngIf="quoteFormOpen" (submit)="submitQuoteRequest($event, quoteName.value, quoteCompany.value, quoteEmail.value, quotePhone.value, quoteNotes.value)">
+    <p class="quote-form-summary">Your request includes {{ cartCount }} item{{ cartCount === 1 ? '' : 's' }}. We will confirm pricing and availability by email.</p>
+    <label for="quote-name">Full name<input #quoteName id="quote-name" type="text" autocomplete="name" required></label>
+    <label for="quote-company">Company or laboratory<input #quoteCompany id="quote-company" type="text" autocomplete="organization"></label>
+    <label for="quote-email">Email address<input #quoteEmail id="quote-email" type="email" autocomplete="email" required></label>
+    <label for="quote-phone">Phone number<input #quotePhone id="quote-phone" type="tel" autocomplete="tel"></label>
+    <label for="quote-notes">Notes or delivery requirements<textarea #quoteNotes id="quote-notes" rows="4"></textarea></label>
+    <p class="quote-status" role="status">{{ quoteStatus }}</p>
+    <div class="quote-form-actions"><button class="button light" type="button" (click)="backToCart()" [disabled]="quoteSubmitting">Back to bag</button><button class="button dark" type="submit" [disabled]="quoteSubmitting">{{ quoteSubmitting ? 'Sending request…' : 'Send quotation request' }}</button></div>
+  </form>
+</aside>
 
 <footer>
   <div class="shell footer-grid">

@@ -5,6 +5,8 @@ import helmet from 'helmet';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { storefrontPath } from './storefront-path';
+import { productUploadsPath } from './products/product-upload.config';
+import { contentUploadsPath } from './media/media-upload.config';
 
 const hashedAssetPattern = /-[A-Z0-9]{8,}\.(?:css|js)$/i;
 const cacheableAssetPattern = /[\\/]assets[\\/]/;
@@ -45,6 +47,19 @@ async function bootstrap() {
             : 'public, max-age=3600'
       );
     }
+  });
+
+  // Uploaded media must be registered before controller routes. The public-page
+  // catch-all otherwise treats an image URL as a missing HTML page.
+  app.useStaticAssets(productUploadsPath, {
+    prefix: '/uploads/products',
+    fallthrough: false,
+    setHeaders: (response) => response.setHeader('Cache-Control', 'public, max-age=2592000')
+  });
+  app.useStaticAssets(contentUploadsPath, {
+    prefix: '/uploads/content',
+    fallthrough: false,
+    setHeaders: (response) => response.setHeader('Cache-Control', 'public, max-age=2592000')
   });
 
   if (process.env.NODE_ENV !== 'production' || process.env.CLIENT_ORIGIN) {

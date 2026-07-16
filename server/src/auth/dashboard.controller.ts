@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res } from '@nestjs/common';
+import { Controller, Get, Req, Res, UnauthorizedException } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { resolve } from 'node:path';
 import { AuthService } from './auth.service';
@@ -31,9 +31,7 @@ export class DashboardController {
 
   @Get(['internal/dashboard', 'internal/dashboard/'])
   dashboard(@Req() request: Request, @Res() response: Response): void {
-    this.auth.userFromRequest(request);
-    response.setHeader('Cache-Control', 'private, no-store');
-    response.sendFile(dashboardFile('index.html'));
+    this.sendProtectedPage(request, response, dashboardFile('index.html'));
   }
 
   @Get('internal/dashboard/dashboard.js')
@@ -44,9 +42,7 @@ export class DashboardController {
 
   @Get(['internal/products', 'internal/products/'])
   products(@Req() request: Request, @Res() response: Response): void {
-    this.auth.userFromRequest(request);
-    response.setHeader('Cache-Control', 'private, no-store');
-    response.sendFile(internalFile('products/index.html'));
+    this.sendProtectedPage(request, response, internalFile('products/index.html'));
   }
 
   @Get('internal/products/products.js')
@@ -57,9 +53,7 @@ export class DashboardController {
 
   @Get(['internal/settings', 'internal/settings/'])
   settings(@Req() request: Request, @Res() response: Response): void {
-    this.auth.userFromRequest(request);
-    response.setHeader('Cache-Control', 'private, no-store');
-    response.sendFile(internalFile('settings/index.html'));
+    this.sendProtectedPage(request, response, internalFile('settings/index.html'));
   }
 
   @Get('internal/settings/settings.js')
@@ -70,9 +64,7 @@ export class DashboardController {
 
   @Get(['internal/homepage', 'internal/homepage/'])
   homepage(@Req() request: Request, @Res() response: Response): void {
-    this.auth.userFromRequest(request);
-    response.setHeader('Cache-Control', 'private, no-store');
-    response.sendFile(internalFile('homepage/index.html'));
+    this.sendProtectedPage(request, response, internalFile('homepage/index.html'));
   }
 
   @Get('internal/homepage/homepage.js')
@@ -83,9 +75,7 @@ export class DashboardController {
 
   @Get(['internal/pages', 'internal/pages/'])
   pages(@Req() request: Request, @Res() response: Response): void {
-    this.auth.userFromRequest(request);
-    response.setHeader('Cache-Control', 'private, no-store');
-    response.sendFile(internalFile('pages/index.html'));
+    this.sendProtectedPage(request, response, internalFile('pages/index.html'));
   }
 
   @Get('internal/pages/pages.js')
@@ -96,14 +86,39 @@ export class DashboardController {
 
   @Get(['internal/menus', 'internal/menus/'])
   menus(@Req() request: Request, @Res() response: Response): void {
-    this.auth.userFromRequest(request);
-    response.setHeader('Cache-Control', 'private, no-store');
-    response.sendFile(internalFile('menus/index.html'));
+    this.sendProtectedPage(request, response, internalFile('menus/index.html'));
   }
 
   @Get('internal/menus/menus.js')
   menusScript(@Res() response: Response): void {
     response.type('text/javascript');
     response.sendFile(internalFile('menus/menus.js'));
+  }
+
+  @Get(['internal/quotations', 'internal/quotations/'])
+  quotations(@Req() request: Request, @Res() response: Response): void {
+    this.sendProtectedPage(request, response, internalFile('quotations/index.html'));
+  }
+
+  @Get('internal/quotations/quotations.js')
+  quotationsScript(@Res() response: Response): void {
+    response.type('text/javascript');
+    response.sendFile(internalFile('quotations/quotations.js'));
+  }
+
+  private sendProtectedPage(request: Request, response: Response, filePath: string): void {
+    try {
+      this.auth.userFromRequest(request);
+      response.setHeader('Cache-Control', 'private, no-store');
+      response.sendFile(filePath);
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        response.status(401);
+        response.setHeader('Cache-Control', 'private, no-store');
+        response.sendFile(internalFile('unauthorized.html'));
+        return;
+      }
+      throw error;
+    }
   }
 }

@@ -21,6 +21,8 @@ import { CreateMenuItems1783766400000 } from './migrations/1783766400000-create-
 import { SeedMenuItems1783770000000 } from './migrations/1783770000000-seed-menu-items';
 import { IntegrateBusinessLocation1783773600000 } from './migrations/1783773600000-integrate-business-location';
 import { AddSeoLandingPages1784257200000 } from './migrations/1784257200000-add-seo-landing-pages';
+import { QuotationRequestEntity } from '../quotations/entities/quotation-request.entity';
+import { CreateQuotationRequests1784260800000 } from './migrations/1784260800000-create-quotation-requests';
 
 @Module({
   imports: [
@@ -35,7 +37,7 @@ import { AddSeoLandingPages1784257200000 } from './migrations/1784257200000-add-
         password: config.getOrThrow<string>('DB_PASSWORD'),
         database: config.getOrThrow<string>('DB_NAME'),
         charset: 'utf8mb4',
-        entities: [ProductEntity, ProductImageEntity, UserEntity, AppSettingsEntity, HomepageSectionEntity, PageEntity, PageBlockEntity, MenuItemEntity],
+        entities: [ProductEntity, ProductImageEntity, UserEntity, AppSettingsEntity, HomepageSectionEntity, PageEntity, PageBlockEntity, MenuItemEntity, QuotationRequestEntity],
         migrations: [
           InitialProductCatalog1760000000000,
           CreateUsers1783741200000,
@@ -48,7 +50,8 @@ import { AddSeoLandingPages1784257200000 } from './migrations/1784257200000-add-
           CreateMenuItems1783766400000,
           SeedMenuItems1783770000000,
           IntegrateBusinessLocation1783773600000,
-          AddSeoLandingPages1784257200000
+          AddSeoLandingPages1784257200000,
+          CreateQuotationRequests1784260800000
         ],
         migrationsRun: config.get<boolean>('DB_RUN_MIGRATIONS', true),
         synchronize: false,

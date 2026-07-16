@@ -37,6 +37,15 @@ export class ProductsService {
     return this.toModel(product);
   }
 
+  async findOnePublic(id: number): Promise<Product | null> {
+    const product = await this.productsRepository.findOne({
+      where: { id, isActive: true },
+      relations: { images: true },
+      order: { images: { sortOrder: 'ASC' } }
+    });
+    return product ? this.toModel(product) : null;
+  }
+
   async create(input: CreateProductDto, userId: number, imageUrls: string[]): Promise<Product> {
     const sku = input.sku.trim().toUpperCase();
     const existingProduct = await this.productsRepository.findOneBy({ sku });

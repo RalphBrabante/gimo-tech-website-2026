@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { MenuItemEntity, MenuLocation } from '../menus/entities/menu-item.entity';
 import { Page, PageBlock } from './models/page.model';
 import { escapeHtml } from '../common/html.util';
+import type { Product } from '../products/models/product.model';
 
 interface NavLink {
   label: string;
@@ -54,10 +55,79 @@ export class PageRendererService {
       ogImage: null,
       headerLinks: nav.header,
       footerColumns: nav.footerColumns,
-      bodyHtml: '<h1>Page not found</h1><p>The page you requested does not exist or is no longer available.</p><a class="button dark" href="/">Return home</a>',
+      bodyHtml: `<section class="error-page" aria-labelledby="not-found-title">
+  <p class="error-code">404 · Page not found</p>
+  <h1 id="not-found-title">We couldn’t find that page.</h1>
+  <p>The link may be out of date, or the page may have moved. You can return to the Gimo Tech Supplies home page or browse our syringe filters.</p>
+  <div class="error-actions"><a class="button dark" href="/">Go to homepage</a><a class="text-link" href="/syringe-filters">Browse syringe filters</a></div>
+</section>`,
       robots: 'noindex,follow',
       jsonLd: null
     });
+  }
+
+  async renderQuotationThankYou(origin: string, requestNumber: string | null): Promise<string> {
+    const nav = await this.loadNav();
+    const requestLabel = requestNumber ? `<p class="error-code">Request reference · ${escapeHtml(requestNumber)}</p>` : '';
+    return this.shell({
+      title: 'Quotation request received',
+      description: 'Your Gimo Tech Supplies quotation request has been received.',
+      canonicalUrl: `${origin}/quotation-request-received`,
+      ogImage: null,
+      headerLinks: nav.header,
+      footerColumns: nav.footerColumns,
+      bodyHtml: `<section class="error-page" aria-labelledby="quotation-thank-you-title">${requestLabel}<h1 id="quotation-thank-you-title">Thank you for your quotation request.</h1><p>Our supply team has received your request and will review the quantities, availability, and delivery requirements before sending your formal quotation by email.</p><div class="error-actions"><a class="button dark" href="/">Return to homepage</a><a class="text-link" href="/lazada-shop">Visit our Lazada shop</a></div></section>`,
+      robots: 'noindex,follow',
+      jsonLd: null
+    });
+  }
+
+  async renderProduct(product: Product, origin: string): Promise<string> {
+    const nav = await this.loadNav();
+    const canonicalUrl = `${origin}/product/${product.id}`;
+    const images = product.images.length > 0 ? product.images : product.imageUrl ? [{ id: 0, url: product.imageUrl }] : [];
+    const imageUrl = this.absoluteHttpUrl(images[0]?.url ?? null, origin);
+    const imageMarkup = this.renderProductMedia(images, product.name, product.category, product.accent);
+    const bodyHtml = `<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/#shop">Catalog</a><span aria-hidden="true">/</span><span>${escapeHtml(product.name)}</span></nav>
+<article class="product-page"><div class="product-page-media">${imageMarkup}</div><div class="product-page-copy"><p class="product-category">${escapeHtml(product.category)}</p><h1>${escapeHtml(product.name)}</h1><p class="product-sku">SKU: ${escapeHtml(product.sku)}</p><p>${escapeHtml(product.description)}</p><div class="product-page-actions"><a class="button dark" href="/?add-to-quote=${product.id}">Add to quotation bag</a><a class="text-link" href="mailto:gimotechsupplies@gmail.com?subject=${encodeURIComponent(`Quotation request: ${product.name}`)}">Ask about this product</a></div><p class="product-note">Pricing, availability, and delivery options are confirmed in your quotation.</p></div></article>`;
+    return this.shell({
+      title: product.name,
+      description: product.description.slice(0, 160),
+      canonicalUrl,
+      ogImage: imageUrl,
+      headerLinks: nav.header,
+      footerColumns: nav.footerColumns,
+      bodyHtml,
+      robots: null,
+      jsonLd: null,
+      scripts: images.length > 0 ? ['/assets/product-gallery.js'] : []
+    });
+  }
+
+  private renderProductMedia(images: { id: number; url: string }[], productName: string, category: string, accent: string): string {
+    if (images.length === 0) {
+      return `<div class="product-page-placeholder" style="background:${escapeHtml(accent)}" aria-hidden="true">${escapeHtml(category.slice(0, 1))}</div>`;
+    }
+    if (images.length === 1) {
+      return `<img src="${escapeHtml(images[0].url)}" width="760" height="570" alt="${escapeHtml(productName)}" fetchpriority="high" decoding="async">`;
+    }
+    const slides = images
+      .map(
+        (image, index) =>
+          `<figure class="product-gallery-slide">${
+            index === 0
+              ? `<img src="${escapeHtml(image.url)}" width="760" height="570" alt="${escapeHtml(productName)}" fetchpriority="high" decoding="async">`
+              : `<img src="${escapeHtml(image.url)}" width="760" height="570" alt="${escapeHtml(productName)} – photo ${index + 1} of ${images.length}" loading="lazy" decoding="async">`
+          }</figure>`
+      )
+      .join('');
+    const thumbs = images
+      .map(
+        (image, index) =>
+          `<button type="button" class="product-thumb" aria-current="${index === 0 ? 'true' : 'false'}" aria-label="View photo ${index + 1} of ${images.length}"><img src="${escapeHtml(image.url)}" width="120" height="90" alt="" loading="lazy" decoding="async"></button>`
+      )
+      .join('');
+    return `<div class="product-gallery"><div class="product-gallery-main">${slides}</div><div class="product-thumbs" role="group" aria-label="Product images">${thumbs}</div></div>`;
   }
 
   private async loadNav(): Promise<{ header: NavLink[]; footerColumns: FooterColumn[] }> {
@@ -123,6 +193,7 @@ export class PageRendererService {
     bodyHtml: string;
     robots: string | null;
     jsonLd: Record<string, unknown> | null;
+    scripts?: string[];
   }): string {
     const link = (item: NavLink) =>
       `<a href="${escapeHtml(item.href)}"${item.openInNewTab ? ' target="_blank" rel="noopener"' : ''}>${escapeHtml(item.label)}</a>`;
@@ -141,6 +212,7 @@ export class PageRendererService {
     const robotsTag = options.robots ? `<meta name="robots" content="${escapeHtml(options.robots)}">` : '';
     const ogUrlTag = options.canonicalUrl ? `<meta property="og:url" content="${escapeHtml(options.canonicalUrl)}">` : '';
     const title = escapeHtml(`${options.title} | Gimo Tech Supplies`);
+    const scriptTags = (options.scripts ?? []).map((src) => `<script src="${escapeHtml(src)}" defer></script>`).join('\n');
 
     return `<!doctype html>
 <html lang="en">
@@ -175,6 +247,7 @@ ${jsonLdScript}
 </header>
 <main class="site-main">${options.bodyHtml}</main>
 <footer class="site-footer"><div class="footer-grid">${footerColumns}</div></footer>
+${scriptTags}
 </body>
 </html>`;
   }
