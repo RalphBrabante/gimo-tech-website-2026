@@ -162,9 +162,9 @@ ${ogImageTag}
 <meta name="twitter:title" content="${escapeHtml(options.title)}">
 <meta name="twitter:description" content="${escapeHtml(options.description)}">
 ${twitterImageTag}
-<link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
-<link rel="icon" type="image/x-icon" href="/favicon.ico">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="64x64" href="/gimo-flask-favicon-v2.png">
+<link rel="shortcut icon" type="image/x-icon" href="/gimo-flask-favicon-v2.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/gimo-apple-touch-icon-v2.png">
 <link rel="stylesheet" href="/assets/site-shell.css">
 ${jsonLdScript}
 </head>
