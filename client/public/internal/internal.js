@@ -39,7 +39,9 @@ form.addEventListener('submit', async (event) => {
     if (!response.ok) {
       status.textContent = response.status === 429
         ? 'Too many sign-in attempts. Wait a minute and try again.'
-        : 'The username or password is incorrect.';
+        : response.status === 403
+          ? 'Password reset is required. Use the reset link below.'
+          : 'The username or password is incorrect.';
       password.value = '';
       password.focus();
       return;

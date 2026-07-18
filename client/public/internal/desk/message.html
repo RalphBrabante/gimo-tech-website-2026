@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#153f70">
+  <title>Email conversation | Gimo Tech Helpdesk</title>
+  <link rel="stylesheet" href="/internal/assets/bootstrap.min.css">
+  <link rel="stylesheet" href="/internal/assets/bootstrap-icons.css">
+  <link rel="stylesheet" href="/internal/assets/internal.css">
+  <link rel="stylesheet" href="/internal/desk/thread.css">
+</head>
+<body>
+  <div id="thread-loading" class="loading-overlay" role="status"><div class="text-center"><div class="spinner-border text-aqua mb-3" aria-hidden="true"></div><p class="fw-semibold text-gimo mb-0">Opening conversation…</p></div></div>
+  <div id="thread-page" class="d-none internal-shell">
+    <aside class="internal-sidebar" aria-label="Internal navigation">
+      <a class="internal-brand" href="/"><picture><source srcset="/assets/brand/gimo-tech-supplies-logo-600.webp" type="image/webp"><img src="/assets/brand/gimo-tech-supplies-logo-600.png" width="600" height="200" alt="Gimo Tech Supplies"></picture></a>
+      <nav class="internal-nav nav flex-column gap-1"><a class="nav-link" href="/internal/dashboard/"><i class="bi bi-grid-1x2" aria-hidden="true"></i>Overview</a><a class="nav-link active" href="/internal/helpdesk/" aria-current="page"><i class="bi bi-inbox" aria-hidden="true"></i>Helpdesk</a><a class="nav-link" href="/internal/products/"><i class="bi bi-box-seam" aria-hidden="true"></i>Products</a><a class="nav-link" href="/internal/quotations/"><i class="bi bi-file-earmark-text" aria-hidden="true"></i>Quotations</a><a class="nav-link" href="/internal/homepage/"><i class="bi bi-window" aria-hidden="true"></i>Homepage</a><a class="nav-link" href="/internal/pages/"><i class="bi bi-file-earmark-text" aria-hidden="true"></i>Pages</a><a class="nav-link" href="/internal/menus/"><i class="bi bi-list" aria-hidden="true"></i>Menus</a><a class="nav-link" href="/internal/profile/"><i class="bi bi-person-circle" aria-hidden="true"></i>Profile</a><a class="nav-link" href="/internal/settings/"><i class="bi bi-gear" aria-hidden="true"></i>Settings</a></nav>
+      <div class="internal-sidebar-footer"><a class="nav-link" href="/"><i class="bi bi-shop" aria-hidden="true"></i>View storefront</a><button id="thread-logout" class="nav-link mt-2" type="button"><i class="bi bi-box-arrow-right" aria-hidden="true"></i>Sign out</button></div>
+    </aside>
+    <main class="internal-content helpdesk-content">
+      <header class="internal-header helpdesk-header py-3 px-3 px-md-4"><div><a class="helpdesk-back" href="/internal/helpdesk/"><i class="bi bi-arrow-left" aria-hidden="true"></i> Back to inbox</a><div class="d-flex align-items-center flex-wrap gap-2 mt-2"><h1 id="thread-subject" class="page-title">Email conversation</h1><span class="badge rounded-pill text-bg-success">Open</span></div></div><button id="thread-refresh" class="btn btn-outline-primary btn-sm" type="button"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i> Refresh thread</button></header>
+      <div class="helpdesk-layout">
+        <aside class="helpdesk-ticket-panel" aria-labelledby="ticket-details-title"><p class="eyebrow">Ticket</p><h2 id="ticket-details-title" class="h6 fw-bold text-gimo mt-2">Conversation details</h2><dl class="ticket-details"><div><dt>Ticket ID</dt><dd id="ticket-id">—</dd></div><div><dt>Channel</dt><dd><i class="bi bi-envelope" aria-hidden="true"></i> Email</dd></div><div><dt>Mailbox</dt><dd id="ticket-mailbox">sales@gimosupplies.com</dd></div><div><dt>Created</dt><dd id="ticket-created">—</dd></div><div><dt>Messages</dt><dd id="ticket-message-count">—</dd></div></dl><div class="ticket-field"><label for="thread-client">Client category</label><select id="thread-client" class="form-select form-select-sm"><option value="">Unassigned</option></select><p id="client-status" class="small mt-2 mb-0" role="status"></p></div></aside>
+
+        <section class="helpdesk-conversation" aria-labelledby="conversation-title"><div class="conversation-heading"><div><p class="eyebrow mb-1">Email thread</p><h2 id="conversation-title" class="h5 fw-bold text-gimo mb-0">Conversation</h2></div><span id="conversation-status" class="small text-secondary" role="status"></span></div><div id="thread-alert" class="alert alert-danger d-none m-3" role="alert"></div><div id="conversation-list" class="conversation-list"></div><form id="reply-form" class="reply-composer" novalidate><div class="reply-composer-top"><span class="reply-avatar" aria-hidden="true">G</span><div><strong>Reply as GIMO Laboratory Supplies</strong><small>From sales@gimosupplies.com to <span id="reply-recipient">the client</span></small></div></div><label class="visually-hidden" for="reply-text">Reply message</label><textarea id="reply-text" class="form-control" rows="7" required maxlength="20000" placeholder="Write a helpful response…"></textarea><div class="reply-attachments"><label class="btn btn-light btn-sm" for="reply-files"><i class="bi bi-paperclip" aria-hidden="true"></i> Add attachments</label><input id="reply-files" class="visually-hidden" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.jpg,.jpeg,.png,.webp"><span class="small text-secondary">Up to 5 files, 5 MB each</span></div><ul id="reply-file-list" class="reply-file-list" aria-live="polite"></ul><div class="reply-composer-footer"><p id="reply-status" class="small mb-0" role="status"></p><button id="send-reply" class="btn btn-gimo" type="submit"><i class="bi bi-send" aria-hidden="true"></i> Send reply</button></div></form></section>
+
+        <aside class="helpdesk-customer-panel" aria-labelledby="customer-title"><div class="customer-card"><span id="customer-avatar" class="customer-avatar" aria-hidden="true">?</span><p class="eyebrow mt-3 mb-1">Requester</p><h2 id="customer-title" class="h6 fw-bold text-gimo mb-1">Loading client…</h2><a id="customer-email" href="#"></a></div><section class="customer-section"><h2 class="h6 fw-bold text-gimo">Threading</h2><p class="small text-secondary">Desk combines matching Inbox and Sent messages so both the client and sales responses appear in one conversation.</p></section><section class="customer-section"><h2 class="h6 fw-bold text-gimo">Quick actions</h2><a id="open-webmail" class="btn btn-light btn-sm w-100" href="https://mail.hostinger.com/" target="_blank" rel="noopener noreferrer"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i> Open Hostinger Webmail</a></section></aside>
+      </div>
+    </main>
+  </div>
+  <script src="/internal/desk/thread.js" defer></script>
+</body>
+</html>

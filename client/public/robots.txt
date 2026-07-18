@@ -2,5 +2,9 @@ User-agent: *
 Disallow: /internal/
 Disallow: /api/
 Allow: /
+Allow: /assets/
+Allow: /uploads/products/
+Allow: /uploads/content/
 
 Sitemap: https://gimosupplies.com/sitemap.xml
+Host: gimosupplies.com

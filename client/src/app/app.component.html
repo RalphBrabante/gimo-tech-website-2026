@@ -29,7 +29,7 @@
         <div class="ticks">
           <span *ngFor="let tick of homepage.hero.ticks">{{ tick }}</span>
         </div>
-        <a class="button dark" [href]="homepage.hero.ctaHref">{{ homepage.hero.ctaLabel }}</a>
+        <div class="hero-actions"><a class="button dark" [href]="homepage.hero.ctaHref">{{ homepage.hero.ctaLabel }}</a><a class="hero-secondary" href="/products/nylon-syringe-filter-25mm-045um">View the 25mm 0.45µm Nylon Syringe Filter</a></div>
       </div>
       <div class="hero-visual">
         <a class="hero-product-link" href="https://www.lazada.com.ph/products/i3969520270.html" target="_blank" rel="noopener noreferrer" aria-label="Buy GIMO Nylon syringe filters on Lazada">
@@ -150,6 +150,7 @@
         <span *ngFor="let item of homepage.split_1.checklist">{{ item }}</span>
       </div>
       <a class="button aqua" [href]="homepage.split_1.ctaHref">{{ homepage.split_1.ctaLabel }}</a>
+      <a class="selection-guide-link" href="/guides/nylon-vs-ptfe-vs-pvdf-vs-mce-syringe-filters">Compare Nylon, PTFE, PVDF, and MCE syringe filters</a>
     </div>
   </section>
 

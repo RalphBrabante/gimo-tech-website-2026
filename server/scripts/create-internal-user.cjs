@@ -48,6 +48,7 @@ function hiddenQuestion(label) {
 async function main() {
   const prompt = createInterface({ input: stdin, output: stdout });
   const username = (await prompt.question('Username: ')).trim().toLowerCase();
+  const email = (await prompt.question('Recovery email: ')).trim().toLowerCase();
   prompt.close();
   const password = await hiddenQuestion('Password: ');
 
@@ -55,8 +56,12 @@ async function main() {
     throw new Error('Username must contain between 1 and 80 characters.');
   }
 
-  if (password.length < 8 || password.length > 128) {
-    throw new Error('Password must contain between 8 and 128 characters.');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
+    throw new Error('Enter a valid recovery email address.');
+  }
+
+  if (password.length < 12 || password.length > 128 || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password)) {
+    throw new Error('Password must contain 12–128 characters with uppercase, lowercase, and a number.');
   }
 
   const connection = await mysql.createConnection({
@@ -71,10 +76,11 @@ async function main() {
   try {
     const passwordHash = await hash(password, 12);
     const [result] = await connection.execute(
-      `INSERT INTO users (username, password_hash, is_active)
-       VALUES (?, ?, true)
-       ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash), is_active = true`,
-      [username, passwordHash]
+      `INSERT INTO users (username, email, password_hash, is_active)
+       VALUES (?, ?, ?, true)
+       ON DUPLICATE KEY UPDATE email = VALUES(email), password_hash = VALUES(password_hash), is_active = true,
+       failed_login_attempts = 0, password_reset_required = false`,
+      [username, email, passwordHash]
     );
 
     const action = result.affectedRows === 1 ? 'created' : 'updated';

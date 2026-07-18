@@ -150,6 +150,7 @@ const FALLBACK_MENUS: PublicMenus = {
   footer: {
     products: [
       { label: 'Syringe filters', href: '/syringe-filters', openInNewTab: false },
+      { label: 'Nylon syringe filters', href: '/products/nylon-syringe-filter-25mm-045um', openInNewTab: false },
       { label: 'QR biohazard bags', href: '/biohazard-bags', openInNewTab: false },
       { label: 'Lazada shop', href: '/lazada-shop', openInNewTab: false }
     ],

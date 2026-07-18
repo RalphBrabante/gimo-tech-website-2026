@@ -23,6 +23,11 @@ import { IntegrateBusinessLocation1783773600000 } from './migrations/17837736000
 import { AddSeoLandingPages1784257200000 } from './migrations/1784257200000-add-seo-landing-pages';
 import { QuotationRequestEntity } from '../quotations/entities/quotation-request.entity';
 import { CreateQuotationRequests1784260800000 } from './migrations/1784260800000-create-quotation-requests';
+import { LinkNylonSeoPages1784347200000 } from './migrations/1784347200000-link-nylon-seo-pages';
+import { DeskClientEntity } from '../desk/entities/desk-client.entity';
+import { DeskMessageAssignmentEntity } from '../desk/entities/desk-message-assignment.entity';
+import { CreateDesk1784433600000 } from './migrations/1784433600000-create-desk';
+import { AddAuthSecurity1784520000000 } from './migrations/1784520000000-add-auth-security';
 
 @Module({
   imports: [
@@ -37,7 +42,7 @@ import { CreateQuotationRequests1784260800000 } from './migrations/1784260800000
         password: config.getOrThrow<string>('DB_PASSWORD'),
         database: config.getOrThrow<string>('DB_NAME'),
         charset: 'utf8mb4',
-        entities: [ProductEntity, ProductImageEntity, UserEntity, AppSettingsEntity, HomepageSectionEntity, PageEntity, PageBlockEntity, MenuItemEntity, QuotationRequestEntity],
+        entities: [ProductEntity, ProductImageEntity, UserEntity, AppSettingsEntity, HomepageSectionEntity, PageEntity, PageBlockEntity, MenuItemEntity, QuotationRequestEntity, DeskClientEntity, DeskMessageAssignmentEntity],
         migrations: [
           InitialProductCatalog1760000000000,
           CreateUsers1783741200000,
@@ -51,7 +56,10 @@ import { CreateQuotationRequests1784260800000 } from './migrations/1784260800000
           SeedMenuItems1783770000000,
           IntegrateBusinessLocation1783773600000,
           AddSeoLandingPages1784257200000,
-          CreateQuotationRequests1784260800000
+          CreateQuotationRequests1784260800000,
+          LinkNylonSeoPages1784347200000,
+          CreateDesk1784433600000,
+          AddAuthSecurity1784520000000
         ],
         migrationsRun: config.get<boolean>('DB_RUN_MIGRATIONS', true),
         synchronize: false,

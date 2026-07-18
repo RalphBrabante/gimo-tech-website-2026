@@ -10,9 +10,10 @@ import { PagesViewController } from './pages-view.controller';
 import { QuotationThankYouController } from './quotation-thank-you.controller';
 import { AuthModule } from '../auth/auth.module';
 import { PageRendererModule } from './page-renderer.module';
+import { ProductEntity } from '../products/entities/product.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PageEntity, PageBlockEntity]), AuthModule, PageRendererModule],
+  imports: [TypeOrmModule.forFeature([PageEntity, PageBlockEntity, ProductEntity]), AuthModule, PageRendererModule],
   controllers: [InternalPagesController, SitemapController, QuotationThankYouController, PagesViewController],
   providers: [PagesService]
 })

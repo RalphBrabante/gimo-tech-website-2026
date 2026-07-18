@@ -5,11 +5,12 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { DashboardController } from './dashboard.controller';
 import { InternalAuthGuard } from './internal-auth.guard';
+import { AuthMailService } from './auth-mail.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity])],
   controllers: [AuthController, DashboardController],
-  providers: [AuthService, InternalAuthGuard],
+  providers: [AuthService, AuthMailService, InternalAuthGuard],
   exports: [AuthService, InternalAuthGuard]
 })
 export class AuthModule {}

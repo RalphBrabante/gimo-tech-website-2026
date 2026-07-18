@@ -17,6 +17,7 @@ import { MenusModule } from './menus/menus.module';
 import { PagesModule } from './pages/pages.module';
 import { contentUploadsPath } from './media/media-upload.config';
 import { QuotationsModule } from './quotations/quotations.module';
+import { DeskModule } from './desk/desk.module';
 
 @Module({
   imports: [
@@ -34,7 +35,10 @@ import { QuotationsModule } from './quotations/quotations.module';
         DB_PASSWORD: Joi.string().required(),
         DB_SSL: Joi.boolean().default(false),
         DB_RUN_MIGRATIONS: Joi.boolean().default(true),
-        AUTH_SECRET: Joi.string().min(32).required()
+        AUTH_SECRET: Joi.string().min(32).required(),
+        PUBLIC_BASE_URL: Joi.string().uri({ scheme: ['http', 'https'] }).default('https://gimosupplies.com'),
+        HOSTINGER_MAIL_API_TOKEN: Joi.string().min(20).optional(),
+        HOSTINGER_MAILBOX_ADDRESS: Joi.string().email().default('sales@gimosupplies.com')
       })
     }),
     DatabaseModule,
@@ -43,6 +47,7 @@ import { QuotationsModule } from './quotations/quotations.module';
     SettingsModule,
     ProductsModule,
     QuotationsModule,
+    DeskModule,
     HomepageModule,
     MediaModule,
     MenusModule,

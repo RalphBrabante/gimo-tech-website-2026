@@ -89,6 +89,10 @@ button:active { transform: translateY(1px); }
 button:focus-visible { outline: 3px solid #29d3c1; outline-offset: 3px; }
 button:disabled { cursor: wait; opacity: .72; }
 .form-status { min-height: 1.5em; margin: -4px 0 0; color: #60778d; font-size: .78rem; line-height: 1.5; }
+.field-help { margin: 0; color: #718799; font-size: .72rem; line-height: 1.5; }
+.auth-link { color: #153f70; font-size: .78rem; font-weight: 800; text-underline-offset: .2em; }
+.auth-link:hover { color: #087bdd; }
+.auth-link:focus-visible { outline: 3px solid #29d3c1; outline-offset: 3px; }
 .support { margin: auto 0 0; padding-top: 48px; color: #718799; font-size: .75rem; line-height: 1.6; }
 
 .welcome-panel {

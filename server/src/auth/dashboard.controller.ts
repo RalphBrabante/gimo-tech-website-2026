@@ -40,6 +40,35 @@ export class DashboardController {
     response.sendFile(dashboardFile('dashboard.js'));
   }
 
+  @Get('internal/dashboard/dashboard.css')
+  dashboardStyles(@Res() response: Response): void {
+    response.type('text/css');
+    response.sendFile(dashboardFile('dashboard.css'));
+  }
+
+  @Get(['internal/profile', 'internal/profile/'])
+  profile(@Req() request: Request, @Res() response: Response): void {
+    this.sendProtectedPage(request, response, internalFile('profile/index.html'));
+  }
+
+  @Get('internal/profile/profile.js')
+  profileScript(@Res() response: Response): void {
+    response.type('text/javascript');
+    response.sendFile(internalFile('profile/profile.js'));
+  }
+
+  @Get(['internal/reset-password', 'internal/reset-password/'])
+  resetPassword(@Res() response: Response): void {
+    response.setHeader('Cache-Control', 'private, no-store');
+    response.sendFile(internalFile('reset-password.html'));
+  }
+
+  @Get('internal/reset-password.js')
+  resetPasswordScript(@Res() response: Response): void {
+    response.type('text/javascript');
+    response.sendFile(internalFile('reset-password.js'));
+  }
+
   @Get(['internal/products', 'internal/products/'])
   products(@Req() request: Request, @Res() response: Response): void {
     this.sendProtectedPage(request, response, internalFile('products/index.html'));
@@ -104,6 +133,28 @@ export class DashboardController {
   quotationsScript(@Res() response: Response): void {
     response.type('text/javascript');
     response.sendFile(internalFile('quotations/quotations.js'));
+  }
+
+  @Get(['internal/helpdesk', 'internal/helpdesk/', 'internal/desk', 'internal/desk/'])
+  desk(@Req() request: Request, @Res() response: Response): void {
+    this.sendProtectedPage(request, response, internalFile('desk/index.html'));
+  }
+
+  @Get('internal/desk/desk.js')
+  deskScript(@Res() response: Response): void {
+    response.type('text/javascript');
+    response.sendFile(internalFile('desk/desk.js'));
+  }
+
+  @Get(['internal/helpdesk/messages/:uid', 'internal/helpdesk/messages/:uid/', 'internal/desk/messages/:uid', 'internal/desk/messages/:uid/'])
+  deskMessage(@Req() request: Request, @Res() response: Response): void {
+    this.sendProtectedPage(request, response, internalFile('desk/message.html'));
+  }
+
+  @Get('internal/desk/thread.js')
+  deskThreadScript(@Res() response: Response): void {
+    response.type('text/javascript');
+    response.sendFile(internalFile('desk/thread.js'));
   }
 
   private sendProtectedPage(request: Request, response: Response, filePath: string): void {

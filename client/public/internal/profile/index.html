@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#153f70">
+  <title>Profile | Gimo Tech Internal</title>
+  <link rel="stylesheet" href="/internal/assets/bootstrap.min.css">
+  <link rel="stylesheet" href="/internal/assets/bootstrap-icons.css">
+  <link rel="stylesheet" href="/internal/assets/internal.css">
+</head>
+<body>
+  <div id="profile-loading" class="loading-overlay" role="status"><div class="spinner-border text-aqua" aria-hidden="true"></div><span class="visually-hidden">Loading profile</span></div>
+  <div id="profile-page" class="d-none internal-shell">
+    <aside class="internal-sidebar" aria-label="Internal navigation">
+      <a class="internal-brand" href="/"><img src="/assets/brand/gimo-tech-supplies-logo-600.png" width="600" height="200" alt="Gimo Tech Supplies"></a>
+      <nav class="internal-nav nav flex-column gap-1"><a class="nav-link" href="/internal/dashboard/"><i class="bi bi-grid-1x2" aria-hidden="true"></i>Overview</a><a class="nav-link" href="/internal/helpdesk/"><i class="bi bi-inbox" aria-hidden="true"></i>Helpdesk</a><a class="nav-link" href="/internal/products/"><i class="bi bi-box-seam" aria-hidden="true"></i>Products</a><a class="nav-link" href="/internal/quotations/"><i class="bi bi-file-earmark-text" aria-hidden="true"></i>Quotations</a><a class="nav-link" href="/internal/homepage/"><i class="bi bi-window" aria-hidden="true"></i>Homepage</a><a class="nav-link" href="/internal/pages/"><i class="bi bi-file-earmark-text" aria-hidden="true"></i>Pages</a><a class="nav-link" href="/internal/menus/"><i class="bi bi-list" aria-hidden="true"></i>Menus</a><a class="nav-link active" href="/internal/profile/" aria-current="page"><i class="bi bi-person-circle" aria-hidden="true"></i>Profile</a><a class="nav-link" href="/internal/settings/"><i class="bi bi-gear" aria-hidden="true"></i>Settings</a></nav>
+      <div class="internal-sidebar-footer"><a class="nav-link" href="/"><i class="bi bi-shop" aria-hidden="true"></i>View storefront</a><button id="profile-logout" class="nav-link mt-2" type="button"><i class="bi bi-box-arrow-right" aria-hidden="true"></i>Sign out</button></div>
+    </aside>
+    <main class="internal-content">
+      <header class="internal-header py-3 px-3 px-md-4"><p class="eyebrow">Your account</p><h1 class="page-title">Profile and security</h1></header>
+      <div class="container-fluid p-3 p-md-4">
+        <div class="row g-4">
+          <section class="col-xl-8" aria-labelledby="credentials-title">
+            <div class="card"><div class="card-body p-4 p-md-5"><p class="eyebrow">Login credentials</p><h2 id="credentials-title" class="h4 fw-bold text-gimo mt-2">Update your account</h2><p class="text-secondary">Your recovery email is required for self-service password resets.</p>
+              <form id="profile-form" class="mt-4" novalidate>
+                <div class="row g-3"><div class="col-md-6"><label class="form-label fw-semibold" for="profile-username">Username</label><input id="profile-username" class="form-control" required minlength="1" maxlength="80" autocomplete="username" pattern="[A-Za-z0-9._-]+"></div><div class="col-md-6"><label class="form-label fw-semibold" for="profile-email">Recovery email</label><input id="profile-email" class="form-control" type="email" required maxlength="254" autocomplete="email"></div></div>
+                <hr class="my-4"><h3 class="h6 fw-bold text-gimo">Change password <span class="fw-normal text-secondary">(optional)</span></h3><div class="row g-3"><div class="col-md-6"><label class="form-label fw-semibold" for="new-password">New password</label><input id="new-password" class="form-control" type="password" minlength="12" maxlength="128" autocomplete="new-password" aria-describedby="password-help"><div id="password-help" class="form-text">At least 12 characters with uppercase, lowercase, and a number.</div></div><div class="col-md-6"><label class="form-label fw-semibold" for="confirm-password">Confirm new password</label><input id="confirm-password" class="form-control" type="password" maxlength="128" autocomplete="new-password"></div></div>
+                <div class="mt-4"><label class="form-label fw-semibold" for="current-password">Current password <span class="text-danger" aria-hidden="true">*</span></label><input id="current-password" class="form-control" type="password" required maxlength="128" autocomplete="current-password"><div class="form-text">Required to save any credential change.</div></div>
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mt-4"><p id="profile-status" class="small mb-0" role="status"></p><button id="save-profile" class="btn btn-gimo" type="submit">Save credentials</button></div>
+              </form>
+            </div></div>
+          </section>
+          <aside class="col-xl-4"><div class="card"><div class="card-body p-4"><span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-light text-gimo" style="width:2.5rem;height:2.5rem"><i class="bi bi-shield-lock" aria-hidden="true"></i></span><h2 class="h5 fw-bold text-gimo mt-3">Account protection</h2><p class="small text-secondary mb-0">After five invalid sign-in attempts, password reset is required. Reset links expire after 30 minutes and work only once.</p><dl class="mt-4 mb-0"><dt class="small text-secondary">Password last changed</dt><dd id="password-changed" class="fw-semibold text-gimo mt-1">Not recorded</dd></dl></div></div></aside>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="/internal/profile/profile.js" defer></script>
+</body>
+</html>
