@@ -1,0 +1,627 @@
+.site-main:has(.sf-page) {
+  max-width: none;
+  padding: 0;
+  overflow: hidden;
+}
+
+.sf-page {
+  --sf-yellow: #f5b800;
+  --sf-yellow-deep: #d99600;
+  --sf-aqua-dark: #087f7e;
+  color: var(--gimo-ink);
+}
+
+.sf-shell {
+  width: min(1120px, calc(100% - 40px));
+  margin-inline: auto;
+}
+
+.sf-page .breadcrumb {
+  margin: 0;
+  padding-block: 22px;
+}
+
+.sf-hero {
+  position: relative;
+  min-height: 690px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 82% 46%, rgba(245, 184, 0, 0.2), transparent 31%),
+    linear-gradient(135deg, #f8fbfd 0%, #eef7f7 48%, #fffaf0 100%);
+}
+
+.sf-hero::before,
+.sf-hero::after {
+  position: absolute;
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+}
+
+.sf-hero::before {
+  width: 310px;
+  height: 310px;
+  top: -170px;
+  right: 8%;
+  border: 1px solid rgba(21, 63, 112, 0.1);
+}
+
+.sf-hero::after {
+  width: 180px;
+  height: 180px;
+  bottom: -110px;
+  left: 4%;
+  background: rgba(34, 199, 196, 0.1);
+}
+
+.sf-hero-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  min-height: 610px;
+  grid-template-columns: minmax(0, 0.88fr) minmax(480px, 1.12fr);
+  align-items: center;
+  gap: clamp(28px, 6vw, 76px);
+  padding-block: 44px 72px;
+}
+
+.sf-eyebrow {
+  margin: 0 0 16px !important;
+  color: var(--sf-aqua-dark) !important;
+  font-size: 0.68rem !important;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.sf-hero-copy h1 {
+  max-width: 660px;
+  margin: 0 0 22px;
+  font-size: clamp(2.65rem, 6vw, 4.8rem);
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+
+.sf-lede {
+  max-width: 590px;
+  font-size: clamp(1rem, 2vw, 1.12rem);
+  line-height: 1.75;
+}
+
+.sf-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  margin-top: 30px;
+}
+
+.sf-hero-actions .text-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+}
+
+.sf-lazada-button {
+  gap: 7px;
+  color: #fff;
+  background: var(--sf-aqua-dark);
+}
+
+.sf-lazada-button:hover,
+.sf-lazada-button:focus-visible {
+  color: #fff;
+  background: #066c6b;
+}
+
+.sf-proof {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 38px;
+}
+
+.sf-proof div {
+  padding-left: 13px;
+  border-left: 2px solid var(--gimo-aqua);
+}
+
+.sf-proof strong,
+.sf-proof span {
+  display: block;
+}
+
+.sf-proof strong {
+  color: var(--gimo-ink);
+  font-size: 0.86rem;
+}
+
+.sf-proof span {
+  margin-top: 2px;
+  color: #718799;
+  font-size: 0.68rem;
+  line-height: 1.45;
+}
+
+.sf-visual {
+  position: relative;
+  min-width: 0;
+}
+
+.sf-stage {
+  position: relative;
+  width: 100%;
+  min-height: 530px;
+  overflow: hidden;
+  border: 1px solid rgba(21, 63, 112, 0.1);
+  border-radius: 50% 50% 46% 54% / 45% 48% 52% 55%;
+  background:
+    radial-gradient(circle at 50% 43%, rgba(255, 222, 89, 0.75), rgba(245, 184, 0, 0.12) 35%, transparent 63%),
+    rgba(255, 255, 255, 0.64);
+  box-shadow: 0 30px 80px rgba(21, 63, 112, 0.13);
+  isolation: isolate;
+}
+
+.sf-stage::after {
+  position: absolute;
+  inset: auto 16% 8%;
+  z-index: -1;
+  height: 18%;
+  border-radius: 50%;
+  background: rgba(21, 63, 112, 0.13);
+  filter: blur(24px);
+  content: "";
+  transform: scaleX(0.8);
+}
+
+#syringe-filter-canvas {
+  display: block;
+  width: 100%;
+  height: 530px;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+#syringe-filter-canvas:active {
+  cursor: grabbing;
+}
+
+#syringe-filter-canvas:focus-visible {
+  outline: 4px solid var(--gimo-aqua);
+  outline-offset: -6px;
+}
+
+.sf-stage-loading {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  z-index: -1;
+  margin: 0 !important;
+  color: #60778d !important;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transform: translate(-50%, -50%);
+}
+
+.sf-stage.is-ready .sf-stage-loading {
+  display: none;
+}
+
+.sf-stage.is-unavailable {
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255, 223, 99, 0.82), transparent 46%),
+    url("/assets/products/nylon-syringe-filter-hero-640.jpg") center / cover no-repeat;
+}
+
+.sf-stage.is-unavailable .sf-stage-loading {
+  inset: auto 20px 20px;
+  z-index: 2;
+  padding: 8px 12px;
+  border-radius: 20px;
+  color: #fff !important;
+  background: rgba(21, 63, 112, 0.9);
+  transform: none;
+}
+
+.sf-motion-toggle {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  min-height: 42px;
+  padding: 9px 14px;
+  border: 1px solid rgba(21, 63, 112, 0.16);
+  border-radius: 22px;
+  color: var(--gimo-ink);
+  background: rgba(255, 255, 255, 0.92);
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(21, 63, 112, 0.1);
+}
+
+.sf-motion-toggle:hover,
+.sf-motion-toggle:focus-visible {
+  border-color: var(--gimo-aqua);
+}
+
+.sf-callout {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  min-width: 120px;
+  gap: 1px;
+  padding: 12px 15px;
+  border: 1px solid rgba(21, 63, 112, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 12px 32px rgba(21, 63, 112, 0.12);
+  pointer-events: none;
+}
+
+.sf-callout strong {
+  font-size: 0.74rem;
+}
+
+.sf-callout span {
+  color: #718799;
+  font-size: 0.62rem;
+}
+
+.sf-callout.membrane {
+  top: 15%;
+  left: -20px;
+}
+
+.sf-callout.pore {
+  right: -12px;
+  top: 26%;
+}
+
+.sf-callout.format {
+  left: -4px;
+  bottom: 15%;
+}
+
+.sf-section {
+  padding-block: clamp(72px, 10vw, 110px);
+}
+
+.sf-section-head {
+  display: grid;
+  grid-template-columns: minmax(0, 0.75fr) minmax(0, 1fr);
+  gap: clamp(28px, 8vw, 100px);
+  align-items: end;
+  margin-bottom: 42px;
+}
+
+.sf-section h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+.sf-section-head p:last-child {
+  margin: 0;
+}
+
+.sf-membranes {
+  background: #fff;
+}
+
+.sf-membrane-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.sf-membrane-card {
+  position: relative;
+  min-height: 290px;
+  padding: 25px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 14px 34px rgba(21, 63, 112, 0.06);
+}
+
+.sf-membrane-card::before {
+  display: block;
+  width: 74px;
+  height: 74px;
+  margin-bottom: 28px;
+  border: 11px solid var(--membrane-color);
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0 48%, #dce6ee 49% 54%, #f8fafc 55%);
+  box-shadow: inset 0 0 0 1px rgba(21, 63, 112, 0.08);
+  content: "";
+}
+
+.sf-membrane-card small {
+  color: var(--sf-aqua-dark);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+}
+
+.sf-membrane-card h3 {
+  margin: 8px 0 10px;
+}
+
+.sf-membrane-card p {
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.sf-membrane-card.featured {
+  border-color: rgba(245, 184, 0, 0.7);
+  background: linear-gradient(160deg, #fffdf7, #fff);
+}
+
+.sf-membrane-card.featured::after {
+  position: absolute;
+  top: 18px;
+  right: -32px;
+  width: 124px;
+  padding: 5px 0;
+  color: #fff;
+  background: var(--sf-yellow-deep);
+  content: "FEATURED";
+  font-size: 0.52rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-align: center;
+  transform: rotate(45deg);
+}
+
+.sf-anatomy {
+  background: var(--gimo-mist);
+}
+
+.sf-anatomy-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 0.75fr);
+  gap: clamp(30px, 8vw, 90px);
+  align-items: center;
+}
+
+.sf-flow {
+  position: relative;
+  display: grid;
+  gap: 14px;
+  margin-top: 34px;
+}
+
+.sf-flow::before {
+  position: absolute;
+  top: 36px;
+  bottom: 36px;
+  left: 22px;
+  width: 2px;
+  background: #cbdde5;
+  content: "";
+}
+
+.sf-flow article {
+  position: relative;
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.sf-flow b {
+  display: grid;
+  z-index: 1;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--gimo-navy);
+  font-size: 0.72rem;
+}
+
+.sf-flow h3 {
+  margin: 1px 0 5px;
+  font-size: 1rem;
+}
+
+.sf-flow p {
+  font-size: 0.82rem;
+}
+
+.sf-feature-card {
+  padding: clamp(24px, 4vw, 38px);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 22px 60px rgba(21, 63, 112, 0.12);
+}
+
+.sf-feature-card img {
+  display: block;
+  width: 100%;
+  margin: 0 0 24px;
+  aspect-ratio: 5 / 4;
+  object-fit: cover;
+}
+
+.sf-feature-card h3 {
+  margin: 8px 0 10px;
+  font-size: 1.35rem;
+}
+
+.sf-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 18px 0 24px;
+}
+
+.sf-specs span {
+  padding: 7px 10px;
+  border-radius: 20px;
+  color: #31516f;
+  background: #eef3f8;
+  font-size: 0.66rem;
+  font-weight: 800;
+}
+
+.sf-selection {
+  background: #dff5f3;
+}
+
+.sf-selection-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 42px;
+  align-items: center;
+  padding: clamp(30px, 6vw, 58px);
+  border-radius: 10px;
+  background: var(--gimo-navy);
+  box-shadow: 0 24px 60px rgba(21, 63, 112, 0.18);
+}
+
+.sf-selection-panel h2 {
+  max-width: 690px;
+  color: #fff;
+}
+
+.sf-selection-panel p {
+  max-width: 700px;
+  color: #c7d7e4;
+}
+
+.sf-selection-panel .button {
+  background: var(--gimo-aqua);
+  color: #0d3853;
+}
+
+.sf-small-note {
+  margin-top: 16px !important;
+  color: #718799 !important;
+  font-size: 0.74rem;
+}
+
+.sf-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 960px) {
+  .sf-hero-grid {
+    grid-template-columns: 1fr;
+    padding-top: 26px;
+  }
+
+  .sf-hero-copy {
+    max-width: 720px;
+  }
+
+  .sf-visual {
+    width: min(680px, 100%);
+    margin-inline: auto;
+  }
+
+  .sf-membrane-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .site-main:has(.sf-page) {
+    overflow: hidden;
+  }
+
+  .sf-shell {
+    width: min(100% - 32px, 1120px);
+  }
+
+  .sf-hero-grid {
+    padding-bottom: 54px;
+  }
+
+  .sf-proof {
+    grid-template-columns: 1fr;
+  }
+
+  .sf-stage,
+  #syringe-filter-canvas {
+    min-height: 410px;
+    height: 410px;
+  }
+
+  .sf-callout {
+    min-width: 98px;
+    padding: 9px 11px;
+  }
+
+  .sf-callout.membrane {
+    left: 8px;
+  }
+
+  .sf-callout.pore {
+    right: 8px;
+  }
+
+  .sf-callout.format {
+    left: 14px;
+  }
+
+  .sf-section-head,
+  .sf-anatomy-grid,
+  .sf-selection-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .sf-selection-panel .button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .sf-hero-copy h1 {
+    font-size: clamp(2.5rem, 14vw, 3.3rem);
+  }
+
+  .sf-hero-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .sf-hero-actions .button {
+    width: 100%;
+  }
+
+  .sf-membrane-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sf-stage,
+  #syringe-filter-canvas {
+    min-height: 350px;
+    height: 350px;
+  }
+
+  .sf-callout {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sf-motion-toggle {
+    display: none !important;
+  }
+}

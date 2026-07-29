@@ -25,6 +25,8 @@ export class PageRendererService {
   constructor(@InjectRepository(MenuItemEntity) private readonly menuItems: Repository<MenuItemEntity>) {}
 
   async renderPage(page: Page, origin: string): Promise<string> {
+    if (page.slug === 'syringe-filters') return this.renderSyringeFilters(page);
+
     const nav = await this.loadNav();
     const canonicalUrl = `${SITE_ORIGIN}/${page.slug}`;
     const description = page.metaDescription ?? '';
@@ -46,6 +48,128 @@ export class PageRendererService {
         description,
         url: canonicalUrl
       }
+    });
+  }
+
+  private async renderSyringeFilters(page: Page): Promise<string> {
+    const nav = await this.loadNav();
+    const canonicalUrl = `${SITE_ORIGIN}/syringe-filters`;
+    const description =
+      page.metaDescription ??
+      'Explore Nylon, PTFE, PVDF, and MCE syringe filters for HPLC sample preparation, including 25 mm and 0.45 µm laboratory options.';
+    const ogImage = `${SITE_ORIGIN}/assets/products/nylon-syringe-filter-hero-1280.jpg`;
+    const intro =
+      page.blocks.find((block) => block.blockType === 'paragraph')?.paragraphText ??
+      'Gimo Tech Supplies provides syringe filters for routine HPLC sample preparation, sample clarification, and laboratory filtration workflows.';
+
+    const bodyHtml = `<article class="sf-page">
+  <section class="sf-hero" aria-labelledby="sf-page-title">
+    <div class="sf-shell"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span aria-current="page">Syringe Filters</span></nav></div>
+    <div class="sf-shell sf-hero-grid">
+      <div class="sf-hero-copy">
+        <p class="sf-eyebrow">Precision sample preparation</p>
+        <h1 id="sf-page-title">${escapeHtml(page.title)}</h1>
+        <p class="sf-lede">${escapeHtml(intro)}</p>
+        <div class="sf-hero-actions">
+          <a class="button dark" href="${NYLON_PRODUCT_PATH}">View the Nylon filter</a>
+          <a class="button sf-lazada-button" href="https://www.lazada.com.ph/products/i3969520270.html" target="_blank" rel="noopener noreferrer">Shop on Lazada now <span aria-hidden="true">↗</span></a>
+          <a class="text-link" href="mailto:gimotechsupplies@gmail.com?subject=Syringe%20filter%20quotation">Request product matching</a>
+        </div>
+        <div class="sf-proof" aria-label="Available syringe filter options">
+          <div><strong>4 membranes</strong><span>Nylon, PTFE, PVDF and MCE</span></div>
+          <div><strong>25 mm format</strong><span>Common laboratory diameter</span></div>
+          <div><strong>0.45 µm option</strong><span>Confirm against your method</span></div>
+        </div>
+      </div>
+      <div class="sf-visual">
+        <div class="sf-stage" id="syringe-filter-stage">
+          <canvas id="syringe-filter-canvas" role="img" tabindex="0" aria-label="Interactive 3D model of a yellow 25 millimetre nylon syringe filter" aria-describedby="sf-canvas-help"></canvas>
+          <p id="sf-canvas-help" class="sf-sr-only">Drag the model or use the arrow keys to inspect it. The animation is decorative and can be paused.</p>
+          <p class="sf-stage-loading" role="status">Loading interactive 3D model</p>
+          <button class="sf-motion-toggle" id="sf-motion-toggle" type="button" aria-pressed="false" hidden>Pause 3D motion</button>
+        </div>
+        <div class="sf-callout membrane"><strong>Nylon membrane</strong><span>General sample preparation</span></div>
+        <div class="sf-callout pore"><strong>0.45 µm</strong><span>Verified pictured format</span></div>
+        <div class="sf-callout format"><strong>25 mm</strong><span>Filter diameter</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sf-section sf-membranes" aria-labelledby="sf-membranes-title">
+    <div class="sf-shell">
+      <div class="sf-section-head">
+        <div><p class="sf-eyebrow">Membrane selection</p><h2 id="sf-membranes-title">Match the filter to your method.</h2></div>
+        <p>Selection depends on the complete sample composition, solvent system, analytes, sterility needs, and validated laboratory method. These categories are a starting point, not a substitute for manufacturer compatibility data.</p>
+      </div>
+      <div class="sf-membrane-grid">
+        <article class="sf-membrane-card featured" style="--membrane-color:#f5b800"><small>NY · GENERAL PREP</small><h3>Nylon</h3><p>Catalogued for general aqueous and mixed sample-preparation workflows. Confirm compatibility with the entire formulation.</p></article>
+        <article class="sf-membrane-card" style="--membrane-color:#22c7c4"><small>PTFE · SOLVENT REVIEW</small><h3>PTFE</h3><p>Compare for stronger-solvent workflows, then verify that the supplied membrane and housing fit the sample system.</p></article>
+        <article class="sf-membrane-card" style="--membrane-color:#087bdd"><small>PVDF · LOW BINDING</small><h3>PVDF</h3><p>Consider where low-binding performance is important, with method-specific analyte recovery and compatibility checks.</p></article>
+        <article class="sf-membrane-card" style="--membrane-color:#8ba5b7"><small>MCE · CLARIFICATION</small><h3>MCE</h3><p>Compare for general clarification workflows after verifying the method, sample, and solvent requirements.</p></article>
+      </div>
+      <p class="sf-small-note">Product availability, packaging, and suitability are confirmed for each enquiry.</p>
+    </div>
+  </section>
+
+  <section class="sf-section sf-anatomy" aria-labelledby="sf-anatomy-title">
+    <div class="sf-shell sf-anatomy-grid">
+      <div>
+        <p class="sf-eyebrow">Filtration workflow</p>
+        <h2 id="sf-anatomy-title">A compact path from sample to analysis.</h2>
+        <div class="sf-flow">
+          <article><b>01</b><div><h3>Load the sample</h3><p>Connect the selected filter using the inlet and outlet format specified by the applicable manufacturer documentation.</p></div></article>
+          <article><b>02</b><div><h3>Pass through the membrane</h3><p>The membrane choice and pore size must align with your sample, solvent, analyte, and validated procedure.</p></div></article>
+          <article><b>03</b><div><h3>Collect for the next step</h3><p>Use the filtrate according to your laboratory method and instrument-preparation requirements.</p></div></article>
+        </div>
+      </div>
+      <article class="sf-feature-card">
+        <picture>
+          <source srcset="/assets/products/nylon-syringe-filter-hero-640.jpg 640w, /assets/products/nylon-syringe-filter-hero-1280.jpg 1280w" sizes="(max-width: 720px) calc(100vw - 80px), 390px">
+          <img src="/assets/products/nylon-syringe-filter-hero-640.jpg" width="640" height="512" alt="Canister of GIMO 25 millimetre 0.45 micrometre nylon syringe filters" loading="lazy" decoding="async">
+        </picture>
+        <p class="sf-eyebrow">Featured configuration</p>
+        <h3>25 mm 0.45 µm Nylon</h3>
+        <p>The verified product page documents the pictured non-sterile canister containing 100 pieces.</p>
+        <div class="sf-specs" aria-label="Verified filter specifications"><span>Nylon</span><span>25 mm</span><span>0.45 µm</span><span>100 pieces</span></div>
+        <a class="text-link" href="${NYLON_PRODUCT_PATH}">Review verified product details →</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="sf-section sf-selection" aria-labelledby="sf-selection-title">
+    <div class="sf-shell">
+      <div class="sf-selection-panel">
+        <div><p class="sf-eyebrow">Before you order</p><h2 id="sf-selection-title">Share the method, sample system, quantity, and destination.</h2><p>GIMO can help compare membrane options and confirm current packaging and delivery details without assuming compatibility or stock.</p></div>
+        <a class="button" href="/guides/nylon-vs-ptfe-vs-pvdf-vs-mce-syringe-filters">Compare membranes</a>
+      </div>
+    </div>
+  </section>
+</article>`;
+
+    return this.shell({
+      title: page.title,
+      description,
+      canonicalUrl,
+      ogImage,
+      headerLinks: nav.header,
+      footerColumns: nav.footerColumns,
+      bodyHtml,
+      robots: null,
+      jsonLd: {
+        '@context': 'https://schema.org',
+        '@graph': [
+          { '@type': 'WebPage', name: page.title, description, url: canonicalUrl },
+          {
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_ORIGIN}/` },
+              { '@type': 'ListItem', position: 2, name: 'Syringe Filters', item: canonicalUrl }
+            ]
+          }
+        ]
+      },
+      stylesheets: ['/assets/syringe-filters.css'],
+      scripts: ['/assets/syringe-filter-3d.js']
     });
   }
 
@@ -320,6 +444,7 @@ export class PageRendererService {
     robots: string | null;
     jsonLd: Record<string, unknown> | null;
     ogType?: 'website' | 'product' | 'article';
+    stylesheets?: string[];
     scripts?: string[];
   }): string {
     const link = (item: NavLink) =>
@@ -339,6 +464,9 @@ export class PageRendererService {
     const robotsTag = options.robots ? `<meta name="robots" content="${escapeHtml(options.robots)}">` : '';
     const ogUrlTag = options.canonicalUrl ? `<meta property="og:url" content="${escapeHtml(options.canonicalUrl)}">` : '';
     const title = escapeHtml(options.fullTitle ? options.title : `${options.title} | Gimo Tech Supplies`);
+    const stylesheetTags = (options.stylesheets ?? [])
+      .map((href) => `<link rel="stylesheet" href="${escapeHtml(href)}">`)
+      .join('\n');
     const scriptTags = (options.scripts ?? []).map((src) => `<script src="${escapeHtml(src)}" defer></script>`).join('\n');
 
     return `<!doctype html>
@@ -365,6 +493,7 @@ ${twitterImageTag}
 <link rel="shortcut icon" type="image/x-icon" href="/gimo-flask-favicon-v2.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="/gimo-apple-touch-icon-v2.png">
 <link rel="stylesheet" href="/assets/site-shell.css">
+${stylesheetTags}
 ${jsonLdScript}
 </head>
 <body>

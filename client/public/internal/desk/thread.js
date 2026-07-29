@@ -38,7 +38,7 @@ function attachmentMarkup(message) {
 }
 
 function uidFromPath() {
-  const match = window.location.pathname.match(/\/internal\/desk\/messages\/([^/]+)/);
+  const match = window.location.pathname.match(/\/internal\/(?:helpdesk|desk)\/messages\/([^/]+)/);
   return match ? decodeURIComponent(match[1]) : null;
 }
 
