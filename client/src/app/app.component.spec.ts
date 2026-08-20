@@ -23,5 +23,6 @@ describe('AppComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h1')?.textContent).toContain('Syringe filters');
     expect(compiled.querySelector<HTMLAnchorElement>('a[href="/products/nylon-syringe-filter-25mm-045um"]')).toBeTruthy();
+    expect(compiled.querySelector<HTMLAnchorElement>('a[href="/sequential-qr-code-labels"]')).toBeTruthy();
   });
 });

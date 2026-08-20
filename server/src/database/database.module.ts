@@ -28,6 +28,7 @@ import { DeskClientEntity } from '../desk/entities/desk-client.entity';
 import { DeskMessageAssignmentEntity } from '../desk/entities/desk-message-assignment.entity';
 import { CreateDesk1784433600000 } from './migrations/1784433600000-create-desk';
 import { AddAuthSecurity1784520000000 } from './migrations/1784520000000-add-auth-security';
+import { AddSequentialQrCodeLabelOffer1784606400000 } from './migrations/1784606400000-add-sequential-qr-code-label-offer';
 
 @Module({
   imports: [
@@ -59,7 +60,8 @@ import { AddAuthSecurity1784520000000 } from './migrations/1784520000000-add-aut
           CreateQuotationRequests1784260800000,
           LinkNylonSeoPages1784347200000,
           CreateDesk1784433600000,
-          AddAuthSecurity1784520000000
+          AddAuthSecurity1784520000000,
+          AddSequentialQrCodeLabelOffer1784606400000
         ],
         migrationsRun: config.get<boolean>('DB_RUN_MIGRATIONS', true),
         synchronize: false,

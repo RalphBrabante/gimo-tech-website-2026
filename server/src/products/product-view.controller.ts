@@ -19,6 +19,11 @@ export class ProductViewController {
     response.status(200).type('text/html').send(await this.renderer.renderNylonSyringeFilter());
   }
 
+  @Get('sequential-qr-code-labels')
+  async renderSequentialQrCodeLabels(@Res() response: Response): Promise<void> {
+    response.status(200).type('text/html').send(await this.renderer.renderSequentialQrCodeLabels());
+  }
+
   @Get('guides/nylon-vs-ptfe-vs-pvdf-vs-mce-syringe-filters')
   async renderSyringeFilterGuide(@Res() response: Response): Promise<void> {
     response.status(200).type('text/html').send(await this.renderer.renderSyringeFilterGuide());

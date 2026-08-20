@@ -8,6 +8,7 @@ import { ProductEntity } from '../products/entities/product.entity';
 const SITE_ORIGIN = 'https://gimosupplies.com';
 const STATIC_INDEXABLE_PATHS = [
   '',
+  'sequential-qr-code-labels',
   'products/nylon-syringe-filter-25mm-045um',
   'guides/nylon-vs-ptfe-vs-pvdf-vs-mce-syringe-filters'
 ];

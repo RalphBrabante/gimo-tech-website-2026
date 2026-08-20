@@ -353,6 +353,136 @@ export class PageRendererService {
     });
   }
 
+  async renderSequentialQrCodeLabels(): Promise<string> {
+    const nav = await this.loadNav();
+    const canonicalUrl = `${SITE_ORIGIN}/sequential-qr-code-labels`;
+    const title = 'Sequential QR Code Labels Philippines | Gimo Tech Supplies';
+    const description = 'Order custom 30 × 20 mm sequential QR code labels on durable adhesive paper for tracking, labeling, and inventory workflows in the Philippines.';
+    const image = `${SITE_ORIGIN}/assets/products/sequential-qr-labels-hero-1280.jpg`;
+    const quoteHref = 'mailto:gimotechsupplies@gmail.com?subject=Bulk%20order%20enquiry%3A%20Sequential%20QR%20code%20labels';
+    const faqs = [
+      {
+        question: 'What size are the sequential QR code labels?',
+        answer: 'This offer is for labels printed at 30 × 20 mm. Share your application and required quantity so the final layout and order details can be confirmed before production.'
+      },
+      {
+        question: 'Can every label have a different QR code or number?',
+        answer: 'Yes. The offer supports sequential numbering and unique QR code printing. Provide the required sequence or source data when requesting a quotation.'
+      },
+      {
+        question: 'Are the labels suitable for wet or oily environments?',
+        answer: 'The offered adhesive paper is described as water, oil, and scratch resistant. Confirm the intended surface, exposure conditions, and handling requirements before ordering so suitability can be reviewed.'
+      },
+      {
+        question: 'Can I place a bulk order?',
+        answer: 'Yes. Send the required quantity, numbering range, QR data, delivery destination, and target schedule to Gimo Tech Supplies for a custom quotation.'
+      }
+    ];
+
+    const icon = (path: string) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${path}"></path></svg>`;
+    const bodyHtml = `<article class="qr-page">
+  <section class="qr-hero" aria-labelledby="qr-page-title">
+    <div class="qr-shell"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span aria-current="page">Sequential QR Code Labels</span></nav></div>
+    <div class="qr-shell qr-hero-grid">
+      <div class="qr-hero-copy">
+        <p class="qr-eyebrow">Custom identification labels</p>
+        <h1 id="qr-page-title">Sequential<br> QR Code Labels</h1>
+        <p class="qr-format">Printed on <strong>30 × 20 mm</strong> water-, oil-, and scratch-resistant adhesive paper.</p>
+        <ul class="qr-benefit-list">
+          <li><span class="qr-benefit-icon">${icon('M12 3l8 4v5c0 5-3.4 8.7-8 10-4.6-1.3-8-5-8-10V7l8-4zm-3 9l2 2 4-5')}</span><span><strong>Durable adhesive labels</strong><small>Designed for clear, dependable identification</small></span></li>
+          <li><span class="qr-benefit-icon">${icon('M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h2v2h-2v-2zm4 0h2v6h-6v-2h4v-4z')}</span><span><strong>Clear QR code printing</strong><small>Unique code data can be supplied per label</small></span></li>
+          <li><span class="qr-benefit-icon">${icon('M5 6h14M5 12h14M5 18h14')}</span><span><strong>Sequential numbering available</strong><small>Organize series for repeatable tracking workflows</small></span></li>
+        </ul>
+        <div class="qr-actions"><a class="button dark" href="${quoteHref}">${icon('M4 5h16v11H8l-4 3V5zm4 5h8M8 13h5')}<span>Message us for bulk orders</span></a><a class="text-link" href="#order-details">See order requirements</a></div>
+      </div>
+      <figure class="qr-hero-visual">
+        <picture>
+          <source srcset="/assets/products/sequential-qr-labels-hero-640.jpg 640w, /assets/products/sequential-qr-labels-hero-1280.jpg 1280w" sizes="(max-width: 960px) calc(100vw - 32px), 610px">
+          <img src="/assets/products/sequential-qr-labels-hero-640.jpg" width="640" height="426" alt="Roll of white sequential QR code adhesive labels on a pale blue backing" fetchpriority="high" decoding="async">
+        </picture>
+        <figcaption><strong>30 × 20 mm</strong><span>Custom sequential print format</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="qr-section qr-use-cases" aria-labelledby="qr-use-cases-title">
+    <div class="qr-shell">
+      <div class="qr-section-head"><div><p class="qr-eyebrow">Built for traceability</p><h2 id="qr-use-cases-title">One label. A clear identity for every item.</h2></div><p>Sequential QR labels can support organized tracking across equipment, samples, assets, packages, files, and inventory. The data structure remains yours; Gimo Tech Supplies coordinates the print specification.</p></div>
+      <div class="qr-card-grid">
+        <article><span class="qr-card-icon">${icon('M4 7l8-4 8 4-8 4-8-4zm0 5l8 4 8-4M4 17l8 4 8-4')}</span><h3>Inventory labeling</h3><p>Assign unique identifiers to stock, supplies, and storage locations.</p></article>
+        <article><span class="qr-card-icon">${icon('M4 5h16v14H4V5zm4 4h8M8 13h5')}</span><h3>Asset tracking</h3><p>Connect physical equipment or property to your chosen digital record.</p></article>
+        <article><span class="qr-card-icon">${icon('M7 3h10v4h3v14H4V7h3V3zm2 4h6V5H9v2z')}</span><h3>Sample identification</h3><p>Keep a readable label and sequential reference close to each container.</p></article>
+        <article><span class="qr-card-icon">${icon('M3 6h18M6 3v6m12-6v6M5 11h14v10H5V11z')}</span><h3>Batch organization</h3><p>Prepare ordered series for production, receiving, or distribution workflows.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="qr-section qr-spec-section" aria-labelledby="qr-spec-title">
+    <div class="qr-shell qr-spec-grid">
+      <div>
+        <p class="qr-eyebrow">Offer details</p>
+        <h2 id="qr-spec-title">A compact label with room for a unique code.</h2>
+        <p>The 30 × 20 mm format combines a QR code with an optional human-readable sequence. Final code density and readability depend on the supplied data, print layout, and scanner requirements.</p>
+        <div class="qr-spec-list" role="list" aria-label="Sequential QR label specifications">
+          <div role="listitem"><span>Label size</span><strong>30 × 20 mm</strong></div>
+          <div role="listitem"><span>Print</span><strong>QR code + sequence</strong></div>
+          <div role="listitem"><span>Paper</span><strong>Water, oil &amp; scratch resistant</strong></div>
+          <div role="listitem"><span>Format</span><strong>Adhesive roll labels</strong></div>
+        </div>
+      </div>
+      <aside class="qr-data-card">
+        <span class="qr-demo-code" aria-hidden="true"></span>
+        <p class="qr-eyebrow">Your data, your sequence</p>
+        <h3>Plan the label series before printing.</h3>
+        <p>Send the numbering range and QR destination or encoded value. A representative can confirm what file format is needed for your order.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="qr-section qr-order" id="order-details" aria-labelledby="qr-order-title">
+    <div class="qr-shell">
+      <div class="qr-section-head"><div><p class="qr-eyebrow">Bulk order workflow</p><h2 id="qr-order-title">What to include in your enquiry.</h2></div><p>Complete details help the team review your label layout and prepare an accurate quotation without assuming quantity, price, or production timing.</p></div>
+      <ol class="qr-steps">
+        <li><b>01</b><div><h3>Describe the application</h3><p>Share the surface, environment, scanning device, and how the labels will be used.</p></div></li>
+        <li><b>02</b><div><h3>Provide the QR data</h3><p>Include the numbering range, encoded values or destinations, and any human-readable text.</p></div></li>
+        <li><b>03</b><div><h3>Confirm order details</h3><p>State the required quantity, delivery destination, and target schedule for quotation review.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="qr-section qr-faq" aria-labelledby="qr-faq-title">
+    <div class="qr-shell qr-faq-grid"><div><p class="qr-eyebrow">Frequently asked questions</p><h2 id="qr-faq-title">Before you order</h2><p>Have a different labeling requirement? Send your specifications and intended workflow for review.</p></div><div class="faq-list">${faqs.map((faq) => `<details><summary>${escapeHtml(faq.question)}</summary><p>${escapeHtml(faq.answer)}</p></details>`).join('')}</div></div>
+  </section>
+
+  <section class="qr-cta" aria-labelledby="qr-cta-title"><div class="qr-shell"><div><p class="qr-eyebrow">Custom bulk printing</p><h2 id="qr-cta-title">Ready to prepare your label series?</h2><p>Send your quantity, sequence, QR data, and delivery destination to request a quotation.</p></div><a class="button" href="${quoteHref}">Message Gimo Tech Supplies</a></div></section>
+</article>`;
+
+    return this.shell({
+      title,
+      fullTitle: true,
+      description,
+      canonicalUrl,
+      ogImage: image,
+      headerLinks: nav.header,
+      footerColumns: nav.footerColumns,
+      bodyHtml,
+      robots: null,
+      jsonLd: {
+        '@context': 'https://schema.org',
+        '@graph': [
+          { '@type': 'WebPage', name: 'Sequential QR Code Labels', description, url: canonicalUrl, primaryImageOfPage: image },
+          { '@type': 'Service', name: 'Sequential QR Code Label Printing', description, image, provider: { '@type': 'Organization', name: 'Gimo Tech Supplies', url: `${SITE_ORIGIN}/` }, areaServed: { '@type': 'Country', name: 'Philippines' }, url: canonicalUrl },
+          { '@type': 'BreadcrumbList', itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_ORIGIN}/` },
+            { '@type': 'ListItem', position: 2, name: 'Sequential QR Code Labels', item: canonicalUrl }
+          ] },
+          { '@type': 'FAQPage', mainEntity: faqs.map((faq) => ({ '@type': 'Question', name: faq.question, acceptedAnswer: { '@type': 'Answer', text: faq.answer } })) }
+        ]
+      },
+      stylesheets: ['/assets/sequential-qr-labels.css']
+    });
+  }
+
   private renderProductMedia(images: { id: number; url: string }[], productName: string, category: string, accent: string): string {
     if (images.length === 0) {
       return `<div class="product-page-placeholder" style="background:${escapeHtml(accent)}" aria-hidden="true">${escapeHtml(category.slice(0, 1))}</div>`;

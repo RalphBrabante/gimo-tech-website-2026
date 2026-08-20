@@ -143,6 +143,7 @@ const FALLBACK_MENUS: PublicMenus = {
   header: [
     { label: 'Home', href: '/', openInNewTab: false },
     { label: 'Syringe Filters', href: '/syringe-filters', openInNewTab: false },
+    { label: 'QR Code Labels', href: '/sequential-qr-code-labels', openInNewTab: false },
     { label: 'Biohazard Bags', href: '/biohazard-bags', openInNewTab: false },
     { label: 'Lazada Shop', href: '/lazada-shop', openInNewTab: false },
     { label: 'Contact', href: '/#contact', openInNewTab: false }
@@ -156,6 +157,7 @@ const FALLBACK_MENUS: PublicMenus = {
     ],
     services: [
       { label: 'Custom printing', href: '/biohazard-bags', openInNewTab: false },
+      { label: 'Sequential QR labels', href: '/sequential-qr-code-labels', openInNewTab: false },
       { label: 'QR code attachments', href: '/biohazard-bags', openInNewTab: false },
       { label: 'Repeat supply orders', href: '/#contact', openInNewTab: false }
     ],
