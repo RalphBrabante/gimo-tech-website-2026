@@ -1,0 +1,110 @@
+{
+  "timestamp": "2026-09-30T17:23:32.429Z",
+  "results": [
+    {
+      "path": "/",
+      "width": 360,
+      "violations": [],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "color-contrast"
+      ]
+    },
+    {
+      "path": "/products",
+      "width": 360,
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "path": "/product/100",
+      "width": 360,
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "path": "/products/nylon-syringe-filter-25mm-045um",
+      "width": 360,
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "path": "/syringe-filters",
+      "width": 360,
+      "violations": [],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "color-contrast"
+      ]
+    },
+    {
+      "path": "/contact-us",
+      "width": 360,
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "path": "/sequential-qr-code-labels",
+      "width": 360,
+      "violations": [],
+      "incomplete": [
+        "color-contrast"
+      ]
+    },
+    {
+      "path": "/",
+      "width": 1440,
+      "violations": [],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "color-contrast"
+      ]
+    },
+    {
+      "path": "/products",
+      "width": 1440,
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "path": "/product/100",
+      "width": 1440,
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "path": "/products/nylon-syringe-filter-25mm-045um",
+      "width": 1440,
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "path": "/syringe-filters",
+      "width": 1440,
+      "violations": [],
+      "incomplete": [
+        "aria-prohibited-attr",
+        "color-contrast"
+      ]
+    },
+    {
+      "path": "/contact-us",
+      "width": 1440,
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "path": "/sequential-qr-code-labels",
+      "width": 1440,
+      "violations": [],
+      "incomplete": [
+        "color-contrast"
+      ]
+    },
+    {
+      "check": "dialog keyboard focus, Escape, return and 200% CSS zoom",
+      "overflow": false,
+      "status": "passed"
+    }
+  ]
+}

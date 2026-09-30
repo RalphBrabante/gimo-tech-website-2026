@@ -9,6 +9,7 @@ import { AuthModule } from '../auth/auth.module';
 @Module({
   imports: [TypeOrmModule.forFeature([HomepageSectionEntity]), AuthModule],
   controllers: [HomepageController, InternalHomepageController],
-  providers: [HomepageService]
+  providers: [HomepageService],
+  exports: [HomepageService]
 })
 export class HomepageModule {}

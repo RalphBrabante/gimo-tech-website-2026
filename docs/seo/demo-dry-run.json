@@ -1,0 +1,182 @@
+{
+  "timestamp": "2026-09-30T17:17:20.841Z",
+  "environment": "local test fixtures only; production not inspected",
+  "mode": "dry-run, no writes",
+  "records": [
+    {
+      "id": 100,
+      "sku": "TEST-LAB-1",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 101,
+      "sku": "TEST-LAB-2",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 102,
+      "sku": "TEST-LAB-3",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 103,
+      "sku": "TEST-LAB-4",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 104,
+      "sku": "TEST-LAB-5",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 105,
+      "sku": "TEST-LAB-6",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 106,
+      "sku": "TEST-LAB-7",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 107,
+      "sku": "TEST-LAB-8",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 108,
+      "sku": "TEST-LAB-9",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 109,
+      "sku": "TEST-LAB-10",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 110,
+      "sku": "TEST-LAB-11",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 111,
+      "sku": "TEST-LAB-12",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 112,
+      "sku": "TEST-LAB-13",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 113,
+      "sku": "TEST-LAB-14",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 114,
+      "sku": "TEST-LAB-15",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 115,
+      "sku": "TEST-LAB-16",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 116,
+      "sku": "TEST-LAB-17",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 117,
+      "sku": "TEST-LAB-18",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 118,
+      "sku": "TEST-LAB-19",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 119,
+      "sku": "TEST-LAB-20",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 120,
+      "sku": "TEST-LAB-21",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 121,
+      "sku": "TEST-LAB-22",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 122,
+      "sku": "TEST-LAB-23",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 123,
+      "sku": "TEST-LAB-24",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 124,
+      "sku": "TEST-LAB-25",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 125,
+      "sku": "TEST-LAB-26",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 126,
+      "sku": "TEST-LAB-27",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 127,
+      "sku": "TEST-LAB-28",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 128,
+      "sku": "TEST-LAB-29",
+      "classification": "preserved test product"
+    },
+    {
+      "id": 1,
+      "sku": "LEGACY-1",
+      "classification": "exact unchanged demo; hidden from public projection"
+    },
+    {
+      "id": 2,
+      "sku": "LEGACY-2",
+      "classification": "exact unchanged demo; hidden from public projection"
+    },
+    {
+      "id": 3,
+      "sku": "LEGACY-3",
+      "classification": "exact unchanged demo; hidden from public projection"
+    },
+    {
+      "id": 4,
+      "sku": "LEGACY-4",
+      "classification": "exact unchanged demo; hidden from public projection"
+    },
+    {
+      "id": 5,
+      "sku": "LEGACY-5",
+      "classification": "exact unchanged demo; hidden from public projection"
+    },
+    {
+      "id": 6,
+      "sku": "LEGACY-6",
+      "classification": "exact unchanged demo; hidden from public projection"
+    }
+  ]
+}

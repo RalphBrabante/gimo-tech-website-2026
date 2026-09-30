@@ -7,7 +7,7 @@
 .sf-page {
   --sf-yellow: #f5b800;
   --sf-yellow-deep: #d99600;
-  --sf-aqua-dark: #087f7e;
+  --sf-aqua-dark: #076e6d;
   color: var(--gimo-ink);
 }
 
@@ -138,7 +138,7 @@
 
 .sf-proof span {
   margin-top: 2px;
-  color: #718799;
+  color: #536d83;
   font-size: 0.68rem;
   line-height: 1.45;
 }
@@ -267,7 +267,7 @@
 }
 
 .sf-callout span {
-  color: #718799;
+  color: #536d83;
   font-size: 0.62rem;
 }
 
@@ -504,7 +504,7 @@
 
 .sf-small-note {
   margin-top: 16px !important;
-  color: #718799 !important;
+  color: #536d83 !important;
   font-size: 0.74rem;
 }
 
@@ -625,3 +625,5 @@
     display: none !important;
   }
 }
+
+.sf-selection-panel .sf-eyebrow{color:#8ee9df !important}

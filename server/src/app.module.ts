@@ -37,6 +37,7 @@ import { DeskModule } from './desk/desk.module';
         DB_RUN_MIGRATIONS: Joi.boolean().default(true),
         AUTH_SECRET: Joi.string().min(32).required(),
         PUBLIC_BASE_URL: Joi.string().uri({ scheme: ['http', 'https'] }).default('https://gimosupplies.com'),
+        PUBLIC_ANALYTICS_ADAPTER: Joi.string().pattern(/^\/assets\/[a-zA-Z0-9/_-]+\.js$/).optional(),
         HOSTINGER_MAIL_API_TOKEN: Joi.string().min(20).optional(),
         HOSTINGER_MAILBOX_ADDRESS: Joi.string().email().default('sales@gimosupplies.com')
       })

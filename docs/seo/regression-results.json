@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-09-30T17:34:34.343Z",
+  "results": [
+    {
+      "name": "Every sitemap canonical has unique useful initial HTML and safe schema",
+      "status": "passed"
+    },
+    {
+      "name": "JavaScript-disabled homepage and paginated full catalogue",
+      "status": "passed"
+    },
+    {
+      "name": "Hydration reuses server DOM, preserves attribution and cart quantities",
+      "status": "passed"
+    },
+    {
+      "name": "Consent-gated events: one action, safe fields, response-confirmed success",
+      "status": "passed"
+    },
+    {
+      "name": "Outbound/contact intent fires once without query data; confirmation visits emit no success",
+      "status": "passed"
+    },
+    {
+      "name": "Correct HTML 404, alias redirects and sitemap product coverage",
+      "status": "passed"
+    },
+    {
+      "name": "Schema safely parses, no fabricated review, offer or manufacturer",
+      "status": "passed"
+    }
+  ]
+}

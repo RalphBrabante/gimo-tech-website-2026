@@ -1,0 +1,16 @@
+{
+  "scope": "Public document requests; production post-deployment behavior remains unverified",
+  "preserved": [
+    {"from":"/product/nylon-syringe-filter-25mm-045um","to":"/products/nylon-syringe-filter-25mm-045um","status":301},
+    {"from":"/products/nylon-syringe-filter-25mm-0-45um","to":"/products/nylon-syringe-filter-25mm-045um","status":301},
+    {"from":"/products/nylon-syringe-filter-25mm-045-micron","to":"/products/nylon-syringe-filter-25mm-045um","status":301}
+  ],
+  "new": [
+    {"from":"/products?page=1","to":"/products","status":301},
+    {"from":"published CMS, restored legacy and valid product URLs with trailing slash","to":"same public path without trailing slash, preserving query","status":301},
+    {"from":"HTTPS www alias public document GET/HEAD","to":"configured apex PUBLIC_BASE_URL with original path/query","status":301}
+  ],
+  "restored_without_relocation": ["/contact-us", "/about-gimo", "/request-for-a-quote"],
+  "not_mapped": "No numeric product ID has been proven identical to the dedicated 100-piece nylon configuration. No speculative numeric redirect exists.",
+  "edge_followup": "Observed HTTP www redirects upstream to HTTPS www. Configure a one-hop HTTP www to HTTPS apex rule at the edge if authorized; repository code cannot remove that upstream hop."
+}

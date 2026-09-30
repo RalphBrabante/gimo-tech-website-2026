@@ -1,12 +1,13 @@
-<div class="utility">
+<div class="utility" [attr.inert]="cartOpen ? '' : null">
   <div class="shell">
     <span *ngIf="freeShippingThreshold !== null">Free shipping over {{ freeShippingThreshold | currency:currencyCode }}</span>
     <span>Laboratory supply support</span>
-    <a href="mailto:gimotechsupplies@gmail.com">gimotechsupplies&#64;gmail.com</a>
+    <a [href]="'mailto:' + business.email">{{ business.email }}</a>
   </div>
 </div>
 
-<header class="nav shell">
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="nav shell" [attr.inert]="cartOpen ? '' : null">
   <a class="brand" href="/" aria-label="Gimo Tech Supplies home">
     <picture>
       <source srcset="/assets/brand/gimo-tech-supplies-logo-600.webp" type="image/webp">
@@ -14,12 +15,12 @@
     </picture>
   </a>
   <nav aria-label="Primary navigation">
-    <a *ngFor="let link of menus.header" [href]="link.href" [attr.target]="link.openInNewTab ? '_blank' : null" [attr.rel]="link.openInNewTab ? 'noopener' : null">{{ link.label }}</a>
+    <a *ngFor="let link of menus.header" [href]="link.href" [attr.aria-current]="link.href === '/' ? 'page' : null" [attr.target]="link.openInNewTab ? '_blank' : null" [attr.rel]="link.openInNewTab ? 'noopener' : null">{{ link.label }}</a>
   </nav>
   <button class="cart" type="button" (click)="openCart()" [attr.aria-label]="'Open quotation bag, ' + cartCount + ' items'">Quote bag <span>{{ cartCount }}</span></button>
 </header>
 
-<main>
+<main id="main-content" [attr.inert]="cartOpen ? '' : null">
   <section class="hero" id="syringe-filters">
     <div class="shell hero-inner">
       <div class="hero-copy">
@@ -99,27 +100,27 @@
         <button type="button" (click)="openCart()">Open quote bag</button>
       </div>
     </aside>
+    <p><a href="/products">Browse the complete product catalogue</a></p>
     <div class="loading" *ngIf="loading">Loading the catalog...</div>
     <div class="product-grid" *ngIf="!loading && products.length">
       <article class="card" *ngFor="let product of products.slice(0, 4)">
-        <a class="product-art" [href]="'/product/' + product.id" [attr.aria-label]="'View ' + product.name">
+        <a class="product-art" [href]="product.publicPath || '/product/' + product.id" [attr.aria-label]="'View ' + product.name">
           <img *ngIf="product.imageUrl" [src]="product.imageUrl" width="360" height="260" [alt]="product.name" loading="lazy" decoding="async">
           <div *ngIf="!product.imageUrl" class="product-glyph">{{ product.category.charAt(0) }}</div>
         </a>
         <div class="card-body">
           <small>{{ product.category }}</small>
-          <h3><a [href]="'/product/' + product.id">{{ product.name }}</a></h3>
+          <h3><a [href]="product.publicPath || '/product/' + product.id">{{ product.name }}</a></h3>
           <p>{{ product.description }}</p>
-          <div class="rating">★★★★★ <span>{{ product.rating }}</span></div>
           <div class="buy">
-            <b>{{ product.price | currency:currencyCode }}</b>
+            <b>Request pricing</b>
             <button type="button" (click)="addToQuoteCart(product)" [attr.aria-label]="'Add ' + product.name + ' to quotation bag'">+</button>
           </div>
-          <a [href]="'/product/' + product.id">View product details</a>
+          <a [href]="product.publicPath || '/product/' + product.id">View product details</a>
         </div>
       </article>
     </div>
-    <p class="loading" *ngIf="!loading && !products.length">Catalog unavailable. Start the API and refresh.</p>
+    <p class="loading" *ngIf="!loading && !products.length">Please <a href="/contact-us">contact our supply team</a> for current products, pricing, and availability.</p>
   </section>
 
   <section class="impact" id="biohazard-bags">
@@ -183,7 +184,7 @@
         <p class="contact-label">Quotes and product enquiries</p>
         <h3>Email our supply team</h3>
         <p>Send your product requirements, quantities, and preferred delivery schedule to:</p>
-        <a href="mailto:gimotechsupplies@gmail.com?subject=Quote%20request">gimotechsupplies&#64;gmail.com</a>
+        <a [href]="'mailto:' + business.email + '?subject=Quote%20request'">{{ business.email }}</a>
       </div>
     </div>
   </section>
@@ -243,14 +244,14 @@
 
   <section class="cta">
     <div class="shell">
-      <h3>{{ homepage.cta_banner.heading }}</h3>
+      <h2>{{ homepage.cta_banner.heading }}</h2>
       <a [href]="homepage.cta_banner.ctaHref">{{ homepage.cta_banner.ctaLabel }}</a>
     </div>
   </section>
 </main>
 
 <div class="quote-overlay" *ngIf="cartOpen" (click)="closeCart()" aria-hidden="true"></div>
-<aside class="quote-drawer" *ngIf="cartOpen" role="dialog" aria-modal="true" [attr.aria-labelledby]="quoteFormOpen ? 'quote-form-title' : 'quote-bag-title'">
+<aside #quoteDrawer class="quote-drawer" *ngIf="cartOpen" role="dialog" aria-modal="true" [attr.aria-labelledby]="quoteFormOpen ? 'quote-form-title' : 'quote-bag-title'">
   <header class="quote-drawer-header">
     <div><p class="eyebrow">Quotation request</p><h2 id="quote-bag-title" *ngIf="!quoteFormOpen">Your quote bag</h2><h2 id="quote-form-title" *ngIf="quoteFormOpen">Your request details</h2></div>
     <button class="quote-close" type="button" (click)="closeCart()" aria-label="Close quotation bag">×</button>
@@ -280,11 +281,11 @@
   </form>
 </aside>
 
-<footer>
+<footer [attr.inert]="cartOpen ? '' : null">
   <div class="shell footer-grid">
     <div><a class="brand footer-brand" href="/" aria-label="Gimo Tech Supplies home"><picture><source srcset="/assets/brand/gimo-tech-supplies-logo-600.webp" type="image/webp"><img src="/assets/brand/gimo-tech-supplies-logo-600.png" width="600" height="200" alt="Gimo Tech Supplies" loading="lazy" decoding="async"></picture></a><p>{{ homepage.footer_brand.blurb }}</p><small>{{ homepage.footer_brand.copyrightLine }}</small></div>
-    <div><h4>Products</h4><a *ngFor="let link of menus.footer.products" [href]="link.href" [attr.target]="link.openInNewTab ? '_blank' : null" [attr.rel]="link.openInNewTab ? 'noopener' : null">{{ link.label }}</a></div>
-    <div><h4>Services</h4><a *ngFor="let link of menus.footer.services" [href]="link.href" [attr.target]="link.openInNewTab ? '_blank' : null" [attr.rel]="link.openInNewTab ? 'noopener' : null">{{ link.label }}</a></div>
-    <div><h4>Purchasing help</h4><a *ngFor="let link of menus.footer.purchasing" [href]="link.href" [attr.target]="link.openInNewTab ? '_blank' : null" [attr.rel]="link.openInNewTab ? 'noopener' : null">{{ link.label }}</a></div>
+    <div><h2>Products</h2><a *ngFor="let link of menus.footer.products" [href]="link.href" [attr.aria-current]="link.href === '/' ? 'page' : null" [attr.target]="link.openInNewTab ? '_blank' : null" [attr.rel]="link.openInNewTab ? 'noopener' : null">{{ link.label }}</a></div>
+    <div><h2>Services</h2><a *ngFor="let link of menus.footer.services" [href]="link.href" [attr.aria-current]="link.href === '/' ? 'page' : null" [attr.target]="link.openInNewTab ? '_blank' : null" [attr.rel]="link.openInNewTab ? 'noopener' : null">{{ link.label }}</a></div>
+    <div><h2>Purchasing help</h2><a *ngFor="let link of menus.footer.purchasing" [href]="link.href" [attr.aria-current]="link.href === '/' ? 'page' : null" [attr.target]="link.openInNewTab ? '_blank' : null" [attr.rel]="link.openInNewTab ? 'noopener' : null">{{ link.label }}</a></div>
   </div>
 </footer>

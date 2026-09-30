@@ -1,0 +1,44 @@
+{
+  "timestamp": "2026-09-30T17:24:49.079Z",
+  "measurement": "Local Chrome software/WebGL environment; callback counts are not device GPU power measurements.",
+  "results": [
+    {
+      "reducedMotion": "reduce",
+      "stageClass": "sf-stage is-ready",
+      "animationCallbacksPerVisibleSecond": 0,
+      "animationCallbacksPerOffscreenSecond": 0,
+      "resourceBytes": [
+        {
+          "name": "/assets/vendor/three.module.min.js",
+          "transferSize": 339136
+        },
+        {
+          "name": "/assets/vendor/three.core.min.js",
+          "transferSize": 380674
+        }
+      ]
+    },
+    {
+      "reducedMotion": "no-preference",
+      "stageClass": "sf-stage is-ready",
+      "animationCallbacksPerVisibleSecond": 60,
+      "animationCallbacksPerOffscreenSecond": 0,
+      "resourceBytes": [
+        {
+          "name": "/assets/vendor/three.module.min.js",
+          "transferSize": 339136
+        },
+        {
+          "name": "/assets/vendor/three.core.min.js",
+          "transferSize": 380674
+        }
+      ]
+    },
+    {
+      "forcedWebGLAssetFailure": true,
+      "stageClass": "sf-stage is-unavailable",
+      "h1": "Syringe Filters for HPLC Sample Preparation",
+      "nylonLinkCount": 2
+    }
+  ]
+}

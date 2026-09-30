@@ -12,6 +12,7 @@ import { ProductViewController } from './product-view.controller';
 @Module({
   imports: [TypeOrmModule.forFeature([ProductEntity, ProductImageEntity]), AuthModule, PageRendererModule],
   controllers: [ProductsController, InternalProductsController, ProductViewController],
-  providers: [ProductsService]
+  providers: [ProductsService],
+  exports: [ProductsService]
 })
 export class ProductsModule {}

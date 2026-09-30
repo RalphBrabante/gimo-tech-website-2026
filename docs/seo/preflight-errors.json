@@ -1,0 +1,27 @@
+{
+  "recordedAt": "2026-09-30T17:33:05.687Z",
+  "note": "Exact event times were not retained for these preliminary attempts. All statuses are unknown transport failures, not HTTP 404.",
+  "attempts": [
+    {
+      "environment": "sandbox curl",
+      "url": "https://gimosupplies.com/robots.txt",
+      "status": null,
+      "transportError": "curl: (6) Could not resolve host: gimosupplies.com",
+      "resolution": "Authorized network retry returned HTTP 200; see inventory-before.json"
+    },
+    {
+      "environment": "web tool",
+      "url": "https://gimosupplies.com/robots.txt",
+      "status": null,
+      "transportError": "Internal Error",
+      "resolution": "Direct authorized HTTP fetch subsequently succeeded"
+    },
+    {
+      "environment": "first Chrome baseline attempt",
+      "url": "https://gimosupplies.com/products/nylon-syringe-filter-25mm-045um",
+      "status": null,
+      "transportError": "net::ERR_HTTP_RESPONSE_CODE_FAILURE",
+      "resolution": "Subsequent baseline observations are recorded individually, including late failures, in browser-before.json"
+    }
+  ]
+}

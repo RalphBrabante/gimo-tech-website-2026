@@ -1,0 +1,30 @@
+[
+  {
+    "url": "http://gimosupplies.com/",
+    "timestamp": "2026-09-30T17:00:46.106Z",
+    "status": 301,
+    "location": "https://gimosupplies.com/",
+    "contentType": "text/html"
+  },
+  {
+    "url": "https://www.gimosupplies.com/",
+    "timestamp": "2026-09-30T17:00:48.845Z",
+    "status": 200,
+    "location": null,
+    "contentType": "text/html; charset=utf-8"
+  },
+  {
+    "url": "http://www.gimosupplies.com/",
+    "timestamp": "2026-09-30T17:00:50.234Z",
+    "status": 301,
+    "location": "https://www.gimosupplies.com/",
+    "contentType": "text/html"
+  },
+  {
+    "url": "https://gimosupplies.com/syringe-filters/",
+    "timestamp": "2026-09-30T17:00:52.377Z",
+    "status": 429,
+    "location": null,
+    "contentType": null
+  }
+]

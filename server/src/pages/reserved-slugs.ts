@@ -1,5 +1,9 @@
 export const RESERVED_SLUGS = new Set([
   'api',
+  'products',
+  'product',
+  'guides',
+  'quotation-request-received',
   'health',
   'uploads',
   'internal',

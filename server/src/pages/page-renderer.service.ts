@@ -1,9 +1,12 @@
+import { imageDimensions, thumbnailUrl } from '../media/public-image';
+import { publicOrigin, identityGraph, analyticsAdapterPath, productPath, NYLON_PRODUCT_PATH, BUSINESS } from '../common/public-site';
+import { publicHref } from '../common/public-site';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MenuItemEntity, MenuLocation } from '../menus/entities/menu-item.entity';
 import { Page, PageBlock } from './models/page.model';
-import { escapeHtml } from '../common/html.util';
+import { escapeHtml, serializeJsonLd } from '../common/html.util';
 import type { Product } from '../products/models/product.model';
 
 interface NavLink {
@@ -17,8 +20,8 @@ interface FooterColumn {
   links: NavLink[];
 }
 
-const SITE_ORIGIN = 'https://gimosupplies.com';
-const NYLON_PRODUCT_PATH = '/products/nylon-syringe-filter-25mm-045um';
+// Resolve after ConfigModule has loaded the environment.
+const siteOrigin = publicOrigin;
 
 @Injectable()
 export class PageRendererService {
@@ -28,15 +31,16 @@ export class PageRendererService {
     if (page.slug === 'syringe-filters') return this.renderSyringeFilters(page);
 
     const nav = await this.loadNav();
-    const canonicalUrl = `${SITE_ORIGIN}/${page.slug}`;
-    const description = page.metaDescription ?? '';
-    const bodyHtml = `<h1>${escapeHtml(page.title)}</h1>\n${page.blocks.map((block) => this.renderBlock(block)).join('\n')}`;
+    const canonicalUrl = `${siteOrigin()}/${page.slug}`;
+    const description = page.metaDescription?.trim() || page.blocks.find(block => block.paragraphText?.trim())?.paragraphText?.slice(0, 180) || `${page.title}: product information and enquiries from Gimo Tech Supplies in the Philippines.`;
+    const extra = page.slug === 'biohazard-bags' ? '<h2>Prepare your printing brief</h2><p>Include the desired dimensions, quantity, artwork, printed wording, identifier sequence, and QR destination or data. Ask the team to confirm the layout and proof approval process before production. Printed QR identifiers do not by themselves provide a complete waste-tracking system.</p>' : '';
+    const bodyHtml = `<h1>${escapeHtml(page.title)}</h1>\n${(await Promise.all(page.blocks.map((block, index) => this.renderBlock(block, index < 2)))).join('\n')}${extra}`;
 
     return this.shell({
       title: page.title,
       description,
       canonicalUrl,
-      ogImage: this.absoluteHttpUrl(page.ogImageUrl, SITE_ORIGIN),
+      ogImage: this.absoluteHttpUrl(page.ogImageUrl, siteOrigin()),
       headerLinks: nav.header,
       footerColumns: nav.footerColumns,
       bodyHtml,
@@ -53,11 +57,11 @@ export class PageRendererService {
 
   private async renderSyringeFilters(page: Page): Promise<string> {
     const nav = await this.loadNav();
-    const canonicalUrl = `${SITE_ORIGIN}/syringe-filters`;
+    const canonicalUrl = `${siteOrigin()}/syringe-filters`;
     const description =
       page.metaDescription ??
       'Explore Nylon, PTFE, PVDF, and MCE syringe filters for HPLC sample preparation, including 25 mm and 0.45 µm laboratory options.';
-    const ogImage = `${SITE_ORIGIN}/assets/products/nylon-syringe-filter-hero-1280.jpg`;
+    const ogImage = `${siteOrigin()}/assets/products/nylon-syringe-filter-hero-1280.jpg`;
     const intro =
       page.blocks.find((block) => block.blockType === 'paragraph')?.paragraphText ??
       'Gimo Tech Supplies provides syringe filters for routine HPLC sample preparation, sample clarification, and laboratory filtration workflows.';
@@ -73,7 +77,7 @@ export class PageRendererService {
         <div class="sf-hero-actions">
           <a class="button dark" href="${NYLON_PRODUCT_PATH}">View the Nylon filter</a>
           <a class="button sf-lazada-button" href="https://www.lazada.com.ph/products/i3969520270.html" target="_blank" rel="noopener noreferrer">Shop on Lazada now <span aria-hidden="true">↗</span></a>
-          <a class="text-link" href="mailto:gimotechsupplies@gmail.com?subject=Syringe%20filter%20quotation">Request product matching</a>
+          <a class="text-link" href="mailto:${BUSINESS.email}?subject=Syringe%20filter%20quotation">Request product matching</a>
         </div>
         <div class="sf-proof" aria-label="Available syringe filter options">
           <div><strong>4 membranes</strong><span>Nylon, PTFE, PVDF and MCE</span></div>
@@ -162,7 +166,7 @@ export class PageRendererService {
           {
             '@type': 'BreadcrumbList',
             itemListElement: [
-              { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_ORIGIN}/` },
+              { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteOrigin()}/` },
               { '@type': 'ListItem', position: 2, name: 'Syringe Filters', item: canonicalUrl }
             ]
           }
@@ -171,6 +175,19 @@ export class PageRendererService {
       stylesheets: ['/assets/syringe-filters.css'],
       scripts: ['/assets/syringe-filter-3d.js']
     });
+  }
+
+  async renderCatalogue(products: Product[], page: number, hasNext: boolean): Promise<string> {
+    const nav = await this.loadNav();
+    const path = page === 1 ? '/products' : `/products?page=${page}`;
+    const cards = products.map(p => `<article class="catalogue-card"><a href="${productPath(p)}">${p.imageUrl ? `<img src="${escapeHtml(p.imageUrl)}" width="360" height="260" loading="lazy" decoding="async" alt="${escapeHtml(p.name)}">` : ''}<h2>${escapeHtml(p.name)}</h2></a><p>${escapeHtml(p.description)}</p><p>SKU: ${escapeHtml(p.sku)} · Request pricing</p></article>`).join('');
+    return this.shell({ title: `Laboratory Supplies Catalogue${page > 1 ? ` — Page ${page}` : ''}`, description: `Browse laboratory supplies and request configuration-specific quotations from Gimo Tech Supplies in the Philippines${page > 1 ? `, catalogue page ${page}` : ''}.`, canonicalUrl: `${siteOrigin()}${path}`, ogImage: null, headerLinks: nav.header, footerColumns: nav.footerColumns, robots: null, jsonLd: { '@type': 'CollectionPage', name: 'Laboratory Supplies Catalogue', url: `${siteOrigin()}${path}` }, bodyHtml: `<h1>Laboratory Supplies Catalogue${page > 1 ? ` — Page ${page}` : ''}</h1><p>Confirm pricing, packaging and availability with our supply team.</p><p><a href="${NYLON_PRODUCT_PATH}">25mm 0.45µm nylon syringe filters: non-sterile 100-piece configuration</a> · <a href="/syringe-filters">Syringe filter selection</a></p><div class="catalogue-grid">${cards}</div>${products.length ? '' : '<p>Contact us for current product requirements.</p>'}<nav aria-label="Catalogue pagination">${page > 1 ? `<a href="${page === 2 ? '/products' : `/products?page=${page - 1}`}">Previous page</a>` : ''} ${hasNext ? `<a href="/products?page=${page + 1}">Next page</a>` : ''}</nav><p><a href="/contact-us">Contact Gimo for a quotation</a></p>` });
+  }
+
+  async renderContact(slug: string): Promise<string> {
+    const nav = await this.loadNav();
+    const title = slug === 'about-gimo' ? 'About Gimo Tech Supplies' : slug === 'request-for-a-quote' ? 'Request a Laboratory Supplies Quotation' : 'Contact Gimo Tech Supplies';
+    return this.shell({ title, description: `${title}: discuss nylon syringe filters, custom biohazard bags and sequential QR labels in the Philippines.`, canonicalUrl: `${siteOrigin()}/${slug}`, ogImage: null, headerLinks: nav.header, footerColumns: nav.footerColumns, robots: null, jsonLd: { '@type': slug === 'about-gimo' ? 'AboutPage' : 'ContactPage', name: title, about: { '@id': `${siteOrigin()}/#organization` } }, bodyHtml: `<h1>${title}</h1><p>Gimo Tech Supplies, also known as GIMO Laboratory Supplies, supplies laboratory consumables and coordinates custom printing enquiries in the Philippines.</p><h2>Product and quotation enquiries</h2><p>Include the product or SKU, required configuration, pack quantity and delivery destination. For custom bags or labels, include your artwork, identifier series and QR data requirements.</p><p><a href="mailto:${BUSINESS.email}">Email ${BUSINESS.email}</a></p><p><a href="/products">Browse products for your quotation bag</a> · <a href="/lazada-shop">Order online through Lazada</a></p><h2>Business location</h2><p>${BUSINESS.streetAddress}, ${BUSINESS.locality}, ${BUSINESS.region} ${BUSINESS.postalCode}, Philippines. Contact us before arranging a visit.</p>` });
   }
 
   async renderNotFound(origin: string): Promise<string> {
@@ -199,7 +216,7 @@ export class PageRendererService {
     return this.shell({
       title: 'Quotation request received',
       description: 'Your Gimo Tech Supplies quotation request has been received.',
-      canonicalUrl: `${SITE_ORIGIN}/quotation-request-received`,
+      canonicalUrl: `${siteOrigin()}/quotation-request-received`,
       ogImage: null,
       headerLinks: nav.header,
       footerColumns: nav.footerColumns,
@@ -211,31 +228,38 @@ export class PageRendererService {
 
   async renderProduct(product: Product, origin: string): Promise<string> {
     const nav = await this.loadNav();
-    const canonicalUrl = `${SITE_ORIGIN}/product/${product.id}`;
+    const canonicalUrl = `${siteOrigin()}${productPath(product)}`;
     const images = product.images.length > 0 ? product.images : product.imageUrl ? [{ id: 0, url: product.imageUrl }] : [];
-    const imageUrl = this.absoluteHttpUrl(images[0]?.url ?? null, SITE_ORIGIN);
+    const imageUrl = this.absoluteHttpUrl(images[0]?.url ?? null, siteOrigin());
     const imageMarkup = this.renderProductMedia(images, product.name, product.category, product.accent);
-    const bodyHtml = `<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/#shop">Catalog</a><span aria-hidden="true">/</span><span>${escapeHtml(product.name)}</span></nav>
-<article class="product-page"><div class="product-page-media">${imageMarkup}</div><div class="product-page-copy"><p class="product-category">${escapeHtml(product.category)}</p><h1>${escapeHtml(product.name)}</h1><p class="product-sku">SKU: ${escapeHtml(product.sku)}</p><p>${escapeHtml(product.description)}</p><div class="product-page-actions"><a class="button dark" href="/?add-to-quote=${product.id}">Add to quotation bag</a><a class="text-link" href="mailto:gimotechsupplies@gmail.com?subject=${encodeURIComponent(`Quotation request: ${product.name}`)}">Ask about this product</a></div><p class="product-note">Pricing, availability, and delivery options are confirmed in your quotation.</p></div></article>`;
+    const bodyHtml = `<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/products">Catalog</a><span aria-hidden="true">/</span><span>${escapeHtml(product.name)}</span></nav>
+<article class="product-page"><div class="product-page-media">${imageMarkup}</div><div class="product-page-copy"><p class="product-category">${escapeHtml(product.category)}</p><h1>${escapeHtml(product.name)}</h1><p class="product-sku">SKU: ${escapeHtml(product.sku)}</p><p>${escapeHtml(product.description)}</p><div class="product-page-actions"><a class="button dark" href="/?add-to-quote=${product.id}">Add to quotation bag</a><a class="text-link" href="mailto:${BUSINESS.email}?subject=${encodeURIComponent(`Quotation request: ${product.name}`)}">Ask about this product</a></div><p class="product-note">Pricing, availability, and delivery options are confirmed in your quotation.</p></div></article>`;
     return this.shell({
       title: product.name,
-      description: product.description.slice(0, 160),
+      description: `${product.name}: ${product.description}`.slice(0, 200),
       canonicalUrl,
       ogImage: imageUrl,
       headerLinks: nav.header,
       footerColumns: nav.footerColumns,
       bodyHtml,
       robots: null,
-      jsonLd: null,
+      jsonLd: { '@context': 'https://schema.org', '@graph': [
+        { '@type': 'Product', '@id': `${canonicalUrl}#product`, name: product.name, description: product.description, sku: product.sku, url: canonicalUrl, ...(imageUrl ? { image: [imageUrl] } : {}) },
+        { '@type': 'BreadcrumbList', itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteOrigin()}/` },
+          { '@type': 'ListItem', position: 2, name: 'Products', item: `${siteOrigin()}/products` },
+          { '@type': 'ListItem', position: 3, name: product.name, item: canonicalUrl }
+        ] }
+      ] },
       scripts: images.length > 0 ? ['/assets/product-gallery.js'] : []
     });
   }
 
   async renderNylonSyringeFilter(): Promise<string> {
     const nav = await this.loadNav();
-    const canonicalUrl = `${SITE_ORIGIN}${NYLON_PRODUCT_PATH}`;
+    const canonicalUrl = `${siteOrigin()}${NYLON_PRODUCT_PATH}`;
     const description = 'Buy 25mm 0.45µm nylon syringe filters in the Philippines for HPLC sample preparation and general laboratory filtration. Non-sterile 100-piece packs from GIMO Laboratory Supplies.';
-    const image = `${SITE_ORIGIN}/assets/products/nylon-syringe-filter-hero-1280.jpg`;
+    const image = `${siteOrigin()}/assets/products/nylon-syringe-filter-hero-1280.jpg`;
     const faqs = [
       {
         question: 'What is this 25mm 0.45µm nylon syringe filter used for?',
@@ -266,11 +290,11 @@ export class PageRendererService {
 <article class="seo-product">
   <section class="product-page" aria-labelledby="nylon-product-title">
     <div class="product-page-media"><picture><source srcset="/assets/products/nylon-syringe-filter-hero-640.jpg 640w, /assets/products/nylon-syringe-filter-hero-1280.jpg 1280w" sizes="(max-width: 700px) calc(100vw - 40px), 520px"><img src="/assets/products/nylon-syringe-filter-hero-640.jpg" width="640" height="512" alt="25mm 0.45µm non-sterile nylon syringe filter canister supplied by GIMO Laboratory Supplies Philippines" fetchpriority="high" decoding="async"></picture></div>
-    <div class="product-page-copy"><p class="product-category">Laboratory filtration · Philippines</p><h1 id="nylon-product-title">Nylon Syringe Filter 25mm 0.45µm</h1><p>GIMO Laboratory Supplies provides 25mm 0.45µm nylon syringe filters for HPLC sample preparation and general laboratory filtration in the Philippines. This page documents the verified non-sterile, 100-piece canister shown; procurement teams may enquire about other configurations without assuming they are in stock.</p><div class="product-page-actions"><a class="button dark" href="mailto:gimotechsupplies@gmail.com?subject=Quotation%20request%3A%2025mm%200.45%C2%B5m%20nylon%20syringe%20filters">Request a quotation</a><a class="text-link" href="https://www.lazada.com.ph/products/i3969520270.html" target="_blank" rel="noopener noreferrer">Check the product on Lazada <span aria-hidden="true">↗</span></a></div><p class="product-note">Pricing, current availability, delivery timing, and sterile options are confirmed before purchase.</p></div>
+    <div class="product-page-copy"><p class="product-category">Laboratory filtration · Philippines</p><h1 id="nylon-product-title">Nylon Syringe Filter 25mm 0.45µm</h1><p>GIMO Laboratory Supplies provides 25mm 0.45µm nylon syringe filters for HPLC sample preparation and general laboratory filtration in the Philippines. Singles are also sold separately on Lazada; confirm the selected listing option and current availability there. This page documents the verified non-sterile, 100-piece canister shown; procurement teams may enquire about other configurations without assuming they are in stock.</p><div class="product-page-actions"><a class="button dark" href="mailto:${BUSINESS.email}?subject=Quotation%20request%3A%2025mm%200.45%C2%B5m%20nylon%20syringe%20filters">Request a quotation</a><a class="text-link" href="https://www.lazada.com.ph/products/i3969520270.html" target="_blank" rel="noopener noreferrer">Check the product on Lazada <span aria-hidden="true">↗</span></a></div><p class="product-note">Pricing, current availability, delivery timing, and sterile options are confirmed before purchase.</p></div>
   </section>
-  <section aria-labelledby="specifications-title"><h2 id="specifications-title">Product specifications</h2><div class="table-wrap"><table><tbody><tr><th scope="row">Membrane</th><td>Nylon</td></tr><tr><th scope="row">Filter diameter</th><td>25 mm</td></tr><tr><th scope="row">Pore size</th><td>0.45 µm</td></tr><tr><th scope="row">Verified packaging</th><td>Non-sterile canister, 100 pieces</td></tr><tr><th scope="row">Sterile packaging</th><td>Availability must be confirmed with GIMO before ordering</td></tr><tr><th scope="row">Housing, connectors, SKU, and operating limits</th><td>Not verified in the current catalog; request the applicable manufacturer specification</td></tr></tbody></table></div></section>
+  <section aria-labelledby="specifications-title"><h2 id="specifications-title">Product specifications</h2><div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable product specifications"><table><tbody><tr><th scope="row">Membrane</th><td>Nylon</td></tr><tr><th scope="row">Filter diameter</th><td>25 mm</td></tr><tr><th scope="row">Pore size</th><td>0.45 µm</td></tr><tr><th scope="row">Verified packaging</th><td>Non-sterile canister, 100 pieces</td></tr><tr><th scope="row">Sterile packaging</th><td>Availability must be confirmed with GIMO before ordering</td></tr><tr><th scope="row">Housing, connectors, SKU, and operating limits</th><td>Not verified in the current catalog; request the applicable manufacturer specification</td></tr></tbody></table></div></section>
   <section class="content-grid" aria-label="Applications and selection guidance"><div><h2>Applications and recommended uses</h2><p>This format is offered for HPLC sample preparation, routine sample clarification, and general laboratory filtration. It may suit purchasing departments, researchers, schools, universities, clinics, and industrial laboratories whose methods specify a 25 mm nylon membrane with a 0.45 µm pore size.</p><p>Confirm the membrane, diameter, pore size, sterility requirement, and pack quantity against your laboratory method before use.</p></div><div><h2>Chemical compatibility and limitations</h2><p>Nylon is presented in the existing catalog for general aqueous and mixed sample-preparation workflows. Compatibility cannot be determined from the membrane name alone: it depends on the complete formulation, concentration, temperature, contact time, and housing materials.</p><p>Do not use this product with an unverified solvent or sample system, for sterile processing when supplied non-sterile, or outside manufacturer operating limits. For aggressive solvent workflows, review <a href="/guides/nylon-vs-ptfe-vs-pvdf-vs-mce-syringe-filters#ptfe">PTFE syringe filter considerations</a> and request a compatibility check.</p></div></section>
-  <section class="delivery-panel" aria-labelledby="delivery-title"><div><p class="product-category">Nationwide enquiries</p><h2 id="delivery-title">Delivery availability throughout the Philippines</h2><p>GIMO accepts delivery enquiries from laboratories and procurement teams across the Philippines. Share the destination and required quantity so courier availability, lead time, charges, and current product availability can be confirmed accurately.</p></div><a class="button aqua" href="mailto:gimotechsupplies@gmail.com?subject=Philippines%20delivery%20enquiry%3A%20nylon%20syringe%20filters">Ask about delivery</a></section>
+  <section class="delivery-panel" aria-labelledby="delivery-title"><div><p class="product-category">Nationwide enquiries</p><h2 id="delivery-title">Delivery availability throughout the Philippines</h2><p>GIMO accepts delivery enquiries from laboratories and procurement teams across the Philippines. Share the destination and required quantity so courier availability, lead time, charges, and current product availability can be confirmed accurately.</p></div><a class="button aqua" href="mailto:${BUSINESS.email}?subject=Philippines%20delivery%20enquiry%3A%20nylon%20syringe%20filters">Ask about delivery</a></section>
   <section aria-labelledby="related-title"><h2 id="related-title">Compare related syringe filter membranes</h2><div class="related-grid"><a href="/guides/nylon-vs-ptfe-vs-pvdf-vs-mce-syringe-filters#ptfe"><strong>PTFE Syringe Filters</strong><span>Review general solvent-workflow considerations.</span></a><a href="/guides/nylon-vs-ptfe-vs-pvdf-vs-mce-syringe-filters#pvdf"><strong>PVDF Syringe Filters</strong><span>Review general low-binding selection considerations.</span></a><a href="/guides/nylon-vs-ptfe-vs-pvdf-vs-mce-syringe-filters#mce"><strong>MCE Syringe Filters</strong><span>Review general clarification considerations.</span></a></div></section>
   <section aria-labelledby="faq-title"><h2 id="faq-title">Frequently asked questions</h2><div class="faq-list">${faqs.map((faq) => `<details><summary>${escapeHtml(faq.question)}</summary><p>${escapeHtml(faq.answer)}</p></details>`).join('')}</div></section>
 </article>`;
@@ -295,15 +319,14 @@ export class PageRendererService {
             name: 'Nylon Syringe Filter 25mm 0.45µm',
             description,
             image: [image],
-            brand: { '@type': 'Brand', name: 'GIMO Laboratory Supplies' },
             category: 'Laboratory syringe filters',
             url: canonicalUrl
           },
           {
             '@type': 'BreadcrumbList',
             itemListElement: [
-              { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_ORIGIN}/` },
-              { '@type': 'ListItem', position: 2, name: 'Syringe Filters', item: `${SITE_ORIGIN}/syringe-filters` },
+              { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteOrigin()}/` },
+              { '@type': 'ListItem', position: 2, name: 'Syringe Filters', item: `${siteOrigin()}/syringe-filters` },
               { '@type': 'ListItem', position: 3, name: 'Nylon Syringe Filter 25mm 0.45µm', item: canonicalUrl }
             ]
           },
@@ -322,19 +345,19 @@ export class PageRendererService {
 
   async renderSyringeFilterGuide(): Promise<string> {
     const nav = await this.loadNav();
-    const canonicalUrl = `${SITE_ORIGIN}/guides/nylon-vs-ptfe-vs-pvdf-vs-mce-syringe-filters`;
+    const canonicalUrl = `${siteOrigin()}/guides/nylon-vs-ptfe-vs-pvdf-vs-mce-syringe-filters`;
     const description = 'Compare Nylon, PTFE, PVDF, and MCE syringe filters for general laboratory and HPLC sample-preparation workflows in the Philippines.';
     const bodyHtml = `<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/syringe-filters">Syringe Filters</a><span aria-hidden="true">/</span><span aria-current="page">Membrane comparison guide</span></nav>
 <article class="guide-page"><p class="product-category">Syringe filter selection guide</p><h1>Nylon vs PTFE vs PVDF vs MCE Syringe Filters</h1><p class="lede">Membrane selection should follow the complete sample composition, solvent system, analytes, sterility needs, and validated laboratory method. This guide gives a conservative starting point; it does not replace manufacturer compatibility data.</p>
-<div class="table-wrap"><table><thead><tr><th scope="col">Membrane</th><th scope="col">Typical catalog positioning</th><th scope="col">Selection check</th></tr></thead><tbody><tr id="nylon"><th scope="row">Nylon</th><td>General aqueous and mixed sample preparation</td><td>Confirm compatibility with the entire formulation</td></tr><tr id="ptfe"><th scope="row">PTFE</th><td>Stronger-solvent workflows</td><td>Confirm whether the supplied format is appropriate for the sample system</td></tr><tr id="pvdf"><th scope="row">PVDF</th><td>Methods seeking a low-binding option</td><td>Verify analyte recovery and chemical compatibility</td></tr><tr id="mce"><th scope="row">MCE</th><td>General sample clarification</td><td>Verify method, sample, and solvent suitability</td></tr></tbody></table></div>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable product specifications"><table><thead><tr><th scope="col">Membrane</th><th scope="col">Typical catalog positioning</th><th scope="col">Selection check</th></tr></thead><tbody><tr id="nylon"><th scope="row">Nylon</th><td>General aqueous and mixed sample preparation</td><td>Confirm compatibility with the entire formulation</td></tr><tr id="ptfe"><th scope="row">PTFE</th><td>Stronger-solvent workflows</td><td>Confirm whether the supplied format is appropriate for the sample system</td></tr><tr id="pvdf"><th scope="row">PVDF</th><td>Methods seeking a low-binding option</td><td>Verify analyte recovery and chemical compatibility</td></tr><tr id="mce"><th scope="row">MCE</th><td>General sample clarification</td><td>Verify method, sample, and solvent suitability</td></tr></tbody></table></div>
 <section><h2>How to choose a syringe filter membrane</h2><ol><li>Start with the validated method or instrument requirements.</li><li>List every solvent and sample component, including concentrations.</li><li>Confirm the required diameter, pore size, sterility, and pack format.</li><li>Check manufacturer documentation for both membrane and housing compatibility.</li><li>Run method-appropriate verification before routine analytical use.</li></ol></section>
 <section class="content-grid"><div><h2>When nylon may fit</h2><p>The current GIMO catalog positions nylon for general aqueous and mixed sample-preparation workflows. Laboratories needing a 25 mm, 0.45 µm format can review the dedicated <a href="${NYLON_PRODUCT_PATH}">25mm Nylon Syringe Filter</a> page.</p></div><div><h2>When to compare alternatives</h2><p>Compare PTFE for stronger-solvent workflows, PVDF where a low-binding option is being considered, and MCE for general clarification. These are selection prompts, not universal compatibility claims.</p></div></section>
-<aside class="delivery-panel"><div><h2>Need product matching?</h2><p>Send GIMO your sample system, requested format, quantity, and delivery destination. Availability and suitability details will be confirmed rather than assumed.</p></div><a class="button dark" href="mailto:gimotechsupplies@gmail.com?subject=Syringe%20filter%20selection%20enquiry">Ask GIMO Laboratory Supplies</a></aside></article>`;
+<aside class="delivery-panel"><div><h2>Need product matching?</h2><p>Send GIMO your sample system, requested format, quantity, and delivery destination. Availability and suitability details will be confirmed rather than assumed.</p></div><a class="button dark" href="mailto:${BUSINESS.email}?subject=Syringe%20filter%20selection%20enquiry">Ask GIMO Laboratory Supplies</a></aside></article>`;
     return this.shell({
       title: 'Nylon vs PTFE vs PVDF vs MCE Syringe Filters',
       description,
       canonicalUrl,
-      ogImage: `${SITE_ORIGIN}/assets/products/nylon-syringe-filter-hero-1280.jpg`,
+      ogImage: `${siteOrigin()}/assets/products/nylon-syringe-filter-hero-1280.jpg`,
       headerLinks: nav.header,
       footerColumns: nav.footerColumns,
       bodyHtml,
@@ -342,10 +365,10 @@ export class PageRendererService {
       jsonLd: {
         '@context': 'https://schema.org',
         '@graph': [
-          { '@type': 'Article', headline: 'Nylon vs PTFE vs PVDF vs MCE Syringe Filters', description, mainEntityOfPage: canonicalUrl, publisher: { '@type': 'Organization', name: 'GIMO Laboratory Supplies', url: `${SITE_ORIGIN}/` } },
+          { '@type': 'Article', headline: 'Nylon vs PTFE vs PVDF vs MCE Syringe Filters', description, mainEntityOfPage: canonicalUrl, publisher: { '@id': `${siteOrigin()}/#organization` } },
           { '@type': 'BreadcrumbList', itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_ORIGIN}/` },
-            { '@type': 'ListItem', position: 2, name: 'Syringe Filters', item: `${SITE_ORIGIN}/syringe-filters` },
+            { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteOrigin()}/` },
+            { '@type': 'ListItem', position: 2, name: 'Syringe Filters', item: `${siteOrigin()}/syringe-filters` },
             { '@type': 'ListItem', position: 3, name: 'Membrane comparison guide', item: canonicalUrl }
           ] }
         ]
@@ -355,11 +378,11 @@ export class PageRendererService {
 
   async renderSequentialQrCodeLabels(): Promise<string> {
     const nav = await this.loadNav();
-    const canonicalUrl = `${SITE_ORIGIN}/sequential-qr-code-labels`;
+    const canonicalUrl = `${siteOrigin()}/sequential-qr-code-labels`;
     const title = 'Sequential QR Code Labels Philippines | Gimo Tech Supplies';
     const description = 'Order custom 30 × 20 mm sequential QR code labels on durable adhesive paper for tracking, labeling, and inventory workflows in the Philippines.';
-    const image = `${SITE_ORIGIN}/assets/products/sequential-qr-labels-hero-1280.jpg`;
-    const quoteHref = 'mailto:gimotechsupplies@gmail.com?subject=Bulk%20order%20enquiry%3A%20Sequential%20QR%20code%20labels';
+    const image = `${siteOrigin()}/assets/products/sequential-qr-labels-hero-1280.jpg`;
+    const quoteHref = `mailto:${BUSINESS.email}?subject=Bulk%20order%20enquiry%3A%20Sequential%20QR%20code%20labels`;
     const faqs = [
       {
         question: 'What size are the sequential QR code labels?',
@@ -471,9 +494,9 @@ export class PageRendererService {
         '@context': 'https://schema.org',
         '@graph': [
           { '@type': 'WebPage', name: 'Sequential QR Code Labels', description, url: canonicalUrl, primaryImageOfPage: image },
-          { '@type': 'Service', name: 'Sequential QR Code Label Printing', description, image, provider: { '@type': 'Organization', name: 'Gimo Tech Supplies', url: `${SITE_ORIGIN}/` }, areaServed: { '@type': 'Country', name: 'Philippines' }, url: canonicalUrl },
+          { '@type': 'Service', name: 'Sequential QR Code Label Printing', description, image, provider: { '@id': `${siteOrigin()}/#organization` }, areaServed: { '@type': 'Country', name: 'Philippines' }, url: canonicalUrl },
           { '@type': 'BreadcrumbList', itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_ORIGIN}/` },
+            { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteOrigin()}/` },
             { '@type': 'ListItem', position: 2, name: 'Sequential QR Code Labels', item: canonicalUrl }
           ] },
           { '@type': 'FAQPage', mainEntity: faqs.map((faq) => ({ '@type': 'Question', name: faq.question, acceptedAnswer: { '@type': 'Answer', text: faq.answer } })) }
@@ -503,7 +526,7 @@ export class PageRendererService {
     const thumbs = images
       .map(
         (image, index) =>
-          `<button type="button" class="product-thumb" aria-current="${index === 0 ? 'true' : 'false'}" aria-label="View photo ${index + 1} of ${images.length}"><img src="${escapeHtml(image.url)}" width="120" height="90" alt="" loading="lazy" decoding="async"></button>`
+          `<button type="button" class="product-thumb" aria-current="${index === 0 ? 'true' : 'false'}" aria-label="View photo ${index + 1} of ${images.length}"><img src="${escapeHtml(thumbnailUrl(image.url))}" width="120" height="90" alt="" loading="lazy" decoding="async"></button>`
       )
       .join('');
     return `<div class="product-gallery"><div class="product-gallery-main">${slides}</div><div class="product-thumbs" role="group" aria-label="Product images">${thumbs}</div></div>`;
@@ -517,7 +540,7 @@ export class PageRendererService {
       this.resolveNav('footer_purchasing')
     ]);
     return {
-      header,
+      header: header.length ? header : [{ label: 'Home', href: '/', openInNewTab: false }, { label: 'Products', href: '/products', openInNewTab: false }, { label: 'Contact', href: '/contact-us', openInNewTab: false }],
       footerColumns: [
         { label: 'Products', links: productsLinks },
         { label: 'Services', links: servicesLinks },
@@ -531,17 +554,17 @@ export class PageRendererService {
       where: { location, isActive: true },
       relations: { page: true },
       order: { sortOrder: 'ASC' }
-    });
+    }).catch(() => []);
     return items
       .map((item) => ({
         label: item.label,
-        href: item.linkType === 'page' ? (item.page?.status === 'published' ? `/${item.page.slug}` : null) : item.href,
+        href: item.linkType === 'page' ? (item.page?.status === 'published' ? `/${item.page.slug}` : null) : item.href ? publicHref(item.href) : null,
         openInNewTab: item.openInNewTab
       }))
       .filter((link): link is NavLink => Boolean(link.href));
   }
 
-  private renderBlock(block: PageBlock): string {
+  private async renderBlock(block: PageBlock, priority = false): Promise<string> {
     switch (block.blockType) {
       case 'heading': {
         const level = block.headingLevel === 3 ? 'h3' : 'h2';
@@ -549,10 +572,12 @@ export class PageRendererService {
       }
       case 'paragraph':
         return `<p>${escapeHtml(block.paragraphText ?? '')}</p>`;
-      case 'image':
+      case 'image': {
+        const dimensions = block.imageUrl ? await imageDimensions(block.imageUrl) : null;
         return block.imageUrl
-          ? `<img src="${escapeHtml(block.imageUrl)}" alt="${escapeHtml(block.imageAlt ?? '')}" loading="lazy" decoding="async">`
+          ? `<img src="${escapeHtml(block.imageUrl)}" alt="${escapeHtml(block.imageAlt ?? '')}" class="cms-image" ${dimensions ? `width="${dimensions.width}" height="${dimensions.height}"` : 'style="aspect-ratio:4/3;object-fit:contain;width:100%;height:auto"'} loading="${priority ? 'eager' : 'lazy'}" ${priority ? 'fetchpriority="high"' : ''} decoding="async">`
           : '';
+      }
       case 'button':
         return block.buttonHref
           ? `<a class="button aqua" href="${escapeHtml(block.buttonHref)}">${escapeHtml(block.buttonLabel ?? '')}</a>`
@@ -578,15 +603,15 @@ export class PageRendererService {
     scripts?: string[];
   }): string {
     const link = (item: NavLink) =>
-      `<a href="${escapeHtml(item.href)}"${item.openInNewTab ? ' target="_blank" rel="noopener"' : ''}>${escapeHtml(item.label)}</a>`;
+      `<a href="${escapeHtml(item.href)}"${options.canonicalUrl && item.href === new URL(options.canonicalUrl).pathname ? ' aria-current="page"' : ''}${item.openInNewTab ? ' target="_blank" rel="noopener"' : ''}>${escapeHtml(item.label)}</a>`;
 
     const headerNav = options.headerLinks.map(link).join('\n');
     const footerColumns = options.footerColumns
-      .map((column) => `<div><h4>${escapeHtml(column.label)}</h4>${column.links.map(link).join('')}</div>`)
+      .map((column) => `<div><h2>${escapeHtml(column.label)}</h2>${column.links.map(link).join('')}</div>`)
       .join('\n');
 
     const jsonLdScript = options.jsonLd
-      ? `<script type="application/ld+json">${JSON.stringify(options.jsonLd)}</script>`
+      ? `<script type="application/ld+json">${serializeJsonLd({ '@context': 'https://schema.org', '@graph': [...identityGraph(), ...(Array.isArray(options.jsonLd['@graph']) ? options.jsonLd['@graph'] : [options.jsonLd])] })}</script>`
       : '';
     const ogImageTag = options.ogImage ? `<meta property="og:image" content="${escapeHtml(options.ogImage)}">` : '';
     const twitterImageTag = options.ogImage ? `<meta name="twitter:image" content="${escapeHtml(options.ogImage)}">` : '';
@@ -627,12 +652,15 @@ ${stylesheetTags}
 ${jsonLdScript}
 </head>
 <body>
+<a class="skip-link" href="#main-content">Skip to content</a>
 <header class="site-header">
   <a class="brand" href="/" aria-label="Gimo Tech Supplies home"><img src="/assets/brand/gimo-tech-supplies-logo-600.png" width="600" height="200" alt="Gimo Tech Supplies"></a>
   <nav aria-label="Primary navigation">${headerNav}</nav>
 </header>
-<main class="site-main">${options.bodyHtml}</main>
+<main id="main-content" class="site-main">${options.bodyHtml}</main>
 <footer class="site-footer"><div class="footer-grid">${footerColumns}</div></footer>
+${analyticsAdapterPath() ? `<script src="${analyticsAdapterPath()}" defer></script>` : ''}
+<script src="/assets/analytics.js" defer></script>
 ${scriptTags}
 </body>
 </html>`;

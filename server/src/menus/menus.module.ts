@@ -10,6 +10,7 @@ import { AuthModule } from '../auth/auth.module';
 @Module({
   imports: [TypeOrmModule.forFeature([MenuItemEntity, PageEntity]), AuthModule],
   controllers: [MenusController, InternalMenusController],
-  providers: [MenusService]
+  providers: [MenusService],
+  exports: [MenusService]
 })
 export class MenusModule {}

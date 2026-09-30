@@ -1,3 +1,4 @@
+import { publicHref } from '../common/public-site';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -18,7 +19,12 @@ export class HomepageService {
     for (const key of SECTION_KEYS) {
       content[key] = byKey.get(key) ?? {};
     }
-    return content as HomepageContent;
+    const normalize = (value: unknown): unknown => {
+      if (Array.isArray(value)) return value.map(normalize);
+      if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([key, child]) => [key, /href$/i.test(key) && typeof child === 'string' ? publicHref(child) : normalize(child)]));
+      return value;
+    };
+    return normalize(content) as HomepageContent;
   }
 
   async updateSection(sectionKey: string, input: unknown, userId: number): Promise<unknown> {

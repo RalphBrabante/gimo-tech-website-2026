@@ -40,6 +40,10 @@ export class PagesService {
     return pages.map((page) => page.slug);
   }
 
+  async listPublishedEntries(): Promise<{ slug: string; updatedAt: Date }[]> {
+    return this.pages.find({ where: { status: 'published' }, select: { slug: true, updatedAt: true } });
+  }
+
   async create(input: CreatePageDto, userId: number): Promise<Page> {
     const existing = await this.pages.findOneBy({ slug: input.slug });
     if (existing) throw new ConflictException('A page with this slug already exists.');

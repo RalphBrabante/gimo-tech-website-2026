@@ -1,3 +1,4 @@
+import { publicHref } from '../common/public-site';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -96,7 +97,7 @@ export class MenusService {
     return items
       .map((item) => ({
         label: item.label,
-        href: item.linkType === 'page' ? (item.page?.status === 'published' ? `/${item.page.slug}` : null) : item.href,
+        href: item.linkType === 'page' ? (item.page?.status === 'published' ? `/${item.page.slug}` : null) : item.href ? publicHref(item.href) : null,
         openInNewTab: item.openInNewTab
       }))
       .filter((link): link is PublicMenuLink => Boolean(link.href));

@@ -1,3 +1,4 @@
+import { isUnchangedDemo } from '../products/demo-products';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
@@ -16,8 +17,8 @@ export class QuotationsService {
   async create(input: CreateQuotationRequestDto): Promise<{ requestNumber: string }> {
     const quantities = new Map<number, number>();
     for (const item of input.items) quantities.set(item.productId, (quantities.get(item.productId) ?? 0) + item.quantity);
-    const products = await this.products.find({ where: { id: In([...quantities.keys()]), isActive: true } });
-    if (products.length !== quantities.size) throw new BadRequestException('One or more requested products are no longer available.');
+    const products = await this.products.find({ where: { id: In([...quantities.keys()]), isActive: true }, relations: { images: true } });
+    if (products.length !== quantities.size || products.some(isUnchangedDemo)) throw new BadRequestException('One or more requested products are no longer available.');
 
     const entity = this.requests.create({
       requestNumber: null,

@@ -10,7 +10,7 @@ npm run install:all
 npm run dev
 ```
 
-Open `http://localhost:4200`. Angular proxies `/api` to NestJS on port 3000.
+Open `http://localhost:3000` for the full-document website. The root development command watches the NestJS and Angular builds. A separately started Angular development server (`npm start --prefix client`) provides a client-only preview on port 4200 and proxies `/api` to NestJS.
 
 Copy `.env.example` to `.env` and enter the MySQL password before starting the application. The API uses TypeORM migrations and never uses automatic schema synchronization.
 
@@ -46,3 +46,9 @@ Build with `npm ci && npm run build`, set `NODE_ENV=production` and `PORT=3000`,
 ## Environment
 
 Copy `.env.example` to `.env` for a manual deployment. Keep secrets out of Git; configure production values in Hostinger hPanel.
+
+## Technical SEO and public rendering
+
+Nest renders the homepage through Angular's server bundle with request-local public data and hydration. Deploy both `client/dist/client/browser` and `client/dist/client/server` atomically and restart the Node process after each build. `/products` provides document-based catalogue pagination; public API product arrays use `?page=N` (24 per page). Public content does not require crawlers to access `/api/`.
+
+Run `npm run test:seo` after building for server/data-integrity checks. `npm run seo:fixture` starts an isolated localhost fixture without database or mail access; then `npm run test:seo:browser` verifies rendering, navigation, quotation and measurement behavior. See [the audit and actual results](docs/seo/audit-after.md), [rollout and rollback](docs/seo/production-verification.md), and [owner evidence still needed](docs/seo/owner-inputs.md).

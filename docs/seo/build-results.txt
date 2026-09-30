@@ -1,0 +1,78 @@
+
+> gimo-tech-website@1.0.0 build
+> npm ci --prefix server --include=dev && npm run build --prefix server && npm ci --prefix client --include=dev && npm run build --prefix client
+
+npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+
+added 444 packages, and audited 445 packages in 5s
+
+133 packages are looking for funding
+  run `npm fund` for details
+
+11 vulnerabilities (4 moderate, 7 high)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+
+> gimo-tech-api@1.0.0 build
+> nest build
+
+npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+npm warn deprecated critters@0.0.24: Ownership of Critters has moved to the Nuxt team, who will be maintaining the project going forward. If you'd like to keep using Critters, please switch to the actively-maintained fork at https://github.com/danielroe/beasties
+npm warn deprecated tar@6.2.1: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+npm warn deprecated uuid@8.3.2: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+
+added 1057 packages, and audited 1058 packages in 11s
+
+191 packages are looking for funding
+  run `npm fund` for details
+
+66 vulnerabilities (7 low, 24 moderate, 34 high, 1 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+> client@0.0.0 build
+> npm run build:internal-assets && ng build
+
+
+> client@0.0.0 build:internal-assets
+> mkdir -p public/internal/assets/fonts public/assets/vendor && cp node_modules/bootstrap/dist/css/bootstrap.min.css public/internal/assets/bootstrap.min.css && cp node_modules/bootstrap-icons/font/bootstrap-icons.css public/internal/assets/bootstrap-icons.css && cp node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff2 public/internal/assets/fonts/ && cp node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff public/internal/assets/fonts/ && cp node_modules/chart.js/dist/chart.umd.js public/internal/assets/chart.umd.js && cp node_modules/three/build/three.module.min.js node_modules/three/build/three.core.min.js public/assets/vendor/
+
+❯ Building...
+✔ Building...
+Browser bundles
+Initial chunk files     | Names               |  Raw size | Estimated transfer size
+main-GAPVVRVH.js        | main                | 228.62 kB |                62.92 kB
+polyfills-FFHMD2TL.js   | polyfills           |  34.52 kB |                11.28 kB
+styles-DKBPJEZO.css     | styles              |   8.21 kB |                 1.86 kB
+
+                        | Initial total       | 271.35 kB |                76.06 kB
+
+
+Server bundles
+Initial chunk files     | Names               |  Raw size
+chunk-T4CGWRUD.mjs      | -                   | 503.61 kB |
+polyfills.server.mjs    | polyfills.server    | 268.60 kB |
+main.server.mjs         | main.server         |  86.15 kB |
+chunk-2VI5NG7I.mjs      | -                   |   1.19 kB |
+render-utils.server.mjs | render-utils.server | 221 bytes |
+
+Lazy chunk files        | Names               |  Raw size
+chunk-RHNTORHR.mjs      | xhr2                |  12.07 kB |
+
+Application bundle generation complete. [1.715 seconds]
+
+Output location: /Users/ralphb/Desktop/dockerApps/gimo-tech-website-2026/client/dist/client

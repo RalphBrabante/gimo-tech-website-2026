@@ -1,0 +1,41 @@
+import { chromium, expect } from '@playwright/test';
+import assert from 'node:assert/strict';
+import { writeFile } from 'node:fs/promises';
+const base='http://127.0.0.1:3100';
+const browser=await chromium.launch({channel:'chrome',headless:true});
+const results=[];
+async function check(name,fn) { try {await fn();results.push({name,status:'passed'});}catch(e){results.push({name,status:'failed',error:e.stack});} }
+await check('Every sitemap canonical has unique useful initial HTML and safe schema',async()=>{
+ const xml=await (await fetch(base+'/sitemap.xml')).text();const paths=[...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map(m=>new URL(m[1].replaceAll('&amp;','&')));const titles=new Set(),descriptions=new Set();
+ for(const url of paths){const r=await fetch(base+url.pathname+url.search);assert.equal(r.status,200,url.href);const html=await r.text();assert.equal([...html.matchAll(/<h1\b/g)].length,1,url.href);assert.ok(html.includes(`rel="canonical" href="${url.href.replaceAll('&','&amp;')}"`));const title=html.match(/<title>(.*?)<\/title>/s)?.[1];const desc=html.match(/name="description" content="([^"]+)"/)?.[1];assert.ok(title&&desc,url.href);assert.ok(!titles.has(title),title);assert.ok(!descriptions.has(desc),desc);titles.add(title);descriptions.add(desc);for(const m of html.matchAll(/application\/ld\+json">(.*?)<\/script>/gs))JSON.parse(m[1]);assert.ok(!html.includes('name="robots" content="noindex'));}
+});
+await check('JavaScript-disabled homepage and paginated full catalogue',async()=>{
+ const c=await browser.newContext({javaScriptEnabled:false});const p=await c.newPage();await p.goto(base);await expect(p.locator('h1')).toHaveCount(1);await expect(p.locator('a[href="/products"]')).not.toHaveCount(0);await expect(p.locator('.product-grid article')).toHaveCount(4);
+ await p.goto(base+'/products');await expect(p.locator('.catalogue-card')).toHaveCount(24);await p.getByRole('link',{name:'Next page'}).click();await expect(p.locator('.catalogue-card')).toHaveCount(5);await expect(p.locator('link[rel="canonical"]')).toHaveAttribute('href','https://gimosupplies.com/products?page=2');await c.close();
+});
+await check('Hydration reuses server DOM, preserves attribution and cart quantities',async()=>{
+ const c=await browser.newContext();const p=await c.newPage();const errors=[];p.on('pageerror',e=>errors.push(e.message));
+ await p.addInitScript(()=>{ const observer=new MutationObserver(()=>{ const h=document.querySelector('h1');if(h&&!window.originalHeading)window.originalHeading=h; });observer.observe(document,{childList:true,subtree:true}); });
+ await p.goto(base+'/?add-to-quote=128&utm_source=test&gclid=sample#shop');await expect(p.getByRole('dialog')).toBeVisible();assert.equal(new URL(p.url()).search,'?utm_source=test&gclid=sample');await expect(p.getByRole('heading',{name:'Test laboratory consumable 29'})).toBeVisible();await p.getByRole('button',{name:'Increase quantity for Test laboratory consumable 29'}).click();await p.reload();await p.getByRole('button',{name:/Open quotation bag/}).click();await expect(p.locator('.quantity-control span')).toHaveText('2');assert.equal(await p.evaluate(()=>window.originalHeading===document.querySelector('h1')),true);assert.deepEqual(errors,[]);await c.close();
+});
+await check('Consent-gated events: one action, safe fields, response-confirmed success',async()=>{
+ const c=await browser.newContext();const p=await c.newPage();const recorded=[];await p.exposeFunction('recordEvent',(event,data)=>recorded.push({event,data}));await p.addInitScript(()=>{window.events=[];window.gimoAnalytics={consent:false,send:(event,data)=>{window.events.push({event,data});window.recordEvent(event,data);}};});
+ await p.goto(base+'/product/100');assert.equal(await p.evaluate(()=>events.length),0);await p.evaluate(()=>{gimoAnalytics.consent=true;dispatchEvent(new Event('gimo:analytics-ready'));dispatchEvent(new Event('gimo:analytics-ready'));});assert.equal(await p.evaluate(()=>events.filter(e=>e.event==='product_view').length),1);
+ await p.goto(base+'/?add-to-quote=100&utm_source=test');await p.evaluate(()=>{gimoAnalytics.consent=true;});await p.getByRole('button',{name:'Request quotation',exact:true}).click();await p.getByLabel('Full name').fill('Local Test');await p.getByLabel('Email address').fill('test@example.invalid');
+ await p.route('**/api/quotation-requests',route=>route.fulfill({status:503,contentType:'application/json',body:'{}'}));await p.getByRole('button',{name:'Send quotation request'}).click();await expect(p.locator('.quote-status')).toContainText('could not save');assert.equal(await p.evaluate(()=>events.filter(e=>e.event==='quote_submit_success').length),0);
+ await p.unroute('**/api/quotation-requests');await p.route('**/quotation-request-received?*',route=>route.abort());
+ await p.getByRole('button',{name:'Send quotation request'}).click();await p.waitForTimeout(200);const events=recorded;assert.equal(events.filter(e=>e.event==='quote_start').length,1);assert.equal(events.filter(e=>e.event==='quote_submit_success').length,1);assert.ok(!JSON.stringify(events).includes('test@example'));assert.ok(!JSON.stringify(events).includes('Local Test'));await c.close();
+});
+await check('Outbound/contact intent fires once without query data; confirmation visits emit no success',async()=>{
+ const context=await browser.newContext();const page=await context.newPage();await page.addInitScript(()=>{window.events=[];window.gimoAnalytics={consent:true,send:(event,data)=>window.events.push({event,data})};document.addEventListener('click',event=>{if(event.target.closest('a'))event.preventDefault();});});
+ await page.goto(base+'/?utm_source=test&email=private@example.invalid');await page.locator('a[href*="www.lazada.com.ph"]').first().click();await page.locator('a[href^="mailto:"]').first().click();const events=await page.evaluate(()=>window.events);assert.equal(events.filter(e=>e.event==='lazada_outbound_click').length,1);assert.equal(events.filter(e=>e.event==='contact_click').length,1);assert.ok(!JSON.stringify(events).includes('@'));assert.ok(!JSON.stringify(events).includes('utm_'));assert.ok(!JSON.stringify(events).includes('purchase'));await page.goto(base+'/quotation-request-received?request=GQ-123456');assert.equal(await page.evaluate(()=>window.events.length),0);await context.close();
+});
+await check('Correct HTML 404, alias redirects and sitemap product coverage',async()=>{
+ for(const path of ['/product/not-an-id','/product/0','/product/999999','/products?page=999','/seo-intentionally-nonexistent']) {const r=await fetch(base+path);assert.equal(r.status,404,path);assert.match(r.headers.get('content-type'),/text\/html/);}
+ for(const path of ['/product/nylon-syringe-filter-25mm-045um','/products/nylon-syringe-filter-25mm-0-45um','/products/nylon-syringe-filter-25mm-045-micron']){const r=await fetch(base+path,{redirect:'manual'});assert.equal(r.status,301);assert.equal(r.headers.get('location'),'/products/nylon-syringe-filter-25mm-045um');}
+ const xml=await (await fetch(base+'/sitemap.xml')).text();assert.equal([...xml.matchAll(/<loc>[^<]*\/product\/\d+<\/loc>/g)].length,29);assert.ok(!xml.includes('quotation-request-received'));assert.ok(!xml.includes('/product/1</loc>'));const p=await browser.newPage();await p.goto(base+'/sitemap.xml');assert.equal(await p.evaluate(()=>new DOMParser().parseFromString(document.documentElement.outerHTML,'application/xml').querySelector('parsererror')!==null),false);await p.close();
+});
+await check('Schema safely parses, no fabricated review, offer or manufacturer',async()=>{
+ const p=await browser.newPage();await p.goto(base+'/product/100');const schemas=await p.locator('script[type="application/ld+json"]').allTextContents();const value=schemas.map(JSON.parse);assert.match(JSON.stringify(value),/Product/);assert.match(JSON.stringify(value),/BreadcrumbList/);assert.doesNotMatch(JSON.stringify(value),/AggregateRating|InStock|"Offer"|"manufacturer"/);await expect(p.getByText('Request pricing')).toHaveCount(0);await p.close();
+});
+await browser.close();await writeFile('docs/seo/regression-results.json',JSON.stringify({timestamp:new Date().toISOString(),results},null,2)+'\n');console.log(results);if(results.some(r=>r.status==='failed'))process.exitCode=1;

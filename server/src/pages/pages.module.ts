@@ -1,3 +1,8 @@
+import { HomeRendererService } from '../homepage/home-renderer.service';
+import { ProductsModule } from '../products/products.module';
+import { HomepageModule } from '../homepage/homepage.module';
+import { MenusModule } from '../menus/menus.module';
+import { SettingsModule } from '../settings/settings.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PageEntity } from './entities/page.entity';
@@ -13,8 +18,8 @@ import { PageRendererModule } from './page-renderer.module';
 import { ProductEntity } from '../products/entities/product.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PageEntity, PageBlockEntity, ProductEntity]), AuthModule, PageRendererModule],
+  imports: [TypeOrmModule.forFeature([PageEntity, PageBlockEntity, ProductEntity]), AuthModule, PageRendererModule, ProductsModule, HomepageModule, MenusModule, SettingsModule],
   controllers: [InternalPagesController, SitemapController, QuotationThankYouController, PagesViewController],
-  providers: [PagesService]
+  providers: [PagesService, HomeRendererService]
 })
 export class PagesModule {}

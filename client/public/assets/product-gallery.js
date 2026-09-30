@@ -14,7 +14,7 @@
     thumbs.forEach(function (thumb, i) {
       thumb.addEventListener('click', function () {
         var target = slides[i];
-        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+        if (target) target.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest', inline: 'start' });
         setActive(i);
       });
     });

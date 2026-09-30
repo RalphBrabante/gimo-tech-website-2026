@@ -1,18 +1,19 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import BUSINESS from '../../../server/src/common/public-business.json';
+import { Component, HostListener, OnInit, inject, TransferState, makeStateKey, afterNextRender, ChangeDetectorRef, ViewChild, ElementRef, NgZone, Injector } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { catchError, forkJoin, of } from 'rxjs';
 
-interface Product { id: number; name: string; sku: string; category: string; description: string; price: number; rating: number; accent: string; imageUrl: string | null; }
+export interface Product { id: number; name: string; sku: string; category: string; description: string; price: number; rating: number; accent: string; imageUrl: string | null; publicPath?: string; }
 interface QuoteCartItem { product: Product; quantity: number; }
-interface StoreSettings { currencyCode: string; freeShippingThresholdCents: number | null; }
+export interface StoreSettings { currencyCode: string; freeShippingThresholdCents: number | null; }
 
 interface FilterTypeItem { name: string; tag: string; description: string; format: string; pack: string; color: string; }
 interface BenefitCard { icon: string; title: string; body: string; linkLabel: string; linkHref: string; }
 interface StatItem { value: string; label: string; }
 interface PlanCard { eyebrow: string; title: string; subtitle: string; bullets: string[]; ctaLabel: string; ctaHref: string; featured: boolean; }
 
-interface HomepageContent {
+export interface HomepageContent {
   hero: { eyebrow: string; heading: string; body: string; ticks: string[]; ctaLabel: string; ctaHref: string };
   filter_types: { eyebrow: string; heading: string; items: FilterTypeItem[] };
   benefits: { eyebrow: string; heading: string; body: string; bullets: string[]; ctaLabel: string; ctaHref: string; cards: BenefitCard[] };
@@ -27,23 +28,23 @@ interface HomepageContent {
 }
 
 interface MenuLink { label: string; href: string; openInNewTab: boolean; }
-interface PublicMenus {
+export interface PublicMenus {
   header: MenuLink[];
   footer: { products: MenuLink[]; services: MenuLink[]; purchasing: MenuLink[] };
 }
 
-const FALLBACK_HOMEPAGE_CONTENT: HomepageContent = {
+export const FALLBACK_HOMEPAGE_CONTENT: HomepageContent = {
   hero: {
-    eyebrow: 'Fast shipping laboratory supplies',
+    eyebrow: 'Laboratory supplies · Philippines',
     heading: 'Syringe filters for reliable HPLC sample preparation.',
-    body: 'Gimo Tech Supplies provides multiple syringe filter membrane types for chromatographic workflows, including Nylon, PTFE, PVDF, and MCE options in common laboratory formats such as 25mm and 0.45um.',
+    body: 'Gimo Tech Supplies provides nylon syringe filters for laboratory sample preparation, customized biohazard bags, and sequential QR code labels in the Philippines. Ask us to confirm the configuration and quantity for your method.',
     ticks: [
       'HPLC sample prep and laboratory filtration',
       'Bulk canister packs and routine-use supply options',
       'Authentic lab supplies with responsive purchasing support'
     ],
     ctaLabel: 'View syringe filters',
-    ctaHref: '#shop'
+    ctaHref: '/products'
   },
   filter_types: {
     eyebrow: 'Syringe filter types',
@@ -66,12 +67,12 @@ const FALLBACK_HOMEPAGE_CONTENT: HomepageContent = {
       'Clear product descriptions, SKU tracking, and purchasing support'
     ],
     ctaLabel: 'Request a quote',
-    ctaHref: '#contact',
+    ctaHref: '/contact-us',
     cards: [
-      { icon: 'HPLC', title: 'Chromatography ready', body: 'Filters suited for routine HPLC sample preparation.', linkLabel: 'Browse filters', linkHref: '#shop' },
+      { icon: 'HPLC', title: 'Chromatography ready', body: 'Filters suited for routine HPLC sample preparation.', linkLabel: 'Browse filters', linkHref: '/products' },
       { icon: '4x', title: 'Multiple membranes', body: 'Nylon, PTFE, PVDF, and MCE options for different methods.', linkLabel: 'See details', linkHref: '#filter-types-title' },
-      { icon: 'QR', title: 'Traceable waste bags', body: 'Customized biohazard bags with printed QR code series.', linkLabel: 'Review options', linkHref: '#biohazard-bags' },
-      { icon: 'QA', title: 'Supplier assistance', body: 'Responsive support for product matching and repeat orders.', linkLabel: 'Get support', linkHref: '#contact' }
+      { icon: 'QR', title: 'Traceable waste bags', body: 'Customized biohazard bags with printed QR code series.', linkLabel: 'Review options', linkHref: '/biohazard-bags' },
+      { icon: 'QA', title: 'Supplier assistance', body: 'Responsive support for product matching and repeat orders.', linkLabel: 'Get support', linkHref: '/contact-us' }
     ]
   },
   impact_banner: {
@@ -79,7 +80,7 @@ const FALLBACK_HOMEPAGE_CONTENT: HomepageContent = {
     heading: 'Printed QR code series for traceable laboratory waste handling.',
     body: 'Order customized biohazard bags with series-based printing and QR code attachments for internal tracking, receiving, or disposal documentation workflows.',
     ctaLabel: 'Discuss custom printing',
-    ctaHref: '#contact'
+    ctaHref: '/contact-us'
   },
   split_1: {
     eyebrow: 'Syringe filter selection',
@@ -94,7 +95,7 @@ const FALLBACK_HOMEPAGE_CONTENT: HomepageContent = {
       'Repeat-order support'
     ],
     ctaLabel: 'Ask for recommendations',
-    ctaHref: '#contact'
+    ctaHref: '/contact-us'
   },
   split_2: {
     eyebrow: 'Custom labeling workflow',
@@ -106,7 +107,7 @@ const FALLBACK_HOMEPAGE_CONTENT: HomepageContent = {
       { value: 'PO', label: 'Procurement support' }
     ],
     ctaLabel: 'Start a custom order',
-    ctaHref: '#contact'
+    ctaHref: '/contact-us'
   },
   consult_intro: {
     eyebrow: 'Laboratory purchasing support',
@@ -117,21 +118,21 @@ const FALLBACK_HOMEPAGE_CONTENT: HomepageContent = {
     eyebrow: 'Purchasing paths',
     heading: 'Supply options for laboratories',
     cards: [
-      { eyebrow: 'FILTERS', title: 'HPLC', subtitle: 'Syringe Filter Supply', bullets: ['Nylon, PTFE, PVDF, and MCE options', 'Common diameter and pore sizes', 'Bulk canister packs', 'Repeat procurement support'], ctaLabel: 'Request filter quote', ctaHref: '#contact', featured: false },
-      { eyebrow: 'CANISTER', title: '100', subtitle: 'Routine Lab Packs', bullets: ['Canister pack availability', 'Non-sterile lab-use options', 'SKU-based reordering', 'Fast shipping coordination'], ctaLabel: 'View catalog', ctaHref: '#shop', featured: true },
-      { eyebrow: 'CUSTOM', title: 'QR', subtitle: 'Biohazard Bag Printing', bullets: ['Customized print layout', 'QR code attachments', 'Series-based identifiers', 'Batch order coordination'], ctaLabel: 'Discuss printing', ctaHref: '#contact', featured: false }
+      { eyebrow: 'FILTERS', title: 'HPLC', subtitle: 'Syringe Filter Supply', bullets: ['Nylon, PTFE, PVDF, and MCE options', 'Common diameter and pore sizes', 'Bulk canister packs', 'Repeat procurement support'], ctaLabel: 'Request filter quote', ctaHref: '/contact-us', featured: false },
+      { eyebrow: 'CANISTER', title: '100', subtitle: 'Routine Lab Packs', bullets: ['Canister pack availability', 'Non-sterile lab-use options', 'SKU-based reordering', 'Fast shipping coordination'], ctaLabel: 'View catalog', ctaHref: '/products', featured: true },
+      { eyebrow: 'CUSTOM', title: 'QR', subtitle: 'Biohazard Bag Printing', bullets: ['Customized print layout', 'QR code attachments', 'Series-based identifiers', 'Batch order coordination'], ctaLabel: 'Discuss printing', ctaHref: '/contact-us', featured: false }
     ]
   },
   location: {
-    tagline: 'Visit GIMO Laboratory Supplies',
-    description: 'B2 L26 Diamond St., South 1 Camella Homes Annex, Brgy., San Pedro, Laguna 4023',
+    tagline: 'GIMO Laboratory Supplies location',
+    description: 'B2 L26 Diamond St., South 1 Camella Homes Annex, San Pedro, Laguna 4023',
     ctaLabel: 'View on Google Maps',
     ctaHref: 'https://www.google.com/maps/place/GIMO+Laboratory+Supplies/@14.3808892,121.0679065,15z/data=!4m6!3m5!1s0x3397d1d871eba07b:0x8ca7e1b4bd2d5c7a!8m2!3d14.3723706!4d121.0582515!16s%2Fg%2F11jgc0gmss?entry=ttu'
   },
   cta_banner: {
     heading: 'Need syringe filters or custom QR biohazard bags?',
     ctaLabel: 'Request a quote',
-    ctaHref: '#contact'
+    ctaHref: '/contact-us'
   },
   footer_brand: {
     blurb: 'Laboratory supplies for HPLC sample preparation and custom biohazard bag workflows.',
@@ -139,14 +140,14 @@ const FALLBACK_HOMEPAGE_CONTENT: HomepageContent = {
   }
 };
 
-const FALLBACK_MENUS: PublicMenus = {
+export const FALLBACK_MENUS: PublicMenus = {
   header: [
     { label: 'Home', href: '/', openInNewTab: false },
     { label: 'Syringe Filters', href: '/syringe-filters', openInNewTab: false },
     { label: 'QR Code Labels', href: '/sequential-qr-code-labels', openInNewTab: false },
     { label: 'Biohazard Bags', href: '/biohazard-bags', openInNewTab: false },
     { label: 'Lazada Shop', href: '/lazada-shop', openInNewTab: false },
-    { label: 'Contact', href: '/#contact', openInNewTab: false }
+    { label: 'Contact', href: '/contact-us', openInNewTab: false }
   ],
   footer: {
     products: [
@@ -159,18 +160,22 @@ const FALLBACK_MENUS: PublicMenus = {
       { label: 'Custom printing', href: '/biohazard-bags', openInNewTab: false },
       { label: 'Sequential QR labels', href: '/sequential-qr-code-labels', openInNewTab: false },
       { label: 'QR code attachments', href: '/biohazard-bags', openInNewTab: false },
-      { label: 'Repeat supply orders', href: '/#contact', openInNewTab: false }
+      { label: 'Repeat supply orders', href: '/contact-us', openInNewTab: false }
     ],
     purchasing: [
-      { label: 'Request a quote', href: '/#contact', openInNewTab: false },
+      { label: 'Request a quote', href: '/contact-us', openInNewTab: false },
       { label: 'Product matching', href: '/syringe-filters', openInNewTab: false },
-      { label: 'Shipping support', href: '/#contact', openInNewTab: false }
+      { label: 'Shipping support', href: '/contact-us', openInNewTab: false }
     ]
   }
 };
 
+export interface HomeSnapshot { settings: StoreSettings | null; products: Product[]; homepage: HomepageContent | null; menus: PublicMenus | null; catalogueUnavailable: boolean; selectedProduct?: Product | null; }
+export const HOME_SNAPSHOT = makeStateKey<HomeSnapshot | null>('public-home-snapshot');
+
 @Component({ selector: 'app-root', standalone: true, imports: [CommonModule], templateUrl: './app.component.html', styleUrl: './app.component.scss' })
 export class AppComponent implements OnInit {
+  readonly business = BUSINESS;
   products: Product[] = []; loading = true; currencyCode = 'USD'; freeShippingThreshold: number | null = null;
   homepage: HomepageContent = FALLBACK_HOMEPAGE_CONTENT;
   menus: PublicMenus = FALLBACK_MENUS;
@@ -180,27 +185,62 @@ export class AppComponent implements OnInit {
   quoteStatus = '';
   quoteSubmitting = false;
 
-  constructor(private readonly http: HttpClient) {}
+  private readonly state = inject(TransferState);
+  private readonly zone = inject(NgZone);
+  private readonly injector = inject(Injector);
+  private readonly changeDetector = inject(ChangeDetectorRef);
+  catalogueUnavailable = false;
+  private previousFocus: HTMLElement | null = null;
+  private drawer: HTMLElement | null = null;
+  @ViewChild('quoteDrawer') set quoteDrawer(value: ElementRef<HTMLElement> | undefined) {
+    this.drawer = value?.nativeElement ?? null;
+    if (this.drawer) queueMicrotask(() => this.drawer?.querySelector<HTMLButtonElement>('button')?.focus());
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  trapDialogFocus(event: KeyboardEvent): void {
+    if (!this.cartOpen || !this.drawer || event.key !== 'Tab') return;
+    const controls = Array.from(this.drawer.querySelectorAll<HTMLElement>('button:not([disabled]), input, textarea, a[href]'));
+    const first = controls[0], last = controls[controls.length - 1];
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+  }
+
+  private rememberFocus(): void {
+    if (!this.cartOpen && typeof document !== 'undefined') this.previousFocus = document.activeElement as HTMLElement;
+  }
+  constructor(private readonly http: HttpClient) {
+    afterNextRender(() => this.zone.run(() => {
+      this.loadQuoteCart();
+      this.addQuoteProductFromLocation([...this.products, ...(this.state.get(HOME_SNAPSHOT, null)?.selectedProduct ? [this.state.get(HOME_SNAPSHOT, null)!.selectedProduct!] : [])]);
+      this.changeDetector.detectChanges();
+    }));
+  }
+
+  private applySnapshot(snapshot: HomeSnapshot): void {
+    this.currencyCode = snapshot.settings?.currencyCode ?? this.currencyCode;
+    this.freeShippingThreshold = snapshot.settings?.freeShippingThresholdCents == null ? null : snapshot.settings.freeShippingThresholdCents / 100;
+    this.products = snapshot.products;
+    this.homepage = { ...FALLBACK_HOMEPAGE_CONTENT };
+    for (const key of Object.keys(FALLBACK_HOMEPAGE_CONTENT) as (keyof HomepageContent)[]) {
+      const section = snapshot.homepage?.[key];
+      if (section && Object.keys(section).length) Object.assign(this.homepage, { [key]: section });
+    }
+    this.homepage.location = { ...this.homepage.location, description: this.homepage.location.description.replace('Brgy., ', ''), tagline: this.homepage.location.tagline.replace('Visit GIMO', 'GIMO') };
+    this.menus = snapshot.menus?.header.length ? snapshot.menus : FALLBACK_MENUS;
+    this.catalogueUnavailable = snapshot.catalogueUnavailable;
+    this.loading = false;
+  }
 
   ngOnInit(): void {
-    this.loadQuoteCart();
+    const snapshot = this.state.get(HOME_SNAPSHOT, null);
+    if (snapshot) { this.applySnapshot(snapshot); return; }
     forkJoin({
-      settings: this.http.get<StoreSettings>('/api/settings').pipe(catchError(() => of({ currencyCode: 'USD', freeShippingThresholdCents: null }))),
-      products: this.http.get<Product[]>('/api/products'),
-      homepage: this.http.get<HomepageContent>('/api/homepage').pipe(catchError(() => of(FALLBACK_HOMEPAGE_CONTENT))),
-      menus: this.http.get<PublicMenus>('/api/menus').pipe(catchError(() => of(FALLBACK_MENUS)))
-    }).subscribe({
-      next: ({ settings, products, homepage, menus }) => {
-        this.currencyCode = settings.currencyCode;
-        this.freeShippingThreshold = settings.freeShippingThresholdCents === null ? null : settings.freeShippingThresholdCents / 100;
-        this.products = products;
-        this.homepage = homepage;
-        this.menus = menus;
-        this.addQuoteProductFromLocation(products);
-        this.loading = false;
-      },
-      error: () => { this.loading = false; }
-    });
+      settings: this.http.get<StoreSettings>('/api/settings').pipe(catchError(() => of(null))),
+      products: this.http.get<Product[]>('/api/products').pipe(catchError(() => { this.catalogueUnavailable = true; return of([]); })),
+      homepage: this.http.get<HomepageContent>('/api/homepage').pipe(catchError(() => of(null))),
+      menus: this.http.get<PublicMenus>('/api/menus').pipe(catchError(() => of(null)))
+    }).subscribe(data => { this.applySnapshot({ ...data, catalogueUnavailable: this.catalogueUnavailable }); this.addQuoteProductFromLocation(data.products); });
   }
 
   get cartCount(): number {
@@ -208,6 +248,7 @@ export class AppComponent implements OnInit {
   }
 
   addToQuoteCart(product: Product): void {
+    this.rememberFocus();
     const existing = this.quoteCart.find((item) => item.product.id === product.id);
     if (existing) existing.quantity += 1;
     else this.quoteCart = [...this.quoteCart, { product, quantity: 1 }];
@@ -217,14 +258,20 @@ export class AppComponent implements OnInit {
   }
 
   private addQuoteProductFromLocation(products: Product[]): void {
-    const productId = Number(new URLSearchParams(window.location.search).get('add-to-quote'));
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    const productId = Number(url.searchParams.get('add-to-quote'));
     if (!Number.isInteger(productId) || productId < 1) return;
 
     const product = products.find((candidate) => candidate.id === productId);
-    if (!product) return;
+    if (!product) {
+      this.http.get<Product>(`/api/products/${productId}`).subscribe({ next: found => this.addQuoteProductFromLocation([found]), error: () => { this.quoteStatus = 'Please contact our supply team to confirm this product.'; } });
+      return;
+    }
 
     this.addToQuoteCart(product);
-    window.history.replaceState({}, '', `${window.location.pathname}${window.location.hash}`);
+    url.searchParams.delete('add-to-quote');
+    window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
   }
 
   changeQuantity(productId: number, change: number): void {
@@ -241,9 +288,9 @@ export class AppComponent implements OnInit {
     this.saveQuoteCart();
   }
 
-  openCart(): void { this.cartOpen = true; this.quoteFormOpen = false; this.quoteStatus = ''; }
-  closeCart(): void { this.cartOpen = false; this.quoteFormOpen = false; }
-  openQuoteForm(): void { if (this.quoteCart.length) { this.quoteFormOpen = true; this.quoteStatus = ''; } }
+  openCart(): void { this.rememberFocus(); this.cartOpen = true; this.quoteFormOpen = false; this.quoteStatus = ''; }
+  closeCart(): void { this.cartOpen = false; this.quoteFormOpen = false; afterNextRender(() => this.previousFocus?.focus(), { injector: this.injector }); }
+  openQuoteForm(): void { if (this.quoteCart.length && !this.quoteFormOpen) { window.dispatchEvent(new CustomEvent('gimo:quote-start')); this.quoteFormOpen = true; this.quoteStatus = ''; } }
   backToCart(): void { this.quoteFormOpen = false; this.quoteStatus = ''; }
 
   submitQuoteRequest(event: SubmitEvent, name: string, company: string, email: string, phone: string, notes: string): void {
@@ -256,13 +303,14 @@ export class AppComponent implements OnInit {
       items: this.quoteCart.map((item) => ({ productId: item.product.id, quantity: item.quantity }))
     }).subscribe({
       next: ({ requestNumber }) => {
+        window.dispatchEvent(new CustomEvent('gimo:quote-success'));
         this.quoteCart = [];
         this.saveQuoteCart();
         window.location.assign(`/quotation-request-received?request=${encodeURIComponent(requestNumber)}`);
       },
       error: () => {
         this.quoteSubmitting = false;
-        this.quoteStatus = 'We could not save your request. Please try again or email gimotechsupplies@gmail.com.';
+        this.quoteStatus = `We could not save your request. Please try again or email ${BUSINESS.email}.`;
       }
     });
   }

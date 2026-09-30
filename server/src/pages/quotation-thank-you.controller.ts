@@ -1,9 +1,10 @@
+import { publicOrigin } from '../common/public-site';
 import { Controller, Get, Query, Req, Res } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { PageRendererService } from './page-renderer.service';
 
 function originFromRequest(request: Request): string {
-  return `${request.protocol}://${request.get('host')}`;
+  return publicOrigin();
 }
 
 @Controller()

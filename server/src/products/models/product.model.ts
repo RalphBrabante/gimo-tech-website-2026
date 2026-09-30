@@ -1,5 +1,7 @@
 export interface Product {
   id: number;
+  publicPath: string;
+  updatedAt: Date;
   name: string;
   sku: string;
   category: string;

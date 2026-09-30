@@ -1,6 +1,8 @@
+import { isUnchangedDemo, DEMO_PRODUCTS } from './demo-products';
+import { productPath } from '../common/public-site';
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, In, Not } from 'typeorm';
 import { ProductEntity } from './entities/product.entity';
 import { Product } from './models/product.model';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -16,14 +18,25 @@ export class ProductsService {
     private readonly dataSource: DataSource
   ) {}
 
-  async findAll(category?: string): Promise<Product[]> {
-    const normalizedCategory = category?.trim();
-    const products = await this.productsRepository.find({
-      where: normalizedCategory ? { category: normalizedCategory, isActive: true } : { isActive: true },
-      relations: { images: true },
-      order: { id: 'ASC', images: { sortOrder: 'ASC' } }
+  async findPage(page = 1, size = 24, category?: string): Promise<{ products: Product[]; total: number }> {
+    const candidates = await this.productsRepository.find({ where: { name: In(DEMO_PRODUCTS.map(demo => demo[0])), isActive: true }, relations: { images: true } });
+    const excluded = candidates.filter(isUnchangedDemo).map(product => product.id);
+    const [products, total] = await this.productsRepository.findAndCount({
+      where: { isActive: true, ...(category?.trim() ? { category: category.trim() } : {}), ...(excluded.length ? { id: Not(In(excluded)) } : {}) },
+      relations: { images: true }, order: { id: 'ASC', images: { sortOrder: 'ASC' } },
+      skip: (page - 1) * size, take: size
     });
-    return products.map((product) => this.toModel(product));
+    return { products: products.map(product => this.toModel(product)), total };
+  }
+
+  // Sitemap enumeration uses bounded database reads; HTML/API use findPage directly.
+  async findAll(category?: string): Promise<Product[]> {
+    const result: Product[] = [];
+    for (let page = 1; ; page++) {
+      const batch = await this.findPage(page, 100, category);
+      result.push(...batch.products);
+      if (result.length >= batch.total || !batch.products.length) return result;
+    }
   }
 
   async findAllInternal(): Promise<Product[]> {
@@ -43,7 +56,7 @@ export class ProductsService {
       relations: { images: true },
       order: { images: { sortOrder: 'ASC' } }
     });
-    return product ? this.toModel(product) : null;
+    return product && !isUnchangedDemo(product) ? this.toModel(product) : null;
   }
 
   async create(input: CreateProductDto, userId: number, imageUrls: string[]): Promise<Product> {
@@ -137,6 +150,8 @@ export class ProductsService {
   private toModel(entity: ProductEntity): Product {
     return {
       id: entity.id,
+      publicPath: productPath(entity),
+      updatedAt: entity.updatedAt,
       name: entity.name,
       sku: entity.sku,
       category: entity.category,

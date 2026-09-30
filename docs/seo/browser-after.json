@@ -1,0 +1,367 @@
+{
+  "timestamp": "2026-09-30T17:25:04.389Z",
+  "origin": "http://127.0.0.1:3100",
+  "measurement": "Single-run, local Chrome lab observations; no network/CPU throttling. Not Lighthouse or field Core Web Vitals; INP unavailable.",
+  "results": [
+    {
+      "path": "/",
+      "width": 360,
+      "status": 200,
+      "h1": [
+        "Syringe filters for reliable HPLC sample preparation."
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 132,
+        "cls": 0.008126944444444445
+      },
+      "ttfb": 20.200000000186265,
+      "resources": 8,
+      "bodyText": 6053,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "path": "/products",
+      "width": 360,
+      "status": 200,
+      "h1": [
+        "Laboratory Supplies Catalogue"
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 48,
+        "cls": 0.0038555324074074073
+      },
+      "ttfb": 2.1000000000931323,
+      "resources": 6,
+      "bodyText": 3642,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "path": "/products/nylon-syringe-filter-25mm-045um",
+      "width": 360,
+      "status": 200,
+      "h1": [
+        "Nylon Syringe Filter 25mm 0.45µm"
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 36,
+        "cls": 0
+      },
+      "ttfb": 2.1000000000931323,
+      "resources": 6,
+      "bodyText": 3002,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "path": "/syringe-filters",
+      "width": 360,
+      "status": 200,
+      "h1": [
+        "Syringe Filters for HPLC Sample Preparation"
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 64,
+        "cls": 0
+      },
+      "ttfb": 3.1000000000931323,
+      "resources": 10,
+      "bodyText": 2486,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "path": "/contact-us",
+      "width": 360,
+      "status": 200,
+      "h1": [
+        "Contact Gimo Tech Supplies"
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 44,
+        "cls": 0
+      },
+      "ttfb": 2.8999999999068677,
+      "resources": 5,
+      "bodyText": 720,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "path": "/",
+      "width": 768,
+      "status": 200,
+      "h1": [
+        "Syringe filters for reliable HPLC sample preparation."
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 124,
+        "cls": 0.01629076605902778
+      },
+      "ttfb": 13.199999999720603,
+      "resources": 8,
+      "bodyText": 6053,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "path": "/products",
+      "width": 768,
+      "status": 200,
+      "h1": [
+        "Laboratory Supplies Catalogue"
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 48,
+        "cls": 0.020847254774305556
+      },
+      "ttfb": 2,
+      "resources": 6,
+      "bodyText": 3642,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "path": "/products/nylon-syringe-filter-25mm-045um",
+      "width": 768,
+      "status": 200,
+      "h1": [
+        "Nylon Syringe Filter 25mm 0.45µm"
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 52,
+        "cls": 0
+      },
+      "ttfb": 3.1999999997206032,
+      "resources": 7,
+      "bodyText": 3002,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "path": "/syringe-filters",
+      "width": 768,
+      "status": 200,
+      "h1": [
+        "Syringe Filters for HPLC Sample Preparation"
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 64,
+        "cls": 0
+      },
+      "ttfb": 3.6000000000931323,
+      "resources": 10,
+      "bodyText": 2584,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "path": "/contact-us",
+      "width": 768,
+      "status": 200,
+      "h1": [
+        "Contact Gimo Tech Supplies"
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 52,
+        "cls": 0
+      },
+      "ttfb": 3.3000000002793968,
+      "resources": 5,
+      "bodyText": 720,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "path": "/",
+      "width": 1024,
+      "status": 200,
+      "h1": [
+        "Syringe filters for reliable HPLC sample preparation."
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 116,
+        "cls": 0.010555210444662306
+      },
+      "ttfb": 13.699999999720603,
+      "resources": 8,
+      "bodyText": 6053,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "path": "/products",
+      "width": 1024,
+      "status": 200,
+      "h1": [
+        "Laboratory Supplies Catalogue"
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 20,
+        "cls": 0.004539256095886231
+      },
+      "ttfb": 1.6000000000931323,
+      "resources": 6,
+      "bodyText": 3642,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "path": "/products/nylon-syringe-filter-25mm-045um",
+      "width": 1024,
+      "status": 200,
+      "h1": [
+        "Nylon Syringe Filter 25mm 0.45µm"
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 52,
+        "cls": 0
+      },
+      "ttfb": 3.2000000001862645,
+      "resources": 6,
+      "bodyText": 3002,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "path": "/syringe-filters",
+      "width": 1024,
+      "status": 200,
+      "h1": [
+        "Syringe Filters for HPLC Sample Preparation"
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 64,
+        "cls": 0
+      },
+      "ttfb": 3.7999999998137355,
+      "resources": 10,
+      "bodyText": 2584,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "path": "/contact-us",
+      "width": 1024,
+      "status": 200,
+      "h1": [
+        "Contact Gimo Tech Supplies"
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 52,
+        "cls": 0
+      },
+      "ttfb": 3.5,
+      "resources": 5,
+      "bodyText": 720,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "path": "/",
+      "width": 1440,
+      "status": 200,
+      "h1": [
+        "Syringe filters for reliable HPLC sample preparation."
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 104,
+        "cls": 0.008874227624796381
+      },
+      "ttfb": 11.600000000093132,
+      "resources": 8,
+      "bodyText": 6053,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "path": "/products",
+      "width": 1440,
+      "status": 200,
+      "h1": [
+        "Laboratory Supplies Catalogue"
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 36,
+        "cls": 0.0025566406250000003
+      },
+      "ttfb": 1.7000000001862645,
+      "resources": 6,
+      "bodyText": 3642,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "path": "/products/nylon-syringe-filter-25mm-045um",
+      "width": 1440,
+      "status": 200,
+      "h1": [
+        "Nylon Syringe Filter 25mm 0.45µm"
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 56,
+        "cls": 0
+      },
+      "ttfb": 3.3999999999068677,
+      "resources": 6,
+      "bodyText": 3002,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "path": "/syringe-filters",
+      "width": 1440,
+      "status": 200,
+      "h1": [
+        "Syringe Filters for HPLC Sample Preparation"
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 56,
+        "cls": 0
+      },
+      "ttfb": 2,
+      "resources": 10,
+      "bodyText": 2584,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "path": "/contact-us",
+      "width": 1440,
+      "status": 200,
+      "h1": [
+        "Contact Gimo Tech Supplies"
+      ],
+      "overflow": false,
+      "lab": {
+        "lcp": 56,
+        "cls": 0
+      },
+      "ttfb": 3.6000000000931323,
+      "resources": 5,
+      "bodyText": 720,
+      "errors": [],
+      "failed": []
+    }
+  ]
+}

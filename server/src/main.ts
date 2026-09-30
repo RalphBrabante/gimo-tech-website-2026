@@ -5,6 +5,8 @@ import helmet from 'helmet';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { storefrontPath } from './storefront-path';
+import { publicDocumentMiddleware } from './common/public-document.middleware';
+import { publicOrigin } from './common/public-site';
 import { productUploadsPath } from './products/product-upload.config';
 import { contentUploadsPath } from './media/media-upload.config';
 
@@ -34,6 +36,8 @@ async function bootstrap() {
   // Register storefront files directly on Express before Nest installs controller
   // routes. Otherwise the CMS catch-all controller can claim asset requests and
   // return its HTML 404 page, leaving the Angular shell unable to bootstrap.
+  publicOrigin(); // Fail startup on a malformed configured public origin.
+  app.use(publicDocumentMiddleware);
   app.useStaticAssets(storefrontPath, {
     index: false,
     fallthrough: true,

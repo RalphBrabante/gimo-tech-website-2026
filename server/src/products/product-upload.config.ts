@@ -1,3 +1,4 @@
+import sharp from 'sharp';
 import { BadRequestException } from '@nestjs/common';
 import { mkdir, unlink, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -37,6 +38,8 @@ export async function saveProductImages(files: Express.Multer.File[]): Promise<{
       const path = resolve(productUploadsPath, filename);
       await writeFile(path, file.buffer, { flag: 'wx' });
       paths.push(path);
+      await sharp(path).rotate().resize(240, 180, { fit: 'inside', withoutEnlargement: true }).webp({ quality: 78 }).toFile(`${path}.thumb.webp`);
+      paths.push(`${path}.thumb.webp`);
       urls.push(`/uploads/products/${filename}`);
     }
     return { paths, urls };
@@ -47,7 +50,7 @@ export async function saveProductImages(files: Express.Multer.File[]): Promise<{
 }
 
 export async function removeProductImages(paths: string[]): Promise<void> {
-  await Promise.all(paths.map((path) => unlink(path).catch(() => undefined)));
+  await Promise.all(paths.flatMap((path) => [unlink(path).catch(() => undefined), unlink(`${path}.thumb.webp`).catch(() => undefined)]));
 }
 
 export function productImagePathFromUrl(url: string): string {

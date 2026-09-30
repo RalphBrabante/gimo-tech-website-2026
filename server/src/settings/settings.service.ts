@@ -26,7 +26,7 @@ export class SettingsService {
   private async getEntity(): Promise<AppSettingsEntity> {
     const settings = await this.settings.findOneBy({ id: 1 });
     if (settings) return settings;
-    return this.settings.save(this.settings.create({ id: 1, currencyCode: 'USD', storeName: 'Gimo Tech Supplies' }));
+    return this.settings.create({ id: 1, currencyCode: 'USD', storeName: 'Gimo Tech Supplies', supportEmail: null, freeShippingThresholdCents: null });
   }
 
   private toModel(entity: AppSettingsEntity): AppSettings {
