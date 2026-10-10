@@ -25,6 +25,9 @@ export class HomeRendererService {
     if (adapter) document = document.replace('<script src="/assets/analytics.js"', `<script src="${adapter}" defer></script><script src="/assets/analytics.js"`);
     // Keep native import in CommonJS Nest output to load Angular's ESM bundle.
     const module = await (new Function('url', 'return import(url)') as (url: string) => Promise<{ default: (document: string, url: string, data: unknown) => Promise<string> }>)(pathToFileURL(resolve(storefrontPath, '../server/main.server.mjs')).href);
-    return module.default(document, `${origin}/`, snapshot);
+    const html = await module.default(document, `${origin}/`, snapshot);
+    // Cloudflare email obfuscation would rewrite server-rendered mailto links inside the hydrated
+    // root into /cdn-cgi/ links. The markers sit outside <app-root>, so hydration is unaffected.
+    return html.replace('<app-root', '<!--email_off--><app-root').replace('</app-root>', '</app-root><!--/email_off-->');
   }
 }

@@ -2,6 +2,7 @@ import { redirectTrailingSlash } from '../common/public-document.middleware';
 import { HomeRendererService } from '../homepage/home-renderer.service';
 import { publicOrigin } from '../common/public-site';
 import { Controller, Get, Param, Query, Req, Res } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
 import { resolve } from 'node:path';
 import { PagesService } from './pages.service';
@@ -25,6 +26,8 @@ export class PagesViewController {
     response.status(404).json({ statusCode: 404, error: 'Not Found', message: 'API endpoint not found' });
   }
 
+  // Public documents are crawled in bursts; a 429 here would cost indexing. APIs and auth keep their limits.
+  @SkipThrottle()
   @Get('/')
   async renderHome(@Res() response: Response, @Query('add-to-quote') productId?: string): Promise<void> {
     response.setHeader('Cache-Control', 'no-cache');
@@ -32,6 +35,7 @@ export class PagesViewController {
     catch { response.status(503).setHeader('Retry-After', '60'); response.type('text/html').send('<!doctype html><html lang="en"><head><title>Temporarily unavailable | Gimo Tech Supplies</title><meta name="robots" content="noindex"></head><body><main><h1>Our catalogue is temporarily unavailable</h1><p>Please email <a href="mailto:gimotechsupplies@gmail.com">our supply team</a> for product and quotation enquiries.</p></main></body></html>'); }
   }
 
+  @SkipThrottle()
   @Get(':slug')
   async renderPage(@Param('slug') slug: string, @Req() request: Request, @Res() response: Response): Promise<void> {
     const page = await this.pages.findPublishedBySlug(slug);
@@ -49,6 +53,7 @@ export class PagesViewController {
     response.status(200).type('text/html').send(html);
   }
 
+  @SkipThrottle()
   @Get('{*splat}')
   async notFound(@Req() request: Request, @Res() response: Response): Promise<void> {
     const html = await this.renderer.renderNotFound(originFromRequest(request));

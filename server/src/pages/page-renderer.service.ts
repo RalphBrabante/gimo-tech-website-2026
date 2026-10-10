@@ -1,5 +1,5 @@
 import { imageDimensions, thumbnailUrl } from '../media/public-image';
-import { publicOrigin, identityGraph, analyticsAdapterPath, productPath, NYLON_PRODUCT_PATH, BUSINESS } from '../common/public-site';
+import { publicOrigin, identityGraph, analyticsAdapterPath, productPath, NYLON_PRODUCT_PATH, BUSINESS, metaDescription, breadcrumbs } from '../common/public-site';
 import { publicHref } from '../common/public-site';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -23,6 +23,13 @@ interface FooterColumn {
 // Resolve after ConfigModule has loaded the environment.
 const siteOrigin = publicOrigin;
 
+// Local social images with known dimensions. Pages without their own image share the nylon photograph.
+const SOCIAL_IMAGES: Record<string, { width: number; height: number; alt: string }> = {
+  '/assets/products/nylon-syringe-filter-hero-1280.jpg': { width: 1280, height: 1024, alt: 'Canister of 25mm 0.45µm nylon syringe filters from Gimo Tech Supplies' },
+  '/assets/products/sequential-qr-labels-hero-1280.jpg': { width: 1280, height: 853, alt: 'Roll of white sequential QR code adhesive labels' }
+};
+const DEFAULT_SOCIAL_IMAGE = '/assets/products/nylon-syringe-filter-hero-1280.jpg';
+
 @Injectable()
 export class PageRendererService {
   constructor(@InjectRepository(MenuItemEntity) private readonly menuItems: Repository<MenuItemEntity>) {}
@@ -32,9 +39,10 @@ export class PageRendererService {
 
     const nav = await this.loadNav();
     const canonicalUrl = `${siteOrigin()}/${page.slug}`;
-    const description = page.metaDescription?.trim() || page.blocks.find(block => block.paragraphText?.trim())?.paragraphText?.slice(0, 180) || `${page.title}: product information and enquiries from Gimo Tech Supplies in the Philippines.`;
-    const extra = page.slug === 'biohazard-bags' ? '<h2>Prepare your printing brief</h2><p>Include the desired dimensions, quantity, artwork, printed wording, identifier sequence, and QR destination or data. Ask the team to confirm the layout and proof approval process before production. Printed QR identifiers do not by themselves provide a complete waste-tracking system.</p>' : '';
-    const bodyHtml = `<h1>${escapeHtml(page.title)}</h1>\n${(await Promise.all(page.blocks.map((block, index) => this.renderBlock(block, index < 2)))).join('\n')}${extra}`;
+    const description = metaDescription(page.metaDescription?.trim() || page.blocks.find(block => block.paragraphText?.trim())?.paragraphText || `${page.title}: product information and enquiries from Gimo Tech Supplies in the Philippines.`);
+    const extra = page.slug === 'biohazard-bags' ? '<h2>Prepare your printing brief</h2><p>Include the desired dimensions, quantity, artwork, printed wording, identifier sequence, and QR destination or data. Ask the team to confirm the layout and proof approval process before production. Printed QR identifiers do not by themselves provide a complete waste-tracking system.</p><h2>Related laboratory supplies</h2><p>Pair printed bags with <a href="/sequential-qr-code-labels">sequential QR code labels</a> for containers and samples, or browse <a href="/syringe-filters">syringe filters for HPLC sample preparation</a>. <a href="/request-for-a-quote">Request a quotation</a> to combine items in one enquiry.</p>' : '';
+    const trail = breadcrumbs([{ name: 'Home', path: '/' }, { name: page.title, path: `/${page.slug}` }]);
+    const bodyHtml = `${trail.html}<h1>${escapeHtml(page.title)}</h1>\n${(await Promise.all(page.blocks.map((block, index) => this.renderBlock(block, index < 2)))).join('\n')}${extra}`;
 
     return this.shell({
       title: page.title,
@@ -47,10 +55,10 @@ export class PageRendererService {
       robots: null,
       jsonLd: {
         '@context': 'https://schema.org',
-        '@type': 'WebPage',
-        name: page.title,
-        description,
-        url: canonicalUrl
+        '@graph': [
+          { '@type': 'WebPage', name: page.title, description, url: canonicalUrl },
+          trail.jsonLd
+        ]
       }
     });
   }
@@ -180,14 +188,70 @@ export class PageRendererService {
   async renderCatalogue(products: Product[], page: number, hasNext: boolean): Promise<string> {
     const nav = await this.loadNav();
     const path = page === 1 ? '/products' : `/products?page=${page}`;
-    const cards = products.map(p => `<article class="catalogue-card"><a href="${productPath(p)}">${p.imageUrl ? `<img src="${escapeHtml(p.imageUrl)}" width="360" height="260" loading="lazy" decoding="async" alt="${escapeHtml(p.name)}">` : ''}<h2>${escapeHtml(p.name)}</h2></a><p>${escapeHtml(p.description)}</p><p>SKU: ${escapeHtml(p.sku)} · Request pricing</p></article>`).join('');
-    return this.shell({ title: `Laboratory Supplies Catalogue${page > 1 ? ` — Page ${page}` : ''}`, description: `Browse laboratory supplies and request configuration-specific quotations from Gimo Tech Supplies in the Philippines${page > 1 ? `, catalogue page ${page}` : ''}.`, canonicalUrl: `${siteOrigin()}${path}`, ogImage: null, headerLinks: nav.header, footerColumns: nav.footerColumns, robots: null, jsonLd: { '@type': 'CollectionPage', name: 'Laboratory Supplies Catalogue', url: `${siteOrigin()}${path}` }, bodyHtml: `<h1>Laboratory Supplies Catalogue${page > 1 ? ` — Page ${page}` : ''}</h1><p>Confirm pricing, packaging and availability with our supply team.</p><p><a href="${NYLON_PRODUCT_PATH}">25mm 0.45µm nylon syringe filters: non-sterile 100-piece configuration</a> · <a href="/syringe-filters">Syringe filter selection</a></p><div class="catalogue-grid">${cards}</div>${products.length ? '' : '<p>Contact us for current product requirements.</p>'}<nav aria-label="Catalogue pagination">${page > 1 ? `<a href="${page === 2 ? '/products' : `/products?page=${page - 1}`}">Previous page</a>` : ''} ${hasNext ? `<a href="/products?page=${page + 1}">Next page</a>` : ''}</nav><p><a href="/contact-us">Contact Gimo for a quotation</a></p>` });
+    const cards = products.map(p => `<article class="catalogue-card"><a href="${productPath(p)}">${p.imageUrl ? `<img src="${escapeHtml(p.imageUrl)}" width="360" height="260" loading="lazy" decoding="async" alt="${escapeHtml(p.name)}">` : ''}<h3>${escapeHtml(p.name)}</h3></a><p>${escapeHtml(p.description)}</p><p>SKU: ${escapeHtml(p.sku)} · Request pricing</p></article>`).join('');
+    // Product ranges that already have their own verified pages; they keep the catalogue useful when few records are published.
+    const ranges = [
+      { name: 'Nylon Syringe Filter 25mm 0.45µm', path: NYLON_PRODUCT_PATH, text: 'Non-sterile 100-piece canister for HPLC sample preparation and general laboratory filtration.' },
+      { name: 'Syringe Filters for HPLC Sample Preparation', path: '/syringe-filters', text: 'Compare Nylon, PTFE, PVDF and MCE membranes in the common 25 mm format.' },
+      { name: 'Sequential QR Code Labels', path: '/sequential-qr-code-labels', text: '30 × 20 mm adhesive labels with unique QR codes and sequential numbering for tracking and inventory.' },
+      { name: 'Customized Biohazard Bags with QR Code Printing', path: '/biohazard-bags', text: 'Printed identifiers, series-based layouts and QR code attachments for laboratory waste workflows.' }
+    ];
+    const rangeCards = ranges.map(r => `<a href="${r.path}"><strong>${escapeHtml(r.name)}</strong><span>${escapeHtml(r.text)}</span></a>`).join('');
+    const pageLabel = page > 1 ? ` — Page ${page}` : '';
+    const trail = breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Catalogue', path: '/products' }]);
+    const listed = [...ranges.map(r => ({ name: r.name, path: r.path })), ...products.map(p => ({ name: p.name, path: productPath(p) }))];
+    return this.shell({
+      title: `Laboratory Supplies Catalogue Philippines${pageLabel}`,
+      description: `Laboratory supplies from Gimo Tech Supplies: nylon syringe filters, sequential QR code labels and custom biohazard bags in the Philippines.${page > 1 ? ` Page ${page}.` : ' Request a quote.'}`,
+      canonicalUrl: `${siteOrigin()}${path}`,
+      ogImage: null,
+      headerLinks: nav.header,
+      footerColumns: nav.footerColumns,
+      robots: null,
+      jsonLd: { '@graph': [
+        { '@type': 'CollectionPage', name: `Laboratory Supplies Catalogue${pageLabel}`, url: `${siteOrigin()}${path}`, mainEntity: { '@type': 'ItemList', itemListElement: listed.map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item.name, url: `${siteOrigin()}${item.path}` })) } },
+        trail.jsonLd
+      ] },
+      bodyHtml: `${trail.html}<h1>Laboratory Supplies Catalogue${pageLabel}</h1><p class="lede">Gimo Tech Supplies, also known as GIMO Laboratory Supplies, supplies syringe filters, sequential QR code labels and customized biohazard bags to laboratories and procurement teams in the Philippines. Pricing, packaging and availability are confirmed with each quotation.</p>
+<section aria-labelledby="ranges-title"><h2 id="ranges-title">Product ranges</h2><div class="related-grid">${rangeCards}</div></section>
+<section aria-labelledby="catalogue-items-title"><h2 id="catalogue-items-title">Catalogue items</h2>${products.length ? `<div class="catalogue-grid">${cards}</div>` : '<p>Contact us for current product requirements, or start with the product ranges above.</p>'}<nav aria-label="Catalogue pagination">${page > 1 ? `<a href="${page === 2 ? '/products' : `/products?page=${page - 1}`}">Previous page</a>` : ''} ${hasNext ? `<a href="/products?page=${page + 1}">Next page</a>` : ''}</nav></section>
+<aside class="delivery-panel"><div><h2>Need a configuration that is not listed?</h2><p>Send the product, membrane, size, pack quantity and delivery destination. The supply team confirms what can be provided rather than assuming stock.</p></div><a class="button dark" href="/request-for-a-quote">Request a quotation</a></aside>`
+    });
   }
 
   async renderContact(slug: string): Promise<string> {
     const nav = await this.loadNav();
-    const title = slug === 'about-gimo' ? 'About Gimo Tech Supplies' : slug === 'request-for-a-quote' ? 'Request a Laboratory Supplies Quotation' : 'Contact Gimo Tech Supplies';
-    return this.shell({ title, description: `${title}: discuss nylon syringe filters, custom biohazard bags and sequential QR labels in the Philippines.`, canonicalUrl: `${siteOrigin()}/${slug}`, ogImage: null, headerLinks: nav.header, footerColumns: nav.footerColumns, robots: null, jsonLd: { '@type': slug === 'about-gimo' ? 'AboutPage' : 'ContactPage', name: title, about: { '@id': `${siteOrigin()}/#organization` } }, bodyHtml: `<h1>${title}</h1><p>Gimo Tech Supplies, also known as GIMO Laboratory Supplies, supplies laboratory consumables and coordinates custom printing enquiries in the Philippines.</p><h2>Product and quotation enquiries</h2><p>Include the product or SKU, required configuration, pack quantity and delivery destination. For custom bags or labels, include your artwork, identifier series and QR data requirements.</p><p><a href="mailto:${BUSINESS.email}">Email ${BUSINESS.email}</a></p><p><a href="/products">Browse products for your quotation bag</a> · <a href="/lazada-shop">Order online through Lazada</a></p><h2>Business location</h2><p>${BUSINESS.streetAddress}, ${BUSINESS.locality}, ${BUSINESS.region} ${BUSINESS.postalCode}, Philippines. Contact us before arranging a visit.</p>` });
+    const address = `${BUSINESS.streetAddress}, ${BUSINESS.locality}, ${BUSINESS.region} ${BUSINESS.postalCode}, Philippines`;
+    const email = `<a href="mailto:${BUSINESS.email}">${BUSINESS.email}</a>`;
+    const offers = `<ul><li><a href="${NYLON_PRODUCT_PATH}">25mm 0.45µm nylon syringe filters</a> and other <a href="/syringe-filters">syringe filters for HPLC sample preparation</a></li><li><a href="/sequential-qr-code-labels">Sequential QR code labels</a> printed at 30 × 20 mm</li><li><a href="/biohazard-bags">Customized biohazard bags</a> with printed identifiers and QR code attachments</li></ul>`;
+    // Each legacy destination answers a different search intent instead of repeating one template.
+    const pages: Record<string, { title: string; heading: string; description: string; type: string; body: string }> = {
+      'about-gimo': {
+        title: 'About Gimo Tech Supplies | Laboratory Supplies Philippines',
+        heading: 'About Gimo Tech Supplies',
+        description: 'Gimo Tech Supplies (GIMO Laboratory Supplies) is a San Pedro, Laguna supplier of syringe filters, sequential QR code labels and custom biohazard bags.',
+        type: 'AboutPage',
+        body: `<p class="lede">Gimo Tech Supplies, also known as GIMO Laboratory Supplies, supplies laboratory consumables and coordinates custom printing enquiries for laboratories and procurement teams in the Philippines.</p><h2>What we supply</h2>${offers}<h2>How we work</h2><p>Every order starts from your method and quantity. Share the configuration you need and the supply team confirms pricing, packaging, availability and delivery for your destination instead of assuming stock. Ready-to-ship items can also be ordered through the <a href="/lazada-shop">GIMO Laboratory Supplies Lazada shop</a>.</p><h2>Where we are</h2><p>${address}. Contact us before arranging a visit.</p><p><a href="/contact-us">Contact Gimo Tech Supplies</a> · <a href="/request-for-a-quote">Request a quotation</a></p>`
+      },
+      'contact-us': {
+        title: 'Contact Gimo Tech Supplies | San Pedro, Laguna',
+        heading: 'Contact Gimo Tech Supplies',
+        description: 'Email Gimo Tech Supplies about syringe filters, sequential QR code labels and custom biohazard bags. Based in San Pedro, Laguna, Philippines.',
+        type: 'ContactPage',
+        body: `<p class="lede">Email the supply team about products, quotations, custom printing and delivery within the Philippines.</p><h2>Email</h2><p>${email}</p><p>Include the product or SKU, required configuration, pack quantity and delivery destination. For custom bags or labels, include your artwork, identifier series and QR data requirements.</p><h2>Business address</h2><p>${address}. Contact us before arranging a visit.</p><h2>Other ways to order</h2><p><a href="/request-for-a-quote">Request a formal quotation</a> · <a href="/lazada-shop">Order online through Lazada</a> · <a href="/products">Browse the catalogue</a></p>`
+      },
+      'request-for-a-quote': {
+        title: 'Request a Laboratory Supplies Quotation | Gimo Tech Supplies',
+        heading: 'Request a Laboratory Supplies Quotation',
+        description: 'Request a quotation for syringe filters, sequential QR code labels or custom biohazard bags. Pricing, availability and delivery are confirmed by email.',
+        type: 'ContactPage',
+        body: `<p class="lede">Get a configuration-specific quotation for laboratory supplies delivered within the Philippines.</p><h2>What we can quote</h2>${offers}<h2>How to request a quotation</h2><ol><li>Browse the <a href="/products">catalogue</a> and add products to your quotation bag, or email ${email} directly.</li><li>Include the configuration, pack quantity and delivery destination. For printed bags or labels, add your artwork, identifier series and QR data.</li><li>The supply team confirms pricing, availability and delivery timing by email before you order.</li></ol><p>Prefer to buy online now? Visit the <a href="/lazada-shop">GIMO Laboratory Supplies Lazada shop</a>.</p>`
+      }
+    };
+    const content = pages[slug] ?? pages['contact-us'];
+    const canonicalUrl = `${siteOrigin()}/${slug}`;
+    const trail = breadcrumbs([{ name: 'Home', path: '/' }, { name: content.heading, path: `/${slug}` }]);
+    return this.shell({ title: content.title, fullTitle: true, description: content.description, canonicalUrl, ogImage: null, headerLinks: nav.header, footerColumns: nav.footerColumns, robots: null, jsonLd: { '@graph': [{ '@type': content.type, name: content.heading, description: content.description, url: canonicalUrl, about: { '@id': `${siteOrigin()}/#organization` } }, trail.jsonLd] }, bodyHtml: `${trail.html}<h1>${content.heading}</h1>${content.body}` });
   }
 
   async renderNotFound(origin: string): Promise<string> {
@@ -232,24 +296,22 @@ export class PageRendererService {
     const images = product.images.length > 0 ? product.images : product.imageUrl ? [{ id: 0, url: product.imageUrl }] : [];
     const imageUrl = this.absoluteHttpUrl(images[0]?.url ?? null, siteOrigin());
     const imageMarkup = this.renderProductMedia(images, product.name, product.category, product.accent);
-    const bodyHtml = `<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/products">Catalog</a><span aria-hidden="true">/</span><span>${escapeHtml(product.name)}</span></nav>
+    const trail = breadcrumbs([{ name: 'Home', path: '/' }, { name: 'Catalogue', path: '/products' }, { name: product.name, path: productPath(product) }]);
+    const bodyHtml = `${trail.html}
 <article class="product-page"><div class="product-page-media">${imageMarkup}</div><div class="product-page-copy"><p class="product-category">${escapeHtml(product.category)}</p><h1>${escapeHtml(product.name)}</h1><p class="product-sku">SKU: ${escapeHtml(product.sku)}</p><p>${escapeHtml(product.description)}</p><div class="product-page-actions"><a class="button dark" href="/?add-to-quote=${product.id}">Add to quotation bag</a><a class="text-link" href="mailto:${BUSINESS.email}?subject=${encodeURIComponent(`Quotation request: ${product.name}`)}">Ask about this product</a></div><p class="product-note">Pricing, availability, and delivery options are confirmed in your quotation.</p></div></article>`;
     return this.shell({
       title: product.name,
-      description: `${product.name}: ${product.description}`.slice(0, 200),
+      description: metaDescription(`${product.name}: ${product.description}`),
       canonicalUrl,
       ogImage: imageUrl,
+      ogType: 'product',
       headerLinks: nav.header,
       footerColumns: nav.footerColumns,
       bodyHtml,
       robots: null,
       jsonLd: { '@context': 'https://schema.org', '@graph': [
-        { '@type': 'Product', '@id': `${canonicalUrl}#product`, name: product.name, description: product.description, sku: product.sku, url: canonicalUrl, ...(imageUrl ? { image: [imageUrl] } : {}) },
-        { '@type': 'BreadcrumbList', itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteOrigin()}/` },
-          { '@type': 'ListItem', position: 2, name: 'Products', item: `${siteOrigin()}/products` },
-          { '@type': 'ListItem', position: 3, name: product.name, item: canonicalUrl }
-        ] }
+        { '@type': 'Product', '@id': `${canonicalUrl}#product`, name: product.name, description: product.description, sku: product.sku, url: canonicalUrl, ...(product.category ? { category: product.category } : {}), ...(imageUrl ? { image: [imageUrl] } : {}) },
+        trail.jsonLd
       ] },
       scripts: images.length > 0 ? ['/assets/product-gallery.js'] : []
     });
@@ -258,7 +320,7 @@ export class PageRendererService {
   async renderNylonSyringeFilter(): Promise<string> {
     const nav = await this.loadNav();
     const canonicalUrl = `${siteOrigin()}${NYLON_PRODUCT_PATH}`;
-    const description = 'Buy 25mm 0.45µm nylon syringe filters in the Philippines for HPLC sample preparation and general laboratory filtration. Non-sterile 100-piece packs from GIMO Laboratory Supplies.';
+    const description = 'Buy 25mm 0.45µm nylon syringe filters in the Philippines for HPLC sample preparation and lab filtration. Non-sterile 100-piece packs from GIMO.';
     const image = `${siteOrigin()}/assets/products/nylon-syringe-filter-hero-1280.jpg`;
     const faqs = [
       {
@@ -358,6 +420,7 @@ export class PageRendererService {
       description,
       canonicalUrl,
       ogImage: `${siteOrigin()}/assets/products/nylon-syringe-filter-hero-1280.jpg`,
+      ogType: 'article',
       headerLinks: nav.header,
       footerColumns: nav.footerColumns,
       bodyHtml,
@@ -365,7 +428,7 @@ export class PageRendererService {
       jsonLd: {
         '@context': 'https://schema.org',
         '@graph': [
-          { '@type': 'Article', headline: 'Nylon vs PTFE vs PVDF vs MCE Syringe Filters', description, mainEntityOfPage: canonicalUrl, publisher: { '@id': `${siteOrigin()}/#organization` } },
+          { '@type': 'Article', headline: 'Nylon vs PTFE vs PVDF vs MCE Syringe Filters', description, url: canonicalUrl, mainEntityOfPage: canonicalUrl, image: [`${siteOrigin()}/assets/products/nylon-syringe-filter-hero-1280.jpg`], inLanguage: 'en-PH', about: ['Syringe filter', 'Membrane filtration', 'HPLC sample preparation'], author: { '@id': `${siteOrigin()}/#organization` }, publisher: { '@id': `${siteOrigin()}/#organization` } },
           { '@type': 'BreadcrumbList', itemListElement: [
             { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteOrigin()}/` },
             { '@type': 'ListItem', position: 2, name: 'Syringe Filters', item: `${siteOrigin()}/syringe-filters` },
@@ -610,15 +673,21 @@ export class PageRendererService {
       .map((column) => `<div><h2>${escapeHtml(column.label)}</h2>${column.links.map(link).join('')}</div>`)
       .join('\n');
 
+    // Page-level nodes join the shared identity graph so every WebPage links to the site and organization.
+    const pageNodes = options.jsonLd ? (Array.isArray(options.jsonLd['@graph']) ? options.jsonLd['@graph'] : [options.jsonLd]).map((node: Record<string, unknown>) => ['WebPage', 'AboutPage', 'ContactPage', 'CollectionPage'].includes(String(node['@type'])) ? { ...node, '@id': `${options.canonicalUrl}#webpage`, inLanguage: 'en-PH', isPartOf: { '@id': `${siteOrigin()}/#website` } } : node) : [];
     const jsonLdScript = options.jsonLd
-      ? `<script type="application/ld+json">${serializeJsonLd({ '@context': 'https://schema.org', '@graph': [...identityGraph(), ...(Array.isArray(options.jsonLd['@graph']) ? options.jsonLd['@graph'] : [options.jsonLd])] })}</script>`
+      ? `<script type="application/ld+json">${serializeJsonLd({ '@context': 'https://schema.org', '@graph': [...identityGraph(), ...pageNodes] })}</script>`
       : '';
-    const ogImageTag = options.ogImage ? `<meta property="og:image" content="${escapeHtml(options.ogImage)}">` : '';
-    const twitterImageTag = options.ogImage ? `<meta name="twitter:image" content="${escapeHtml(options.ogImage)}">` : '';
+    const ogImage = options.ogImage ?? `${siteOrigin()}${DEFAULT_SOCIAL_IMAGE}`;
+    const ogImageInfo = ogImage.startsWith(siteOrigin()) ? SOCIAL_IMAGES[ogImage.slice(siteOrigin().length)] : undefined;
+    const ogImageAlt = ogImageInfo?.alt ?? options.title;
+    const ogImageTag = `<meta property="og:image" content="${escapeHtml(ogImage)}">${ogImageInfo ? `\n<meta property="og:image:width" content="${ogImageInfo.width}">\n<meta property="og:image:height" content="${ogImageInfo.height}">` : ''}\n<meta property="og:image:alt" content="${escapeHtml(ogImageAlt)}">`;
+    const twitterImageTag = `<meta name="twitter:image" content="${escapeHtml(ogImage)}">\n<meta name="twitter:image:alt" content="${escapeHtml(ogImageAlt)}">`;
     const canonicalTag = options.canonicalUrl ? `<link rel="canonical" href="${escapeHtml(options.canonicalUrl)}">` : '';
     const robotsTag = options.robots ? `<meta name="robots" content="${escapeHtml(options.robots)}">` : '';
     const ogUrlTag = options.canonicalUrl ? `<meta property="og:url" content="${escapeHtml(options.canonicalUrl)}">` : '';
-    const title = escapeHtml(options.fullTitle ? options.title : `${options.title} | Gimo Tech Supplies`);
+    // Avoid "About Gimo Tech Supplies | Gimo Tech Supplies" when the brand is already in the title.
+    const title = escapeHtml(options.fullTitle || options.title.includes(BUSINESS.name) ? options.title : `${options.title} | ${BUSINESS.name}`);
     const stylesheetTags = (options.stylesheets ?? [])
       .map((href) => `<link rel="stylesheet" href="${escapeHtml(href)}">`)
       .join('\n');
@@ -635,6 +704,7 @@ ${canonicalTag}
 ${robotsTag}
 <meta name="theme-color" content="#153f70">
 <meta property="og:type" content="${options.ogType ?? 'website'}">
+<meta property="og:locale" content="en_PH">
 ${ogUrlTag}
 <meta property="og:site_name" content="Gimo Tech Supplies">
 <meta property="og:title" content="${escapeHtml(options.title)}">
@@ -652,13 +722,15 @@ ${stylesheetTags}
 ${jsonLdScript}
 </head>
 <body>
+<!--email_off-->
 <a class="skip-link" href="#main-content">Skip to content</a>
 <header class="site-header">
-  <a class="brand" href="/" aria-label="Gimo Tech Supplies home"><img src="/assets/brand/gimo-tech-supplies-logo-600.png" width="600" height="200" alt="Gimo Tech Supplies"></a>
+  <a class="brand" href="/" aria-label="Gimo Tech Supplies home"><picture><source srcset="/assets/brand/gimo-tech-supplies-logo-420.webp" type="image/webp"><img src="/assets/brand/gimo-tech-supplies-logo-420.png" width="420" height="140" alt="Gimo Tech Supplies" decoding="async"></picture></a>
   <nav aria-label="Primary navigation">${headerNav}</nav>
 </header>
 <main id="main-content" class="site-main">${options.bodyHtml}</main>
-<footer class="site-footer"><div class="footer-grid">${footerColumns}</div></footer>
+<footer class="site-footer"><div class="footer-grid">${footerColumns}</div><address class="footer-contact"><strong>${escapeHtml(BUSINESS.name)}</strong> (${escapeHtml(BUSINESS.alternateName)}) · ${escapeHtml(BUSINESS.streetAddress)}, ${escapeHtml(BUSINESS.locality)}, ${escapeHtml(BUSINESS.region)} ${escapeHtml(BUSINESS.postalCode)}, Philippines · <a href="mailto:${BUSINESS.email}">${BUSINESS.email}</a> · <a href="${BUSINESS.lazadaShop}" target="_blank" rel="noopener">Lazada shop</a></address></footer>
+<!--/email_off-->
 ${analyticsAdapterPath() ? `<script src="${analyticsAdapterPath()}" defer></script>` : ''}
 <script src="/assets/analytics.js" defer></script>
 ${scriptTags}

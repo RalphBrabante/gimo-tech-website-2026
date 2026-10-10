@@ -10,8 +10,8 @@
 <header class="nav shell" [attr.inert]="cartOpen ? '' : null">
   <a class="brand" href="/" aria-label="Gimo Tech Supplies home">
     <picture>
-      <source srcset="/assets/brand/gimo-tech-supplies-logo-600.webp" type="image/webp">
-      <img src="/assets/brand/gimo-tech-supplies-logo-600.png" width="600" height="200" alt="Gimo Tech Supplies" fetchpriority="high" decoding="async">
+      <source srcset="/assets/brand/gimo-tech-supplies-logo-420.webp" type="image/webp">
+      <img src="/assets/brand/gimo-tech-supplies-logo-420.png" width="420" height="140" alt="Gimo Tech Supplies" decoding="async">
     </picture>
   </a>
   <nav aria-label="Primary navigation">
@@ -224,8 +224,8 @@
   <section class="location shell">
     <div class="store-card">
       <picture class="store-logo">
-        <source srcset="/assets/brand/gimo-tech-supplies-logo-600.webp" type="image/webp">
-        <img src="/assets/brand/gimo-tech-supplies-logo-600.png" width="600" height="200" alt="Gimo Tech Supplies" loading="lazy" decoding="async">
+        <source srcset="/assets/brand/gimo-tech-supplies-logo-420.webp" type="image/webp">
+        <img src="/assets/brand/gimo-tech-supplies-logo-420.png" width="420" height="140" alt="Gimo Tech Supplies" loading="lazy" decoding="async">
       </picture>
       <p>{{ homepage.location.tagline }}</p>
       <span>{{ homepage.location.description }}</span>
@@ -283,7 +283,7 @@
 
 <footer [attr.inert]="cartOpen ? '' : null">
   <div class="shell footer-grid">
-    <div><a class="brand footer-brand" href="/" aria-label="Gimo Tech Supplies home"><picture><source srcset="/assets/brand/gimo-tech-supplies-logo-600.webp" type="image/webp"><img src="/assets/brand/gimo-tech-supplies-logo-600.png" width="600" height="200" alt="Gimo Tech Supplies" loading="lazy" decoding="async"></picture></a><p>{{ homepage.footer_brand.blurb }}</p><small>{{ homepage.footer_brand.copyrightLine }}</small></div>
+    <div><a class="brand footer-brand" href="/" aria-label="Gimo Tech Supplies home"><picture><source srcset="/assets/brand/gimo-tech-supplies-logo-420.webp" type="image/webp"><img src="/assets/brand/gimo-tech-supplies-logo-420.png" width="420" height="140" alt="Gimo Tech Supplies" loading="lazy" decoding="async"></picture></a><p>{{ homepage.footer_brand.blurb }}</p><small>{{ homepage.footer_brand.copyrightLine }}</small></div>
     <div><h2>Products</h2><a *ngFor="let link of menus.footer.products" [href]="link.href" [attr.aria-current]="link.href === '/' ? 'page' : null" [attr.target]="link.openInNewTab ? '_blank' : null" [attr.rel]="link.openInNewTab ? 'noopener' : null">{{ link.label }}</a></div>
     <div><h2>Services</h2><a *ngFor="let link of menus.footer.services" [href]="link.href" [attr.aria-current]="link.href === '/' ? 'page' : null" [attr.target]="link.openInNewTab ? '_blank' : null" [attr.rel]="link.openInNewTab ? 'noopener' : null">{{ link.label }}</a></div>
     <div><h2>Purchasing help</h2><a *ngFor="let link of menus.footer.purchasing" [href]="link.href" [attr.aria-current]="link.href === '/' ? 'page' : null" [attr.target]="link.openInNewTab ? '_blank' : null" [attr.rel]="link.openInNewTab ? 'noopener' : null">{{ link.label }}</a></div>

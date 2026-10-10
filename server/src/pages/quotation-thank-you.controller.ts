@@ -1,5 +1,6 @@
 import { publicOrigin } from '../common/public-site';
 import { Controller, Get, Query, Req, Res } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
 import { PageRendererService } from './page-renderer.service';
 
@@ -7,6 +8,8 @@ function originFromRequest(request: Request): string {
   return publicOrigin();
 }
 
+// Public documents are crawled in bursts; a 429 here would cost indexing. APIs and auth keep their limits.
+@SkipThrottle()
 @Controller()
 export class QuotationThankYouController {
   constructor(private readonly renderer: PageRendererService) {}

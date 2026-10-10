@@ -444,7 +444,7 @@ tbody tr:last-child > * {
 .catalogue-grid { display:grid; grid-template-columns:1fr; gap:24px; }
 .catalogue-card { border:1px solid #e7edf1; border-radius:9px; padding:20px; min-width:0; }
 .catalogue-card img { width:100%; height:auto; aspect-ratio:18/13; object-fit:contain; }
-.catalogue-card h2 { font-size:1.2rem; }
+.catalogue-card h3 { font-size:1.2rem; }
 .site-footer h2 { font-size:1rem; }
 .cms-image { display:block; max-width:100%; }
 .skip-link { position:absolute; top:0; left:12px; padding:12px; background:#fff; z-index:100; transform:translateY(-110%); }
@@ -454,3 +454,8 @@ a:focus-visible, button:focus-visible { outline:3px solid #087bdd; outline-offse
 @media(min-width:1000px) { .catalogue-grid { grid-template-columns:repeat(4,minmax(0,1fr)); } }
 
 .site-header nav a[aria-current="page"]{text-decoration:underline;text-underline-offset:5px}
+.footer-contact { max-width:1120px; margin:32px auto 0; padding-top:24px; border-top:1px solid rgba(185,202,216,.25); font-style:normal; font-size:.75rem; line-height:1.7; color:#b9cad8; }
+.footer-contact strong { color:#fff; }
+.footer-contact a { color:#b9cad8; text-decoration:underline; text-underline-offset:2px; }
+.footer-contact a:hover, .footer-contact a:focus-visible { color:#fff; }
+.site-header .brand picture { display:block; }

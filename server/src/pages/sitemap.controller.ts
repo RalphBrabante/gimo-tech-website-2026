@@ -1,10 +1,13 @@
 import { Controller, Get, Res } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import type { Response } from 'express';
 import { PagesService } from './pages.service';
 import { ProductsService } from '../products/products.service';
 import { publicOrigin, productPath, NYLON_PRODUCT_PATH } from '../common/public-site';
 import { escapeHtml } from '../common/html.util';
 
+// Public documents are crawled in bursts; a 429 here would cost indexing. APIs and auth keep their limits.
+@SkipThrottle()
 @Controller()
 export class SitemapController {
   constructor(private readonly pages: PagesService, private readonly products: ProductsService) {}

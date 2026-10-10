@@ -17,9 +17,25 @@ export function publicHref(href: string): string {
 export function identityGraph(): Record<string, unknown>[] {
   const origin = publicOrigin();
   return [
-    { '@type': 'Organization', '@id': `${origin}/#organization`, name: BUSINESS.name, alternateName: BUSINESS.alternateName, url: `${origin}/`, email: BUSINESS.email, logo: `${origin}/assets/brand/gimo-tech-supplies-logo-600.png`, sameAs: [BUSINESS.lazadaShop], address: { '@type': 'PostalAddress', streetAddress: BUSINESS.streetAddress, addressLocality: BUSINESS.locality, addressRegion: BUSINESS.region, postalCode: BUSINESS.postalCode, addressCountry: 'PH' } },
-    { '@type': 'WebSite', '@id': `${origin}/#website`, url: `${origin}/`, name: BUSINESS.name, publisher: { '@id': `${origin}/#organization` } }
+    { '@type': 'Organization', '@id': `${origin}/#organization`, name: BUSINESS.name, alternateName: BUSINESS.alternateName, url: `${origin}/`, email: BUSINESS.email, logo: { '@type': 'ImageObject', url: `${origin}/assets/brand/gimo-tech-supplies-logo-600.png`, width: 600, height: 200 }, sameAs: [BUSINESS.lazadaShop], address: { '@type': 'PostalAddress', streetAddress: BUSINESS.streetAddress, addressLocality: BUSINESS.locality, addressRegion: BUSINESS.region, postalCode: BUSINESS.postalCode, addressCountry: 'PH' }, contactPoint: { '@type': 'ContactPoint', contactType: 'sales', email: BUSINESS.email, areaServed: 'PH' }, areaServed: { '@type': 'Country', name: 'Philippines' } },
+    { '@type': 'WebSite', '@id': `${origin}/#website`, url: `${origin}/`, name: BUSINESS.name, alternateName: BUSINESS.alternateName, inLanguage: 'en-PH', publisher: { '@id': `${origin}/#organization` } }
   ];
+}
+
+/** Meta descriptions are cut at a word boundary so search snippets do not end mid-word. */
+export function metaDescription(value: string, max = 160): string {
+  const text = value.replace(/\s+/g, ' ').trim();
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max - 1);
+  return `${cut.slice(0, Math.max(cut.lastIndexOf(' '), max / 2)).replace(/[\s,;:.–—-]+$/, '')}…`;
+}
+
+/** Visible breadcrumb trail plus the matching BreadcrumbList node; the last item is the current page. */
+export function breadcrumbs(items: { name: string; path: string }[]): { html: string; jsonLd: Record<string, unknown> } {
+  const origin = publicOrigin();
+  const escape = (value: string) => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const html = `<nav class="breadcrumb" aria-label="Breadcrumb">${items.map((item, index) => index === items.length - 1 ? `<span aria-current="page">${escape(item.name)}</span>` : `<a href="${escape(item.path)}">${escape(item.name)}</a><span aria-hidden="true">/</span>`).join('')}</nav>`;
+  return { html, jsonLd: { '@type': 'BreadcrumbList', itemListElement: items.map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item.name, item: `${origin}${item.path}` })) } };
 }
 
 /** Optional owner-provided same-origin consent/measurement adapter. */

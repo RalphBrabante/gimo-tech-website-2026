@@ -1,6 +1,7 @@
 import { redirectTrailingSlash } from '../common/public-document.middleware';
 import { publicOrigin } from '../common/public-site';
 import { Controller, Get, Param, Query, Redirect, Req, Res } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
 import { PageRendererService } from '../pages/page-renderer.service';
 import { ProductsService } from './products.service';
@@ -9,6 +10,8 @@ function originFromRequest(request: Request): string {
   return publicOrigin();
 }
 
+// Public documents are crawled in bursts; a 429 here would cost indexing. APIs and auth keep their limits.
+@SkipThrottle()
 @Controller()
 export class ProductViewController {
   constructor(
