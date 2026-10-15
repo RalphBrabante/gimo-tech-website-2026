@@ -6,6 +6,7 @@ const { NestFactory } = require('@nestjs/core');
 const { getRepositoryToken } = require('@nestjs/typeorm');
 const { resolve } = require('node:path');
 const helmet = require('helmet');
+const { contentSecurityPolicy } = require('../dist/common/content-security-policy');
 const { ProductEntity } = require('../dist/products/entities/product.entity');
 const { MenuItemEntity } = require('../dist/menus/entities/menu-item.entity');
 const { ProductsService } = require('../dist/products/products.service');
@@ -41,7 +42,7 @@ async function createFixture(port=3100) {
  class FixtureModule {}
  Module({controllers:[ProductsController,ProductViewController,SitemapController,QuotationThankYouController,PagesViewController],providers:[PageRendererService,HomeRendererService,{provide:ProductsService,useValue:products},{provide:PagesService,useValue:pageService},{provide:HomepageService,useValue:{getAll:async()=>null}},{provide:MenusService,useValue:{getPublic:async()=>null}},{provide:SettingsService,useValue:{get:async()=>({currencyCode:'PHP',freeShippingThresholdCents:null})}},{provide:getRepositoryToken(MenuItemEntity),useValue:{find:async()=>[]}}]})(FixtureModule);
  const app = await NestFactory.create(FixtureModule,{logger:false});
- app.use(helmet({contentSecurityPolicy:{directives:{defaultSrc:["'self'"],scriptSrc:["'self'"],styleSrc:["'self'","'unsafe-inline'",'https://fonts.googleapis.com'],fontSrc:["'self'",'https://fonts.gstatic.com'],imgSrc:["'self'",'data:'],frameSrc:["'self'",'https://www.google.com']}}}));
+ app.use(helmet({contentSecurityPolicy}));
  app.use(require('../dist/common/public-document.middleware').publicDocumentMiddleware);
  app.useStaticAssets(resolve(__dirname,'../../client/dist/client/browser'),{index:false});
  // An explicit fake response for local UI tests. Does not save, email, or reach any service.

@@ -1,4 +1,4 @@
-/* Consent-gated, vendor-neutral adapter. No tag or tracking ID is installed. */
+/* Consent-gated custom events. The owner-approved Google tag initializes separately. */
 (function () {
   'use strict';
   function emit(name, details) {

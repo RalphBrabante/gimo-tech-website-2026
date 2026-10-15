@@ -7,6 +7,7 @@ import { AppModule } from './app.module';
 import { storefrontPath } from './storefront-path';
 import { publicDocumentMiddleware } from './common/public-document.middleware';
 import { publicOrigin } from './common/public-site';
+import { contentSecurityPolicy } from './common/content-security-policy';
 import { productUploadsPath } from './products/product-upload.config';
 import { contentUploadsPath } from './media/media-upload.config';
 
@@ -20,18 +21,7 @@ async function bootstrap() {
 
   app.set('trust proxy', 1);
   app.disable('x-powered-by');
-  app.use(helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-        fontSrc: ["'self'", 'https://fonts.gstatic.com'],
-        imgSrc: ["'self'", 'data:'],
-        scriptSrc: ["'self'"],
-        frameSrc: ["'self'", 'https://www.google.com', 'https://maps.google.com']
-      }
-    }
-  }));
+  app.use(helmet({ contentSecurityPolicy }));
 
   // Register storefront files directly on Express before Nest installs controller
   // routes. Otherwise the CMS catch-all controller can claim asset requests and

@@ -16,6 +16,7 @@
     "verify": "npm run build",
     "test:seo": "npm run build --prefix server && node --test server/test/seo.test.cjs",
     "test:seo:browser": "node scripts/seo-regression.mjs",
+    "test:analytics": "node scripts/test-google-tag.mjs",
     "seo:fixture": "node server/test/public-fixture.cjs",
     "seo:crawl": "node scripts/seo-crawl.mjs"
   },

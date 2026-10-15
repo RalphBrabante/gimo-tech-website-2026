@@ -15,7 +15,7 @@ No ranking, revenue, indexing, rich-result display or AI recommendation is promi
 | Business identity/contact | Approval of existing Gimo Tech Supplies / GIMO Laboratory Supplies aliases, email/address, legal name, phone ownership, visit policy | Existing public identity centralized; dangling Brgy fragment removed; no hours or walk-in promise |
 | Label/bag proof process | Actual file/data formats, proof/approval steps and tolerance/resistance evidence | Enquiry asks for sequence, QR data and artwork; unsupported guarantees not added |
 | Guide authorship | Genuine author/reviewer credentials and approved manufacturer references | No invented reviewer, dates or certification |
-| Analytics | Approved consent policy, adapter/provider, tracking ID, retention and destination allowlist; consent UI implementation | No tracking by default; vendor-neutral adapter only emits after explicit consent=true |
+| Analytics | GA reporting/retention configuration; approved consent UI and adapter for optional custom events | Owner-approved Google tag G-TQKFJZL6YS loads on public indexable documents; custom events still require explicit consent=true |
 | Policies | Owner/legal-approved text for actual policies | No new legal commitments published |
 | Hosting | Hostinger/CDN access to verify forwarded protocol/host, compression, cache and HTML rewrite behavior | Existing trust proxy/security preserved; observed www public alias has fixed-origin redirect; edge HTTP+www one-hop rule still needs verification |
 | Search performance | Search Console and CrUX/RUM access | No claims of indexing or field CWV passes |
