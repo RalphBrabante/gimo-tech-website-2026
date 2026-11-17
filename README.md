@@ -55,6 +55,7 @@ Copy `.env.example` to `.env` for a manual deployment. Keep secrets out of Git; 
 - `server/` — NestJS: API, MySQL/TypeORM, quotations and product enquiries, internal dashboard (`server/internal-ui/`), `sitemap.xml`, and the HTTP pipeline (`src/http-setup.ts`) that hands every non-NestJS path to Next.js.
 - Public HTML is sent with `Cache-Control: public, max-age=0, s-maxage=120, stale-while-revalidate=600` so Hostinger's CDN can absorb traffic bursts. The quotation confirmation page, errors, 404s and requests from signed-in administrators are never shared-cached. **Purge the Hostinger CDN cache after each deployment.**
 - Rate limiting is per real visitor (`CF-Connecting-IP`), and the site's own server-side renders never consume a visitor's limit.
+- **Hostinger build constraint:** Hostinger's build servers have glibc 2.28, so Next.js cannot load its native SWC compiler and falls back to WebAssembly (the `GLIBC_2.29 not found` warning in the build log is expected). That fallback does not support Turbopack, so `client` builds with `next build --webpack`, and `next.config.mjs` is plain ESM so it loads without compilation. Do not convert it back to `next.config.ts`. To reproduce Hostinger locally, build inside an `almalinux:8` container.
 
 ## Technical SEO and testing
 
