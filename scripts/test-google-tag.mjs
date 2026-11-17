@@ -8,7 +8,7 @@ const app = await createFixture(0);
 let browser;
 try {
   const base = await app.getUrl();
-  browser = await chromium.launch({ channel: 'chrome', headless: true });
+  browser = await chromium.launch({ headless: true });
   for (const width of [360, 768, 1440]) {
     const context = await browser.newContext({ viewport: { width, height: 900 } });
     // Intercept all external traffic: never send fixture visits to the real GA property.

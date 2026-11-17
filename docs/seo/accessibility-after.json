@@ -1,12 +1,11 @@
 {
-  "timestamp": "2026-09-30T17:23:32.429Z",
+  "timestamp": "2026-11-17T02:13:56.159Z",
   "results": [
     {
       "path": "/",
       "width": 360,
       "violations": [],
       "incomplete": [
-        "aria-prohibited-attr",
         "color-contrast"
       ]
     },
@@ -14,7 +13,9 @@
       "path": "/products",
       "width": 360,
       "violations": [],
-      "incomplete": []
+      "incomplete": [
+        "color-contrast"
+      ]
     },
     {
       "path": "/product/100",
@@ -26,14 +27,15 @@
       "path": "/products/nylon-syringe-filter-25mm-045um",
       "width": 360,
       "violations": [],
-      "incomplete": []
+      "incomplete": [
+        "color-contrast"
+      ]
     },
     {
       "path": "/syringe-filters",
       "width": 360,
       "violations": [],
       "incomplete": [
-        "aria-prohibited-attr",
         "color-contrast"
       ]
     },
@@ -41,7 +43,9 @@
       "path": "/contact-us",
       "width": 360,
       "violations": [],
-      "incomplete": []
+      "incomplete": [
+        "color-contrast"
+      ]
     },
     {
       "path": "/sequential-qr-code-labels",
@@ -56,7 +60,6 @@
       "width": 1440,
       "violations": [],
       "incomplete": [
-        "aria-prohibited-attr",
         "color-contrast"
       ]
     },
@@ -64,7 +67,9 @@
       "path": "/products",
       "width": 1440,
       "violations": [],
-      "incomplete": []
+      "incomplete": [
+        "color-contrast"
+      ]
     },
     {
       "path": "/product/100",
@@ -76,14 +81,15 @@
       "path": "/products/nylon-syringe-filter-25mm-045um",
       "width": 1440,
       "violations": [],
-      "incomplete": []
+      "incomplete": [
+        "color-contrast"
+      ]
     },
     {
       "path": "/syringe-filters",
       "width": 1440,
       "violations": [],
       "incomplete": [
-        "aria-prohibited-attr",
         "color-contrast"
       ]
     },
@@ -91,7 +97,9 @@
       "path": "/contact-us",
       "width": 1440,
       "violations": [],
-      "incomplete": []
+      "incomplete": [
+        "color-contrast"
+      ]
     },
     {
       "path": "/sequential-qr-code-labels",

@@ -27,6 +27,7 @@
     if (!a) return;
     var url = new URL(a.href, location.href);
     if (url.hostname === 'www.lazada.com.ph' || url.hostname === 'lazada.com.ph') emit('lazada_outbound_click', { destination: 'lazada' });
+    else if (url.hostname === 'shopee.ph' || url.hostname === 'www.shopee.ph') emit('shopee_outbound_click', { destination: 'shopee' });
     else if (url.protocol === 'mailto:' || url.protocol === 'tel:') emit('contact_click', { destination: url.protocol === 'mailto:' ? 'email' : 'phone' });
   });
   window.addEventListener('gimo:quote-start', function () { emit('quote_start'); });

@@ -8,7 +8,9 @@ import { HealthController } from './health.controller';
 import { ProductsModule } from './products/products.module';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { AppThrottlerGuard } from './common/app-throttler.guard';
+import { PublicContentModule } from './public-content/public-content.module';
 import { SettingsModule } from './settings/settings.module';
 import { productUploadsPath } from './products/product-upload.config';
 import { HomepageModule } from './homepage/homepage.module';
@@ -52,6 +54,7 @@ import { DeskModule } from './desk/desk.module';
     HomepageModule,
     MediaModule,
     MenusModule,
+    PublicContentModule,
     ServeStaticModule.forRoot({
       rootPath: productUploadsPath,
       serveRoot: '/uploads/products',
@@ -62,12 +65,12 @@ import { DeskModule } from './desk/desk.module';
       serveRoot: '/uploads/content',
       serveStaticOptions: { maxAge: '30d', fallthrough: false }
     }),
-    // PagesModule must be the last import: its PagesViewController owns every path not
-    // already claimed above (a published CMS page, or a real 404), so anything registered
-    // after it would be unreachable.
+    // PagesModule must be the last import: its ApiNotFoundController owns every unmatched
+    // /api and /internal path, so anything registered after it would be unreachable.
+    // Public website documents are rendered by Next.js (see main.ts), not by NestJS.
     PagesModule
   ],
   controllers: [HealthController],
-  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }]
+  providers: [{ provide: APP_GUARD, useClass: AppThrottlerGuard }]
 })
 export class AppModule {}

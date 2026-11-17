@@ -6,11 +6,22 @@ This document preserves the established Gimo Tech visual system. Read it before 
 
 - The public website is a multi-page experience, not an SPA navigation experience.
 - Header, footer, breadcrumb, category, product, service, and marketing-page links must use normal `href` navigation and refresh the document.
-- Do not use Angular `routerLink`, JavaScript click navigation, or hash-only navigation for destinations that should be separate pages.
+- Do not use Next.js `<Link>`, router push, JavaScript click navigation, or hash-only navigation for destinations that should be separate pages.
 - Preserve the same header, logo, navigation, footer, palette, typography, and spacing system across every page so full refreshes still feel cohesive.
 - Provide an active navigation state based on the current server-rendered or generated document.
 - Every page must remain useful when loaded directly, refreshed, shared, or opened in a new tab.
 - In-page controls such as accordions, galleries, cart buttons, filters, and dialogs may remain interactive without refreshing when they do not represent navigation to a separate indexable page.
+
+## 2026 product-led redesign (approved)
+
+The owner approved a deliberate redesign (November 2026): light, Apple-style product storytelling in the existing navy/aqua palette. It extends, and where noted overrides, the rules below:
+
+- Large display headlines (`.display`, `.headline`), centred hero copy, generous section spacing and alternating white / pale-blue / pale-aqua bands.
+- Product tiles use a 24px radius; sentence-case pill buttons replace uppercase labels.
+- A three.js syringe-filter model (`client/src/components/three/`) may appear in heroes and a sticky scroll story. It must keep a photograph fallback, stop rendering off-screen, render on demand (no idle loops), and be static for `prefers-reduced-motion`.
+- Scroll reveals (`data-reveal`) are opacity/transform only and content stays visible without JavaScript.
+- A translucent sticky global nav and product sub-nav are allowed; avoid glassmorphism elsewhere.
+- Aqua (`#22c7c4`) is decorative or a background behind navy text; use `--aqua-ink` (`#0b7471`) for aqua text on white.
 
 ## Design direction
 

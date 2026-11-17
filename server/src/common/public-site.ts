@@ -5,6 +5,9 @@ export function publicOrigin(): string {
   return url.origin;
 }
 export const NYLON_PRODUCT_PATH = '/products/nylon-syringe-filter-25mm-045um';
+export const PORE_SIZE_GUIDE_PATH = '/guides/0-22-vs-0-45-micron-syringe-filters';
+/** Fixed public routes rendered by Next.js (client/src/app). Keep in sync when adding pages. */
+export const PUBLIC_ROUTES = ['/', '/products', NYLON_PRODUCT_PATH, '/syringe-filters', '/guides/nylon-vs-ptfe-vs-pvdf-vs-mce-syringe-filters', PORE_SIZE_GUIDE_PATH, '/sequential-qr-code-labels', '/contact-us', '/about-gimo', '/request-for-a-quote'];
 export { default as BUSINESS } from './public-business.json';
 import BUSINESS from './public-business.json';
 
@@ -17,7 +20,7 @@ export function publicHref(href: string): string {
 export function identityGraph(): Record<string, unknown>[] {
   const origin = publicOrigin();
   return [
-    { '@type': 'Organization', '@id': `${origin}/#organization`, name: BUSINESS.name, alternateName: BUSINESS.alternateName, url: `${origin}/`, email: BUSINESS.email, logo: { '@type': 'ImageObject', url: `${origin}/assets/brand/gimo-tech-supplies-logo-600.png`, width: 600, height: 200 }, sameAs: [BUSINESS.lazadaShop], address: { '@type': 'PostalAddress', streetAddress: BUSINESS.streetAddress, addressLocality: BUSINESS.locality, addressRegion: BUSINESS.region, postalCode: BUSINESS.postalCode, addressCountry: 'PH' }, contactPoint: { '@type': 'ContactPoint', contactType: 'sales', email: BUSINESS.email, areaServed: 'PH' }, areaServed: { '@type': 'Country', name: 'Philippines' } },
+    { '@type': 'Organization', '@id': `${origin}/#organization`, name: BUSINESS.name, alternateName: BUSINESS.alternateName, url: `${origin}/`, email: BUSINESS.email, logo: { '@type': 'ImageObject', url: `${origin}/assets/brand/gimo-tech-supplies-logo-600.png`, width: 600, height: 200 }, sameAs: [BUSINESS.lazadaShop, BUSINESS.shopeeShop], address: { '@type': 'PostalAddress', streetAddress: BUSINESS.streetAddress, addressLocality: BUSINESS.locality, addressRegion: BUSINESS.region, postalCode: BUSINESS.postalCode, addressCountry: 'PH' }, contactPoint: { '@type': 'ContactPoint', contactType: 'sales', email: BUSINESS.email, areaServed: 'PH' }, areaServed: { '@type': 'Country', name: 'Philippines' } },
     { '@type': 'WebSite', '@id': `${origin}/#website`, url: `${origin}/`, name: BUSINESS.name, alternateName: BUSINESS.alternateName, inLanguage: 'en-PH', publisher: { '@id': `${origin}/#organization` } }
   ];
 }

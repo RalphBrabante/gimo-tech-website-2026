@@ -11,9 +11,10 @@ These instructions apply to every file and feature in this repository. Treat SEO
 
 ## Project context
 
-- The storefront uses Angular in `client/`, but public website navigation must follow a multi-page architecture rather than SPA-style client routing.
+- The public website uses Next.js (App Router, server-rendered) in `client/`, but public website navigation must follow a multi-page architecture rather than SPA-style client routing.
 - The NestJS server and API are in `server/`.
-- Production NestJS serves the compiled Angular application.
+- Production NestJS hosts the Next.js request handler in the same Node process (`server/src/http-setup.ts`, `server/src/next/next-handler.ts`). NestJS owns `/api`, `/internal`, `/uploads`, `/health` and `/sitemap.xml`; every other path is a Next.js document.
+- Public pages read data through the NestJS public content API (`/api/public/*`) via `client/src/lib/api.ts`; never query the database from Next.js.
 - Keep local development and Hostinger deployment working through the root `package.json` scripts.
 - Preserve unrelated user changes and never replace established functionality without a clear requirement.
 
@@ -50,7 +51,7 @@ All public pages and meaningful routes must:
 
 - This website must not behave as a single-page application for public, indexable content.
 - Every primary navigation destination, category, product, service, and marketing page must have its own stable URL and independently indexable HTML document.
-- Clicking a public navigation link must perform a normal browser document request and refresh the page. Do not intercept these links with Angular Router, History API navigation, or custom JavaScript.
+- Clicking a public navigation link must perform a normal browser document request and refresh the page. Do not intercept these links with Next.js `<Link>`/`useRouter`, History API navigation, or custom JavaScript.
 - Use normal `<a href="/path">` links for page navigation. Do not use hash fragments such as `#shop` as substitutes for pages when the destination represents standalone content.
 - Each document must return the correct HTTP status and contain its own title, meta description, canonical URL, headings, body content, social metadata, and applicable structured data in the initial HTML response.
 - Prefer server rendering, static generation, or prerendered route output. Client-side JavaScript may enhance a page but must not be required for crawlers or users to receive its essential content.
@@ -80,13 +81,13 @@ Every new image or icon must be optimized before it is committed.
 - Optimize for current Core Web Vitals: LCP, INP, and CLS.
 - Avoid render-blocking third-party assets. Self-host critical fonts and images where feasible.
 - Limit font families, weights, and character sets. Use `font-display: swap` for custom fonts.
-- Lazy-load noncritical Angular routes and heavy features.
+- Lazy-load heavy client features (for example the three.js scene is code-split and loaded only near the viewport).
 - Avoid adding large libraries for functionality achievable with platform APIs or existing dependencies.
 - Reserve space for dynamic content, banners, product cards, and media so page layout does not jump.
 - Keep animations transform/opacity based, short, and respectful of `prefers-reduced-motion`.
 - Avoid autoplaying media and unnecessary network requests.
 - Use cache-friendly hashed assets in production and appropriate cache headers for static files.
-- Never weaken an existing Angular bundle budget merely to hide unexpected growth. If a deliberate design requires a larger budget, document why and keep the increase narrow.
+- Never weaken the client JavaScript budget merely to hide unexpected growth. If a deliberate design requires a larger budget, document why and keep the increase narrow.
 - Treat Lighthouse/PageSpeed findings as evidence to investigate, while prioritizing real-user Core Web Vitals and functional correctness over chasing a cosmetic score of 100.
 
 ## Accessibility
@@ -99,14 +100,16 @@ Every new image or icon must be optimized before it is committed.
 - Do not communicate state using color alone.
 - Ensure touch targets are comfortably sized and layouts work at 200% zoom.
 
-## Angular standards
+## Next.js standards
 
-- Keep components focused and strongly type API data.
-- Prefer Angular bindings and services over direct DOM manipulation.
-- Use Angular title and meta services for route-specific metadata.
-- Avoid unsafe HTML injection.
+- Pages are Server Components by default; add `'use client'` only for interactive islands (quote bag, forms, 3D scene, menus).
+- Use plain `<a href>` for page navigation. Do not use `next/link`, `useRouter().push` or client-side routing for public pages.
+- Set metadata with `pageMetadata()` from `client/src/lib/seo.tsx` and structured data with `<JsonLd>`; generate visible FAQs and FAQPage data from the same array.
+- Render `<SiteAnalytics />` only on indexable public documents (never on 404, error or quotation-confirmation pages).
+- Keep components focused and strongly type API data (`client/src/lib/types.ts`).
+- Avoid unsafe HTML injection; `dangerouslySetInnerHTML` is reserved for serialized JSON-LD.
 - Preserve loading, empty, success, and error states for API-driven UI.
-- Ensure public internal navigation uses normal document requests and remains usable without Angular client-side routing.
+- Do not add a `loading.tsx` to public routes: streaming before `notFound()` would turn real 404s into 200s.
 
 ## NestJS and API standards
 

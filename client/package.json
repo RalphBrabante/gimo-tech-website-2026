@@ -1,44 +1,26 @@
 {
   "name": "client",
-  "version": "0.0.0",
-  "scripts": {
-    "ng": "ng",
-    "start": "ng serve --proxy-config proxy.conf.json",
-    "build": "npm run build:internal-assets && ng build",
-    "build:internal-assets": "mkdir -p public/internal/assets/fonts public/assets/vendor && cp node_modules/bootstrap/dist/css/bootstrap.min.css public/internal/assets/bootstrap.min.css && cp node_modules/bootstrap-icons/font/bootstrap-icons.css public/internal/assets/bootstrap-icons.css && cp node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff2 public/internal/assets/fonts/ && cp node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff public/internal/assets/fonts/ && cp node_modules/chart.js/dist/chart.umd.js public/internal/assets/chart.umd.js && cp node_modules/three/build/three.module.min.js node_modules/three/build/three.core.min.js public/assets/vendor/",
-    "watch": "npm run build:internal-assets && ng build --watch --configuration development",
-    "test": "ng test"
-  },
+  "version": "1.0.0",
   "private": true,
+  "description": "Gimo Tech Supplies public website (Next.js). Served in production by the NestJS process.",
+  "scripts": {
+    "build": "next build",
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
-    "@angular/animations": "^18.2.0",
-    "@angular/common": "^18.2.0",
-    "@angular/compiler": "^18.2.0",
-    "@angular/core": "^18.2.0",
-    "@angular/forms": "^18.2.0",
-    "@angular/platform-browser": "^18.2.0",
-    "@angular/platform-browser-dynamic": "^18.2.0",
-    "@angular/platform-server": "^18.2.14",
-    "@angular/router": "^18.2.0",
-    "bootstrap": "^5.3.8",
-    "bootstrap-icons": "^1.13.1",
-    "chart.js": "^4.5.1",
-    "rxjs": "~7.8.0",
-    "three": "^0.179.1",
-    "tslib": "^2.3.0",
-    "zone.js": "~0.14.10"
+    "next": "^16.4.6",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "three": "^0.187.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^18.2.4",
-    "@angular/cli": "^18.2.4",
-    "@angular/compiler-cli": "^18.2.0",
-    "@types/jasmine": "~5.1.0",
-    "jasmine-core": "~5.2.0",
-    "karma": "~6.4.0",
-    "karma-chrome-launcher": "~3.2.0",
-    "karma-coverage": "~2.2.0",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.5.2"
+    "@types/node": "^22.20.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.187.0",
+    "typescript": "5.9"
+  },
+  "engines": {
+    "node": ">=20.9.0"
   }
 }

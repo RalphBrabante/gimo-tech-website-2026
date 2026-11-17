@@ -2,21 +2,18 @@ import { Controller, Get, Req, Res, UnauthorizedException } from '@nestjs/common
 import type { Request, Response } from 'express';
 import { resolve } from 'node:path';
 import { AuthService } from './auth.service';
+import { internalUiPath } from '../storefront-path';
 
 const SESSION_COOKIE = 'gimo_internal_session';
-const dashboardSourcePath = resolve(__dirname, '../../../client/public/dashboard');
-const dashboardBuildPath = resolve(__dirname, '../../../client/dist/client/browser/dashboard');
-const internalSourcePath = resolve(__dirname, '../../../client/public/internal');
-const internalBuildPath = resolve(__dirname, '../../../client/dist/client/browser/internal');
+const dashboardSourcePath = resolve(internalUiPath, 'dashboard');
+const internalSourcePath = resolve(internalUiPath, 'internal');
 
 function dashboardFile(name: string): string {
-  const root = process.env.NODE_ENV === 'production' ? dashboardBuildPath : dashboardSourcePath;
-  return resolve(root, name);
+  return resolve(dashboardSourcePath, name);
 }
 
 function internalFile(name: string): string {
-  const root = process.env.NODE_ENV === 'production' ? internalBuildPath : internalSourcePath;
-  return resolve(root, name);
+  return resolve(internalSourcePath, name);
 }
 
 @Controller()

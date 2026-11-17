@@ -25,16 +25,16 @@ The dashboard document uses `noindex`, `nofollow`, private no-store caching, and
 
 ## Bootstrap and Bootstrap Icons
 
-Internal pages use Bootstrap 5 and Bootstrap Icons, with Gimo Tech-specific navigation and color styling in `client/public/internal/assets/internal.css`.
+Internal pages use Bootstrap 5 and Bootstrap Icons, with Gimo Tech-specific navigation and color styling in `server/internal-ui/internal/assets/internal.css`.
 
-- Bootstrap assets: `client/public/internal/assets/bootstrap.min.css`
-- Bootstrap Icons assets: `client/public/internal/assets/bootstrap-icons.css`
-- Shared internal styling: `client/public/internal/assets/internal.css`
-- Dashboard markup: `client/public/dashboard/index.html`
+- Bootstrap assets: `server/internal-ui/internal/assets/bootstrap.min.css`
+- Bootstrap Icons assets: `server/internal-ui/internal/assets/bootstrap-icons.css`
+- Shared internal styling: `server/internal-ui/internal/assets/internal.css`
+- Dashboard markup: `server/internal-ui/dashboard/index.html`
 
-The normal root `npm run build` command copies the locally installed Bootstrap CSS, icon CSS, and font files into the public assets directory before compiling Angular. No CDN or Tailwind CSS is used.
+The vendored Bootstrap, Bootstrap Icons and Chart.js files are committed under `server/internal-ui/internal/assets/`. To upgrade them, copy the new files from a local install of those packages. No CDN or Tailwind CSS is used.
 
-During local development, Angular proxies `/internal/dashboard` to NestJS using `client/proxy.conf.json`. This keeps the authenticated document route and its CSS/JavaScript assets on the same path as production and prevents Angular's SPA fallback from returning HTML for dashboard asset requests. Restart `npm run dev` after changing the proxy configuration.
+The internal documents and assets are owned by NestJS (`server/internal-ui/`) and never pass through the Next.js public website, in development or production.
 
 ## Dashboard behavior
 
@@ -56,7 +56,7 @@ The layout is responsive: it uses a compact stacked layout on small screens and 
 
 ## Helpdesk and Hostinger Agentic Mail
 
-`/internal/helpdesk/` is the primary protected sales inbox workspace; `/internal/desk/` remains available for backward compatibility. The browser calls only `/api/internal/desk/*`; the NestJS server holds the Hostinger token and proxies authenticated mailbox reads to the Hostinger Mail REST API. Never put the token in Helpdesk HTML, JavaScript, the database, or a public Angular environment file.
+`/internal/helpdesk/` is the primary protected sales inbox workspace; `/internal/desk/` remains available for backward compatibility. The browser calls only `/api/internal/desk/*`; the NestJS server holds the Hostinger token and proxies authenticated mailbox reads to the Hostinger Mail REST API. Never put the token in Helpdesk HTML, JavaScript, the database, or a public Next.js environment variable (`NEXT_PUBLIC_*`).
 
 To enable Helpdesk in production:
 

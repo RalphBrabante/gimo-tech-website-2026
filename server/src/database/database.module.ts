@@ -1,4 +1,5 @@
 import { RefinePublicHomepageCopy1790812800000 } from './migrations/1790812800000-refine-public-homepage-copy';
+import { AddShopeeShopLink1795392000000 } from './migrations/1795392000000-add-shopee-shop-link';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -63,7 +64,8 @@ import { AddSequentialQrCodeLabelOffer1784606400000 } from './migrations/1784606
           CreateDesk1784433600000,
           AddAuthSecurity1784520000000,
           AddSequentialQrCodeLabelOffer1784606400000,
-          RefinePublicHomepageCopy1790812800000
+          RefinePublicHomepageCopy1790812800000,
+          AddShopeeShopLink1795392000000
         ],
         migrationsRun: config.get<boolean>('DB_RUN_MIGRATIONS', true),
         synchronize: false,

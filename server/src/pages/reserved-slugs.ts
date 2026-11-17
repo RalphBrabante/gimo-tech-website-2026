@@ -10,5 +10,9 @@ export const RESERVED_SLUGS = new Set([
   'assets',
   'favicon.ico',
   'robots.txt',
-  'sitemap.xml'
+  'sitemap.xml',
+  // Dedicated Next.js routes; a CMS page with these slugs would be unreachable.
+  'syringe-filters',
+  'sequential-qr-code-labels',
+  '_next'
 ]);

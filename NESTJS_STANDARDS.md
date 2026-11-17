@@ -8,7 +8,7 @@ Read this document before changing the API, server configuration, environment va
 - `server/src/main.ts` bootstraps the application.
 - `server/src/app.module.ts` is the root module.
 - Feature modules live in dedicated directories such as `server/src/products/`.
-- Production NestJS serves or routes to independently indexable Angular page documents.
+- Production NestJS hosts the Next.js renderer and routes every non-API path to independently indexable Next.js documents.
 - Hostinger starts the compiled application through the root `server.js`.
 - Preserve `/health`, `/api/health`, Hostinger's assigned `PORT`, proxy trust, Helmet, CORS rules, correct page/404 routing, and shutdown hooks.
 
@@ -130,7 +130,7 @@ feature/
 - Paginate, filter, and select only needed fields.
 - Cache only data with a clear invalidation strategy.
 - Do not block the event loop with CPU-heavy work; move substantial jobs to a queue or worker.
-- Serve immutable hashed Angular assets with long-lived caching while keeping HTML appropriately revalidated.
+- Serve immutable hashed Next.js assets with long-lived caching while keeping HTML appropriately revalidated.
 - Keep dependencies intentional and monitor production packages for vulnerabilities.
 
 ## Testing
@@ -149,10 +149,10 @@ feature/
 
 ## Deployment compatibility
 
-- `npm run build` at the repository root must compile NestJS and Angular.
+- `npm run build` at the repository root must compile NestJS and the Next.js client.
 - `npm start` must launch the compiled NestJS server through `server.js`.
 - Do not make production depend on TypeScript execution or globally installed CLI tools.
-- Production must continue serving the Angular page build with correct full-document route and 404 behavior.
+- Production must continue serving the Next.js page build with correct full-document route and 404 behavior.
 - Use graceful shutdown hooks so Hostinger can replace application processes safely.
 
 ## API change checklist
@@ -167,4 +167,4 @@ Before handing off an API change, confirm:
 - Environment changes are reflected in `.env.example`.
 - Relevant unit or endpoint tests were added or updated.
 - `npm run build` passes.
-- Existing health routes, Angular page serving, full-page navigation, correct 404 responses, and Hostinger startup still work.
+- Existing health routes, Next.js page serving, full-page navigation, correct 404 responses, and Hostinger startup still work.

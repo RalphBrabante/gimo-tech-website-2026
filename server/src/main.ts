@@ -1,78 +1,23 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import helmet from 'helmet';
-import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import { storefrontPath } from './storefront-path';
-import { publicDocumentMiddleware } from './common/public-document.middleware';
-import { publicOrigin } from './common/public-site';
-import { contentSecurityPolicy } from './common/content-security-policy';
-import { productUploadsPath } from './products/product-upload.config';
-import { contentUploadsPath } from './media/media-upload.config';
-
-const hashedAssetPattern = /-[A-Z0-9]{8,}\.(?:css|js)$/i;
-const cacheableAssetPattern = /[\\/]assets[\\/]/;
+import { configureHttp, prepareRenderEnvironment } from './http-setup';
 
 async function bootstrap() {
+  const dev = process.env.NODE_ENV !== 'production';
+  const port = Number(process.env.PORT) || 3000;
+  prepareRenderEnvironment(port);
+
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    logger: process.env.NODE_ENV === 'production' ? ['error', 'warn', 'log'] : undefined
+    logger: dev ? undefined : ['error', 'warn', 'log']
   });
-
-  app.set('trust proxy', 1);
-  app.disable('x-powered-by');
-  app.use(helmet({ contentSecurityPolicy }));
-
-  // Register storefront files directly on Express before Nest installs controller
-  // routes. Otherwise the CMS catch-all controller can claim asset requests and
-  // return its HTML 404 page, leaving the Angular shell unable to bootstrap.
-  publicOrigin(); // Fail startup on a malformed configured public origin.
-  app.use(publicDocumentMiddleware);
-  app.useStaticAssets(storefrontPath, {
-    index: false,
-    fallthrough: true,
-    setHeaders: (response, assetPath) => {
-      response.setHeader(
-        'Cache-Control',
-        hashedAssetPattern.test(assetPath)
-          ? 'public, max-age=31536000, immutable'
-          : cacheableAssetPattern.test(assetPath)
-            ? 'public, max-age=604800, stale-while-revalidate=86400'
-            : 'public, max-age=3600'
-      );
-    }
-  });
-
-  // Uploaded media must be registered before controller routes. The public-page
-  // catch-all otherwise treats an image URL as a missing HTML page.
-  app.useStaticAssets(productUploadsPath, {
-    prefix: '/uploads/products',
-    fallthrough: false,
-    setHeaders: (response) => response.setHeader('Cache-Control', 'public, max-age=2592000')
-  });
-  app.useStaticAssets(contentUploadsPath, {
-    prefix: '/uploads/content',
-    fallthrough: false,
-    setHeaders: (response) => response.setHeader('Cache-Control', 'public, max-age=2592000')
-  });
-
-  if (process.env.NODE_ENV !== 'production' || process.env.CLIENT_ORIGIN) {
-    app.enableCors({
-      origin: process.env.CLIENT_ORIGIN || 'http://localhost:4200',
-      credentials: true
-    });
-  }
-
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true
-  }));
+  const site = await configureHttp(app, { dev, port });
 
   app.enableShutdownHooks();
-  const port = Number(process.env.PORT) || 3000;
+  process.once('beforeExit', () => void site.close());
   await app.listen(port, '0.0.0.0');
-  console.log(`Gimo Tech NestJS API listening on port ${port}`);
+  console.log(`Gimo Tech Supplies (NestJS API + Next.js website) listening on port ${port}${dev ? ' [development]' : ''}`);
 }
 
 void bootstrap();

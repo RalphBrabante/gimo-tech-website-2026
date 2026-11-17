@@ -4,6 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { ProductEntity } from '../products/entities/product.entity';
 import { CreateQuotationRequestDto } from './dto/create-quotation-request.dto';
+import { CreateProductEnquiryDto } from './dto/create-product-enquiry.dto';
+import { ENQUIRY_PRODUCTS } from './enquiry-products';
 import { CreateFormalQuotationDto } from './dto/create-formal-quotation.dto';
 import { FormalQuotation, QuotationRequestEntity } from './entities/quotation-request.entity';
 
@@ -20,7 +22,7 @@ export class QuotationsService {
     const products = await this.products.find({ where: { id: In([...quantities.keys()]), isActive: true }, relations: { images: true } });
     if (products.length !== quantities.size || products.some(isUnchangedDemo)) throw new BadRequestException('One or more requested products are no longer available.');
 
-    const entity = this.requests.create({
+    return this.save({
       requestNumber: null,
       customerName: input.name.trim(), companyName: input.company?.trim() || null,
       customerEmail: input.email.trim().toLowerCase(), phoneNumber: input.phone?.trim() || null,
@@ -28,7 +30,29 @@ export class QuotationsService {
       items: products.map((product) => ({ productId: product.id, name: product.name, sku: product.sku, quantity: quantities.get(product.id)!, priceCents: product.priceCents })),
       status: 'pending', response: null, respondedByUserId: null, quotedAt: null
     });
-    const saved = await this.requests.save(entity);
+  }
+
+  async createProductEnquiry(input: CreateProductEnquiryDto): Promise<{ requestNumber: string }> {
+    const product = ENQUIRY_PRODUCTS[input.product];
+    if (!product) throw new BadRequestException('Unknown product.');
+    const notes = [
+      `Quantity requested: ${input.quantity} × ${product.unit}`,
+      input.deliveryLocation?.trim() ? `Delivery location: ${input.deliveryLocation.trim()}` : null,
+      input.notes?.trim() ? `Notes: ${input.notes.trim()}` : null,
+      `Source page: ${product.sourcePath}`
+    ].filter(Boolean).join('\n');
+    return this.save({
+      requestNumber: null,
+      customerName: input.name.trim(), companyName: input.company?.trim() || null,
+      customerEmail: input.email.trim().toLowerCase(), phoneNumber: input.phone?.trim() || null,
+      notes,
+      items: [{ productId: 0, name: product.name, sku: product.sku, quantity: input.quantity, priceCents: 0 }],
+      status: 'pending', response: null, respondedByUserId: null, quotedAt: null
+    });
+  }
+
+  private async save(values: Partial<QuotationRequestEntity>): Promise<{ requestNumber: string }> {
+    const saved = await this.requests.save(this.requests.create(values));
     const requestNumber = `GQ-${String(saved.id).padStart(6, '0')}`;
     await this.requests.update(saved.id, { requestNumber });
     return { requestNumber };
