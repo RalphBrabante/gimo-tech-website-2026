@@ -62,7 +62,7 @@ export const CONTACT_PAGES: Record<string, { title: string; heading: string; des
         <h2>How to request a quotation</h2>
         <ol>
           <li>For nylon syringe filters, use the <a href={`${NYLON_PATH}#quote`}>quotation form on the nylon syringe filter page</a>.</li>
-          <li>For other items, browse the <a href="/products">catalogue</a> and add products to your quote bag, or email {email} directly.</li>
+          <li>For other items, browse the <a href="/products">catalogue</a> and email {email} with the products you need.</li>
           <li>Include the configuration, pack quantity and delivery destination. For printed bags or labels, add your artwork, identifier series and QR data.</li>
           <li>The supply team confirms pricing, availability and delivery timing by email before you order.</li>
         </ol>

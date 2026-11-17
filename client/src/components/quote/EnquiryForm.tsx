@@ -5,18 +5,18 @@ import { useState, type FormEvent } from 'react';
 type Errors = Partial<Record<'quantity' | 'name' | 'email', string>>;
 
 /**
- * Lead form for a dedicated product landing page. Submissions are stored as quotation requests
- * (internal Quotations screen) and end on /quotation-request-received, a stable URL that can be
- * used as the Google Ads / GA4 conversion page.
+ * Quotation request for a static website: no server stores the request. The form validates the
+ * details, then opens the visitor's email app with a pre-filled message to the supply team. If no
+ * email app opens, the same message is shown ready to copy.
  */
-export function EnquiryForm({ product, unitLabel, email }: { product: string; unitLabel: string; email: string }) {
+export function EnquiryForm({ productName, unitLabel, email }: { productName: string; unitLabel: string; email: string }) {
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<{ text: string; error: boolean }>({ text: '', error: false });
-  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState<{ subject: string; body: string } | null>(null);
+  const [copied, setCopied] = useState(false);
 
-  async function submit(event: FormEvent<HTMLFormElement>) {
+  function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (submitting) return;
     const form = event.currentTarget;
     const data = new FormData(form);
     const text = (name: string) => String(data.get(name) ?? '').trim();
@@ -31,24 +31,33 @@ export function EnquiryForm({ product, unitLabel, email }: { product: string; un
       form.querySelector<HTMLElement>(`[name="${Object.keys(next)[0]}"]`)?.focus();
       return;
     }
-    setSubmitting(true);
-    setStatus({ text: 'Sending your enquiry…', error: false });
-    const optional = (name: string) => text(name) || undefined;
+    const subject = `Quotation request: ${productName}`;
+    const body = [
+      'Hello Gimo Tech Supplies,',
+      '',
+      `Please send a quotation for: ${productName}`,
+      `Quantity: ${quantity} × ${unitLabel}`,
+      text('deliveryLocation') && `Delivery city/province: ${text('deliveryLocation')}`,
+      text('notes') && `Requirements: ${text('notes')}`,
+      '',
+      `Name: ${text('name')}`,
+      text('company') && `Company/laboratory: ${text('company')}`,
+      `Email: ${text('email')}`,
+      text('phone') && `Phone: ${text('phone')}`
+    ].filter((line) => line !== '').join('\n').replace(/\n{3,}/g, '\n\n');
+    setMessage({ subject, body });
+    setCopied(false);
+    setStatus({ text: 'Your email app should open with the request ready to send. Press Send to complete it.', error: false });
+    window.dispatchEvent(new CustomEvent('gimo:quote-start'));
+    window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }
+
+  async function copy() {
+    if (!message) return;
     try {
-      const response = await fetch('/api/product-enquiries', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ product, quantity, name: text('name'), company: optional('company'), email: text('email'), phone: optional('phone'), deliveryLocation: optional('deliveryLocation'), notes: optional('notes'), website: text('website') || undefined })
-      });
-      if (!response.ok) throw new Error(String(response.status));
-      const { requestNumber } = (await response.json()) as { requestNumber: string };
-      window.dispatchEvent(new CustomEvent('gimo:quote-success'));
-      window.location.assign(`/quotation-request-received?request=${encodeURIComponent(requestNumber)}`);
-    } catch (error) {
-      setSubmitting(false);
-      const tooMany = error instanceof Error && error.message === '429';
-      setStatus({ text: tooMany ? `Too many requests in a short time. Please wait a minute, or email ${email}.` : `We could not send your enquiry. Please try again, or email ${email}.`, error: true });
-    }
+      await navigator.clipboard.writeText(`To: ${email}\nSubject: ${message.subject}\n\n${message.body}`);
+      setCopied(true);
+    } catch { /* The text stays selectable below. */ }
   }
 
   const fieldProps = (name: keyof Errors) => ({
@@ -90,19 +99,25 @@ export function EnquiryForm({ product, unitLabel, email }: { product: string; un
         </div>
         <div className="field full">
           <label htmlFor="enq-notes">Method, solvent or other requirements <span className="muted">(optional)</span></label>
-          <textarea id="enq-notes" name="notes" rows={3} maxLength={4000} />
+          <textarea id="enq-notes" name="notes" rows={3} maxLength={2000} />
           <span className="hint">Mention your sample and solvent system if you would like us to confirm the membrane is suitable.</span>
-        </div>
-        <div className="honeypot" aria-hidden="true">
-          <label htmlFor="enq-website">Website</label>
-          <input id="enq-website" name="website" tabIndex={-1} autoComplete="off" />
         </div>
       </div>
       <p className={`form-status${status.error ? ' is-error' : ''}`} role="status" aria-live="polite">{status.text}</p>
       <div className="btn-row">
-        <button type="submit" className="btn btn-primary" disabled={submitting}>{submitting ? 'Sending…' : 'Request a quotation'}</button>
-        <span className="small muted">We reply by email with pricing, availability and delivery.</span>
+        <button type="submit" className="btn btn-primary">Email my quotation request</button>
+        <span className="small muted">Opens your email app, addressed to {email}.</span>
       </div>
+      {message && (
+        <div className="field full" style={{ marginTop: '1.25rem' }}>
+          <label htmlFor="enq-copy">Email app didn’t open? Send this to {email}:</label>
+          <textarea id="enq-copy" readOnly rows={8} value={`Subject: ${message.subject}\n\n${message.body}`} />
+          <div className="btn-row">
+            <button type="button" className="btn btn-outline btn-small" onClick={copy}>{copied ? 'Copied' : 'Copy message'}</button>
+            <a className="link-arrow" href={`mailto:${email}`}>{email}</a>
+          </div>
+        </div>
+      )}
     </form>
   );
 }

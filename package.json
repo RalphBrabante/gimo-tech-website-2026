@@ -9,22 +9,22 @@
     "npm": ">=10"
   },
   "scripts": {
-    "install:all": "npm install --prefix server && npm install --prefix client",
-    "dev": "npm run dev --prefix server",
-    "build": "npm ci --prefix server --include=dev && npm run build --prefix server && npm ci --prefix client --include=dev && npm run build --prefix client",
+    "install:all": "npm install --prefix client",
+    "build": "npm ci --prefix client --include=dev && npm run build --prefix client",
     "start": "node server.js",
-    "verify": "npm run build && npm run test:seo",
-    "test:seo": "npm run build --prefix server && node --test server/test/seo.test.cjs",
-    "preview": "NODE_ENV=production FIXTURE_PORT=3100 node server/test/public-fixture.cjs",
+    "preview": "PORT=3100 node server.js",
     "test:browser": "node scripts/site-browser-check.mjs",
     "test:a11y": "node scripts/seo-accessibility.mjs",
     "test:analytics": "node scripts/test-google-tag.mjs",
-    "seo:fixture": "NODE_ENV=production node server/test/public-fixture.cjs",
     "seo:crawl": "node scripts/seo-crawl.mjs",
-    "seo:keywords": "node scripts/seo-keyword-audit.mjs"
+    "seo:keywords": "node scripts/seo-keyword-audit.mjs",
+    "api:install": "npm install --prefix server",
+    "api:build": "npm run build --prefix server",
+    "api:test": "npm run build --prefix server && node --test server/test/seo.test.cjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.63.0"
-  }
+  },
+  "description": "Gimo Tech Supplies static website (Next.js export). The NestJS backend in server/ is retired from deployment but kept for future use."
 }

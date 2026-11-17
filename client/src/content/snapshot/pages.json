@@ -1,0 +1,273 @@
+{
+  "biohazard-bags": {
+    "slug": "biohazard-bags",
+    "title": "Customized Biohazard Bags with QR Code Printing",
+    "metaDescription": "Request customized biohazard bags with printed identifiers, series-based layouts, and QR code attachments for laboratory waste workflows.",
+    "updatedAt": "2026-07-16T10:43:11.000Z",
+    "blocks": [
+      {
+        "id": 7,
+        "blockType": "paragraph",
+        "sortOrder": 0,
+        "headingText": null,
+        "headingLevel": null,
+        "paragraphText": "Gimo Tech Supplies coordinates customized biohazard bag printing for laboratories that need clear identifiers, series-based layouts, and QR code attachments for internal tracking workflows.",
+        "imageUrl": null,
+        "imageAlt": null,
+        "imageSize": null,
+        "buttonLabel": null,
+        "buttonHref": null
+      },
+      {
+        "id": 8,
+        "blockType": "heading",
+        "sortOrder": 1,
+        "headingText": "Biohazard bag printing for traceable workflows",
+        "headingLevel": 2,
+        "paragraphText": null,
+        "imageUrl": null,
+        "imageAlt": null,
+        "imageSize": null,
+        "buttonLabel": null,
+        "buttonHref": null
+      },
+      {
+        "id": 9,
+        "blockType": "paragraph",
+        "sortOrder": 2,
+        "headingText": null,
+        "headingLevel": null,
+        "paragraphText": "Share your required bag size, quantity, printed information, series format, and QR code details. We can review the specification and prepare the appropriate custom-order requirements for your laboratory.",
+        "imageUrl": null,
+        "imageAlt": null,
+        "imageSize": null,
+        "buttonLabel": null,
+        "buttonHref": null
+      },
+      {
+        "id": 10,
+        "blockType": "heading",
+        "sortOrder": 3,
+        "headingText": "Plan your customized biohazard bag order",
+        "headingLevel": 2,
+        "paragraphText": null,
+        "imageUrl": null,
+        "imageAlt": null,
+        "imageSize": null,
+        "buttonLabel": null,
+        "buttonHref": null
+      },
+      {
+        "id": 11,
+        "blockType": "paragraph",
+        "sortOrder": 4,
+        "headingText": null,
+        "headingLevel": null,
+        "paragraphText": "Custom production details and lead times depend on the approved layout and order quantity. Email the supply team with your preferred delivery schedule so the quotation can reflect your actual requirements.",
+        "imageUrl": null,
+        "imageAlt": null,
+        "imageSize": null,
+        "buttonLabel": null,
+        "buttonHref": null
+      },
+      {
+        "id": 12,
+        "blockType": "button",
+        "sortOrder": 5,
+        "headingText": null,
+        "headingLevel": null,
+        "paragraphText": null,
+        "imageUrl": null,
+        "imageAlt": null,
+        "imageSize": null,
+        "buttonLabel": "Request a biohazard bag quotation",
+        "buttonHref": "mailto:gimotechsupplies@gmail.com?subject=Biohazard%20bag%20quotation"
+      }
+    ]
+  },
+  "lazada-shop": {
+    "slug": "lazada-shop",
+    "title": "GIMO Laboratory Supplies Lazada Shop",
+    "metaDescription": "Visit the official GIMO Laboratory Supplies Lazada shop to browse available laboratory supplies and place an order online.",
+    "updatedAt": "2026-07-16T10:43:11.000Z",
+    "blocks": [
+      {
+        "id": 13,
+        "blockType": "paragraph",
+        "sortOrder": 0,
+        "headingText": null,
+        "headingLevel": null,
+        "paragraphText": "Browse available GIMO Laboratory Supplies products and order conveniently through our official Lazada shop in the Philippines.",
+        "imageUrl": null,
+        "imageAlt": null,
+        "imageSize": null,
+        "buttonLabel": null,
+        "buttonHref": null
+      },
+      {
+        "id": 14,
+        "blockType": "heading",
+        "sortOrder": 1,
+        "headingText": "Shop GIMO laboratory supplies on Lazada",
+        "headingLevel": 2,
+        "paragraphText": null,
+        "imageUrl": null,
+        "imageAlt": null,
+        "imageSize": null,
+        "buttonLabel": null,
+        "buttonHref": null
+      },
+      {
+        "id": 15,
+        "blockType": "paragraph",
+        "sortOrder": 2,
+        "headingText": null,
+        "headingLevel": null,
+        "paragraphText": "The Lazada storefront provides a convenient online purchasing option. For product matching, larger quantities, syringe filter specifications, or customized biohazard bag requirements, contact our supply team directly.",
+        "imageUrl": null,
+        "imageAlt": null,
+        "imageSize": null,
+        "buttonLabel": null,
+        "buttonHref": null
+      },
+      {
+        "id": 16,
+        "blockType": "button",
+        "sortOrder": 3,
+        "headingText": null,
+        "headingLevel": null,
+        "paragraphText": null,
+        "imageUrl": null,
+        "imageAlt": null,
+        "imageSize": null,
+        "buttonLabel": "Visit the official GIMO Lazada shop",
+        "buttonHref": "https://www.lazada.com.ph/shop/gimo-laboratory-supplies/"
+      },
+      {
+        "id": 19,
+        "blockType": "button",
+        "sortOrder": 4,
+        "headingText": null,
+        "headingLevel": null,
+        "paragraphText": null,
+        "imageUrl": null,
+        "imageAlt": null,
+        "imageSize": null,
+        "buttonLabel": "View Nylon syringe filter details",
+        "buttonHref": "/products/nylon-syringe-filter-25mm-045um"
+      }
+    ]
+  },
+  "syringe-filters": {
+    "slug": "syringe-filters",
+    "title": "Syringe Filters for HPLC Sample Preparation",
+    "metaDescription": "Explore Nylon, PTFE, PVDF, and MCE syringe filters for HPLC sample preparation, including 25 mm and 0.45 µm laboratory options.",
+    "updatedAt": "2026-07-16T10:43:11.000Z",
+    "blocks": [
+      {
+        "id": 1,
+        "blockType": "paragraph",
+        "sortOrder": 0,
+        "headingText": null,
+        "headingLevel": null,
+        "paragraphText": "Gimo Tech Supplies provides syringe filters for routine HPLC sample preparation, sample clarification, and laboratory filtration workflows. Available membrane options include Nylon, PTFE, PVDF, and MCE.",
+        "imageUrl": null,
+        "imageAlt": null,
+        "imageSize": null,
+        "buttonLabel": null,
+        "buttonHref": null
+      },
+      {
+        "id": 2,
+        "blockType": "heading",
+        "sortOrder": 1,
+        "headingText": "Choose the syringe filter membrane for your method",
+        "headingLevel": 2,
+        "paragraphText": null,
+        "imageUrl": null,
+        "imageAlt": null,
+        "imageSize": null,
+        "buttonLabel": null,
+        "buttonHref": null
+      },
+      {
+        "id": 3,
+        "blockType": "paragraph",
+        "sortOrder": 2,
+        "headingText": null,
+        "headingLevel": null,
+        "paragraphText": "Nylon filters are widely used for general aqueous and mixed sample preparation. PTFE supports solvent-compatible workflows, PVDF offers low-binding options, and MCE is suitable for general clarification. Tell us your sample and solvent system if you need help matching a membrane.",
+        "imageUrl": null,
+        "imageAlt": null,
+        "imageSize": null,
+        "buttonLabel": null,
+        "buttonHref": null
+      },
+      {
+        "id": 4,
+        "blockType": "heading",
+        "sortOrder": 3,
+        "headingText": "25 mm and 0.45 µm syringe filter options",
+        "headingLevel": 2,
+        "paragraphText": null,
+        "imageUrl": null,
+        "imageAlt": null,
+        "imageSize": null,
+        "buttonLabel": null,
+        "buttonHref": null
+      },
+      {
+        "id": 5,
+        "blockType": "paragraph",
+        "sortOrder": 4,
+        "headingText": null,
+        "headingLevel": null,
+        "paragraphText": "Common laboratory formats include 25 mm diameter filters with 0.45 µm pore sizes, along with bulk and canister pack options for repeat procurement. Product availability depends on the membrane and pack configuration requested.",
+        "imageUrl": null,
+        "imageAlt": null,
+        "imageSize": null,
+        "buttonLabel": null,
+        "buttonHref": null
+      },
+      {
+        "id": 6,
+        "blockType": "button",
+        "sortOrder": 5,
+        "headingText": null,
+        "headingLevel": null,
+        "paragraphText": null,
+        "imageUrl": null,
+        "imageAlt": null,
+        "imageSize": null,
+        "buttonLabel": "Buy Nylon syringe filters on Lazada",
+        "buttonHref": "https://www.lazada.com.ph/products/i3969520270.html"
+      },
+      {
+        "id": 17,
+        "blockType": "button",
+        "sortOrder": 6,
+        "headingText": null,
+        "headingLevel": null,
+        "paragraphText": null,
+        "imageUrl": null,
+        "imageAlt": null,
+        "imageSize": null,
+        "buttonLabel": "View the 25mm Nylon Syringe Filter",
+        "buttonHref": "/products/nylon-syringe-filter-25mm-045um"
+      },
+      {
+        "id": 18,
+        "blockType": "button",
+        "sortOrder": 7,
+        "headingText": null,
+        "headingLevel": null,
+        "paragraphText": null,
+        "imageUrl": null,
+        "imageAlt": null,
+        "imageSize": null,
+        "buttonLabel": "Compare syringe filter membranes",
+        "buttonHref": "/guides/nylon-vs-ptfe-vs-pvdf-vs-mce-syringe-filters"
+      }
+    ]
+  }
+}

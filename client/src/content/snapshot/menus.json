@@ -1,0 +1,102 @@
+{
+  "header": [
+    {
+      "label": "Home",
+      "href": "/",
+      "openInNewTab": false
+    },
+    {
+      "label": "Syringe Filters",
+      "href": "/syringe-filters",
+      "openInNewTab": false
+    },
+    {
+      "label": "QR Code Labels",
+      "href": "/sequential-qr-code-labels",
+      "openInNewTab": false
+    },
+    {
+      "label": "Biohazard Bags",
+      "href": "/biohazard-bags",
+      "openInNewTab": false
+    },
+    {
+      "label": "Catalog",
+      "href": "/lazada-shop",
+      "openInNewTab": false
+    },
+    {
+      "label": "Contact",
+      "href": "/contact-us",
+      "openInNewTab": false
+    }
+  ],
+  "footer": {
+    "products": [
+      {
+        "label": "Syringe filters",
+        "href": "/syringe-filters",
+        "openInNewTab": false
+      },
+      {
+        "label": "QR biohazard bags",
+        "href": "/biohazard-bags",
+        "openInNewTab": false
+      },
+      {
+        "label": "Product catalog",
+        "href": "/lazada-shop",
+        "openInNewTab": false
+      },
+      {
+        "label": "Nylon syringe filters",
+        "href": "/products/nylon-syringe-filter-25mm-045um",
+        "openInNewTab": false
+      },
+      {
+        "label": "Shopee shop",
+        "href": "https://shopee.ph/shop/229076897",
+        "openInNewTab": true
+      }
+    ],
+    "services": [
+      {
+        "label": "Custom printing",
+        "href": "/biohazard-bags",
+        "openInNewTab": false
+      },
+      {
+        "label": "Sequential QR labels",
+        "href": "/sequential-qr-code-labels",
+        "openInNewTab": false
+      },
+      {
+        "label": "QR code attachments",
+        "href": "/biohazard-bags",
+        "openInNewTab": false
+      },
+      {
+        "label": "Repeat supply orders",
+        "href": "/contact-us",
+        "openInNewTab": false
+      }
+    ],
+    "purchasing": [
+      {
+        "label": "Request a quote",
+        "href": "/contact-us",
+        "openInNewTab": false
+      },
+      {
+        "label": "Product matching",
+        "href": "/syringe-filters",
+        "openInNewTab": false
+      },
+      {
+        "label": "Shipping support",
+        "href": "/contact-us",
+        "openInNewTab": false
+      }
+    ]
+  }
+}

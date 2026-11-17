@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getCmsPage } from '@/lib/api';
+import { cmsSlugs, getCmsPage } from '@/lib/content';
 import type { CmsPage, PageBlock } from '@/lib/types';
 import { SiteAnalytics } from '@/components/SiteAnalytics';
 import { pageMetadata, JsonLd, breadcrumbNode, webPageNode } from '@/lib/seo';
@@ -10,11 +10,17 @@ import { CONTACT_PAGES, BIOHAZARD_EXTRA } from '@/content/contact-pages';
 
 type Props = { params: Promise<{ slug: string }> };
 
+// Static export: exactly these pages exist; any other slug is a 404.
+export const dynamicParams = false;
+export function generateStaticParams() {
+  return [...cmsSlugs(), ...Object.keys(CONTACT_PAGES).filter((slug) => !cmsSlugs().includes(slug))].map((slug) => ({ slug }));
+}
+
 /** Administrator-managed CMS pages, plus built-in contact pages when no CMS page overrides them. */
 async function resolve(params: Props['params']): Promise<{ kind: 'cms'; page: CmsPage } | { kind: 'contact'; slug: string }> {
   const { slug } = await params;
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) notFound();
-  const page = await getCmsPage(slug);
+  const page = getCmsPage(slug);
   if (page) return { kind: 'cms', page };
   if (CONTACT_PAGES[slug]) return { kind: 'contact', slug };
   notFound();

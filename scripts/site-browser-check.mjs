@@ -7,7 +7,7 @@ import { mkdir } from 'node:fs/promises';
 
 const origin = process.argv[2] || 'http://127.0.0.1:3100';
 const shots = process.argv[3] || null;
-const routes = ['/', '/products/nylon-syringe-filter-25mm-045um', '/syringe-filters', '/guides/0-22-vs-0-45-micron-syringe-filters', '/sequential-qr-code-labels', '/products', '/product/100', '/biohazard-bags', '/contact-us', '/nope'];
+const routes = ['/', '/products/nylon-syringe-filter-25mm-045um', '/syringe-filters', '/guides/0-22-vs-0-45-micron-syringe-filters', '/sequential-qr-code-labels', '/products', '/biohazard-bags', '/contact-us', '/nope'];
 const widths = [360, 768, 1024, 1440];
 if (shots) await mkdir(shots, { recursive: true });
 
@@ -46,30 +46,22 @@ try {
     await context.close();
   }
 
-  // Conversion flows (fixture endpoints never store or send anything).
+  // Quotation form (static site): validates, then prepares an email. The mailto navigation is
+  // blocked in the test; the copyable fallback message must contain the entered details.
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  await context.route(/googletagmanager|google-analytics|doubleclick|google\.com\/maps/, (route) => route.fulfill({ status: 204, body: '' }));
   const page = await context.newPage();
   await page.goto(`${origin}/products/nylon-syringe-filter-25mm-045um#quote`);
-  await page.click('button[type=submit]:has-text("Request a quotation")');
+  await page.click('button[type=submit]:has-text("Email my quotation request")');
   const inlineErrors = await page.locator('.field-error').count();
   await page.fill('#enq-quantity', '3');
   await page.fill('#enq-name', 'Browser Test');
   await page.fill('#enq-email', 'test@example.com');
-  await Promise.all([page.waitForURL(/quotation-request-received\?request=GQ-/), page.click('button[type=submit]:has-text("Request a quotation")')]);
-  const enquiryOk = inlineErrors >= 2 && (await page.locator('h1').innerText()).includes('Thank you');
-
-  await page.goto(`${origin}/product/100`);
-  await page.click('button:has-text("Add to quotation bag")');
-  const dialogOpen = await page.locator('dialog.drawer[open]').count();
-  await page.keyboard.press('Escape');
-  const dialogClosed = await page.locator('dialog.drawer[open]').count() === 0;
-  const bagCount = await page.locator('.bag-count').innerText();
-  await page.click('.bag-button');
-  await page.click('button:has-text("Request quotation")');
-  await page.fill('#bag-name', 'Browser Test');
-  await page.fill('#bag-email', 'test@example.com');
-  await Promise.all([page.waitForURL(/quotation-request-received/), page.click('button:has-text("Send quotation request")')]);
-  const bagOk = dialogOpen === 1 && dialogClosed && bagCount === '1';
+  await page.fill('#enq-location', 'Cebu City');
+  await page.click('button[type=submit]:has-text("Email my quotation request")').catch(() => {});
+  await page.waitForSelector('#enq-copy', { timeout: 5000 });
+  const draft = await page.locator('#enq-copy').inputValue();
+  const enquiryOk = inlineErrors >= 2 && draft.includes('Quantity: 3 × canisters of 100') && draft.includes('Cebu City') && draft.includes('test@example.com');
 
   // Mobile menu keyboard behaviour.
   await page.goto(`${origin}/`);
@@ -77,8 +69,8 @@ try {
   const menuOpen = await page.locator('#mobile-menu').isVisible();
   await page.keyboard.press('Escape');
   const menuClosed = !(await page.locator('#mobile-menu').isVisible());
-  console.log(JSON.stringify({ enquiryOk, bagOk, menuOk: menuOpen && menuClosed }));
-  if (!enquiryOk || !bagOk || !menuOpen || !menuClosed) failures += 1;
+  console.log(JSON.stringify({ enquiryOk, menuOk: menuOpen && menuClosed }));
+  if (!enquiryOk || !menuOpen || !menuClosed) failures += 1;
   await context.close();
 } finally {
   await browser.close();

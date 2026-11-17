@@ -1,5 +1,7 @@
 # Gimo Tech Internal Dashboard
 
+> **Retired from deployment (17 November 2026).** The public website is now a static export and the NestJS backend is not deployed, so `/internal` returns 404. This document and the code in `server/` are kept for a possible future restore; the MySQL database was left untouched.
+
 The internal dashboard is available at `/internal/dashboard` after a successful sign-in at `/internal/`.
 
 ## Authentication flow

@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
-import { getHome } from '@/lib/api';
+import { getHomepage } from '@/lib/content';
+import { RANGES } from '@/content/ranges';
 import { SiteAnalytics } from '@/components/SiteAnalytics';
 import { pageMetadata, JsonLd, webPageNode } from '@/lib/seo';
 import { BUSINESS, LAZADA_NYLON_URL, SHOPEE_NYLON_URL, MEMBRANE_GUIDE_PATH, NYLON_PATH, PORE_SIZE_GUIDE_PATH, isExternal } from '@/lib/site';
 import { Picture, NYLON_PHOTO, QR_PHOTO } from '@/components/Picture';
 import { FilterScene } from '@/components/three/FilterScene';
-import { ProductCard } from '@/components/ProductCard';
 
 const TITLE = 'Syringe Filter Supplier Philippines | Gimo Tech Supplies';
 const DESCRIPTION = 'Laboratory syringe filter supplier in the Philippines: 0.45 micron nylon syringe filters for HPLC, sequential QR code labels and custom biohazard bags.';
@@ -14,8 +14,8 @@ export const metadata: Metadata = pageMetadata({ title: TITLE, absoluteTitle: tr
 
 const external = (href: string) => (isExternal(href) ? { target: '_blank', rel: 'noopener noreferrer' } : {});
 
-export default async function HomePage() {
-  const { homepage: h, products, catalogueUnavailable } = await getHome();
+export default function HomePage() {
+  const h = getHomepage();
 
   return (
     <>
@@ -124,14 +124,16 @@ export default async function HomePage() {
           <div className="section-head">
             <p className="eyebrow">Product catalogue</p>
             <h2 id="catalogue-title" className="headline">Laboratory consumables and custom supplies</h2>
-            <p>Add products to your quote bag, set quantities, and send one request for pricing and availability.</p>
+            <p>Tell us the products and quantities you need, and we confirm pricing, availability and delivery by email.</p>
           </div>
-          {products.length > 0 ? (
-            <div className="grid grid-4">{products.map((product) => <ProductCard key={product.id} product={product} />)}</div>
-          ) : (
-            <p className="center">{catalogueUnavailable ? 'The catalogue is temporarily unavailable. ' : ''}Please <a href="/contact-us">contact our supply team</a> for current products, pricing and availability, or view the <a href={NYLON_PATH}>25mm 0.45 micron nylon syringe filter</a>.</p>
-          )}
-          <p className="center" style={{ marginTop: '2rem' }}><a className="btn btn-outline" href="/products">Browse the complete catalogue</a></p>
+          <div className="grid grid-4">
+            {RANGES.map((range, index) => (
+              <a key={range.path} className="card card-link" href={range.path} data-reveal style={{ ['--reveal-delay' as string]: `${index * 0.06}s` }}>
+                <strong>{range.name}</strong><span>{range.text}</span>
+              </a>
+            ))}
+          </div>
+          <p className="center" style={{ marginTop: '2rem' }}><a className="btn btn-outline" href="/products">View the full catalogue</a></p>
         </div>
       </section>
 

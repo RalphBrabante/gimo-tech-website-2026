@@ -1,19 +1,5 @@
 export interface MenuLink { label: string; href: string; openInNewTab: boolean }
 export interface PublicMenus { header: MenuLink[]; footer: { products: MenuLink[]; services: MenuLink[]; purchasing: MenuLink[] } }
-export interface StoreSettings { currencyCode: string; freeShippingThresholdCents: number | null }
-
-export interface PublicProduct {
-  id: number;
-  publicPath: string;
-  updatedAt: string;
-  name: string;
-  sku: string;
-  category: string;
-  description: string;
-  accent: string;
-  imageUrl: string | null;
-  images: { id: number; url: string; thumbnailUrl: string }[];
-}
 
 export interface PageBlock {
   id: number;

@@ -11,10 +11,10 @@ These instructions apply to every file and feature in this repository. Treat SEO
 
 ## Project context
 
-- The public website uses Next.js (App Router, server-rendered) in `client/`, but public website navigation must follow a multi-page architecture rather than SPA-style client routing.
+- The public website is a fully static Next.js export in `client/` (`output: 'export'` → `client/out`). It has no runtime API or database; content lives in `client/src/content/`.
 - The NestJS server and API are in `server/`.
-- Production NestJS hosts the Next.js request handler in the same Node process (`server/src/http-setup.ts`, `server/src/next/next-handler.ts`). NestJS owns `/api`, `/internal`, `/uploads`, `/health` and `/sitemap.xml`; every other path is a Next.js document.
-- Public pages read data through the NestJS public content API (`/api/public/*`) via `client/src/lib/api.ts`; never query the database from Next.js.
+- The NestJS backend in `server/` is retired from deployment (kept for possible future use). Do not make the public site depend on it again without an explicit request.
+- Hostinger serves `client/out` with `client/public/.htaccess`; `/server.js` is a dependency-free Node fallback with the same rules. Keep the two in sync.
 - Keep local development and Hostinger deployment working through the root `package.json` scripts.
 - Preserve unrelated user changes and never replace established functionality without a clear requirement.
 
@@ -45,7 +45,7 @@ All public pages and meaningful routes must:
 - Ensure product names, descriptions, prices, availability, and structured data use the same source of truth.
 - Prevent accidental indexing of private, account, cart, checkout, search-result, or duplicate-filter pages when those routes are introduced.
 - Update `robots.txt` and `sitemap.xml` when public routes are added or removed.
-- Use server rendering, static generation, or prerendering for every public landing, category, product, service, and marketing route.
+- Statically generate every public landing, category, product, service, and marketing route.
 
 ## Multi-page navigation requirement
 

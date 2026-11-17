@@ -201,7 +201,7 @@ export default function NylonSyringeFilterPage() {
           <div>
             <p className="eyebrow">Buy nylon syringe filters</p>
             <h2 id="quote-title" className="headline">Request a quotation.</h2>
-            <p>Tell us how many canisters you need and where to deliver. The supply team replies by email with pricing, current availability and delivery timing for your location.</p>
+            <p>Tell us how many canisters you need and where to deliver. The form prepares an email to our supply team, who reply with pricing, current availability and delivery timing for your location.</p>
             <ul className="checklist">
               <li>Nylon · 25 mm · 0.45 µm · 100 pieces per canister</li>
               <li>Formal quotations for purchasing departments</li>
@@ -209,7 +209,7 @@ export default function NylonSyringeFilterPage() {
             </ul>
             <p className="small">Prefer to order online now? Buy on <a href={LAZADA_NYLON_URL} target="_blank" rel="noopener noreferrer">Lazada</a> or <a href={SHOPEE_NYLON_URL} target="_blank" rel="noopener noreferrer">Shopee</a>. Or email <a href={`mailto:${BUSINESS.email}?subject=${encodeURIComponent('Quotation request: 25mm 0.45µm nylon syringe filters')}`}>{BUSINESS.email}</a>.</p>
           </div>
-          <EnquiryForm product="nylon-syringe-filter-25mm-045um" unitLabel="canisters of 100" email={BUSINESS.email} />
+          <EnquiryForm productName="Nylon Syringe Filter 25mm 0.45µm (non-sterile, 100-piece canister)" unitLabel="canisters of 100" email={BUSINESS.email} />
         </div>
       </section>
 

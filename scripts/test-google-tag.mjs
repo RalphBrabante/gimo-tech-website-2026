@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
-import { createRequire } from 'node:module';
+import { spawn } from 'node:child_process';
 import { chromium } from '@playwright/test';
 
-const require = createRequire(import.meta.url);
-const { createFixture } = require('../server/test/public-fixture.cjs');
-const app = await createFixture(0);
+// Serves the static export (client/out) with the production rules in server.js.
+const port = 3190;
+const app = spawn(process.execPath, ['server.js'], { env: { ...process.env, PORT: String(port) }, stdio: 'ignore' });
+const base = `http://127.0.0.1:${port}`;
+for (let i = 0; i < 50; i++) { try { await fetch(`${base}/health`); break; } catch { await new Promise((r) => setTimeout(r, 200)); } }
 let browser;
 try {
-  const base = await app.getUrl();
   browser = await chromium.launch({ headless: true });
   for (const width of [360, 768, 1440]) {
     const context = await browser.newContext({ viewport: { width, height: 900 } });
@@ -33,7 +34,7 @@ try {
         window.testCspViolations.push(`${event.violatedDirective}: ${event.blockedURI}`);
       });
     });
-    for (const path of ['/', '/products', '/product/100', '/syringe-filters', '/contact-us']) {
+    for (const path of ['/', '/products', '/products/nylon-syringe-filter-25mm-045um', '/syringe-filters', '/contact-us']) {
       const response = await page.goto(base + path);
       assert.equal(response.status(), 200, path);
       await page.waitForFunction(() => window.testAnalyticsConnection === true);
@@ -50,7 +51,7 @@ try {
       assert.deepEqual(state.violations, [], path);
       assert.match(response.headers()['content-security-policy'], /connect-src[^;]*https:\/\/\*\.google-analytics\.com/);
     }
-    for (const path of ['/quotation-request-received?request=TEST-ONLY', '/unknown-analytics-test', '/internal/desk']) {
+    for (const path of ['/unknown-analytics-test', '/internal/desk']) {
       await page.goto(base + path);
       assert.equal(await page.evaluate(() => typeof window.gtag), 'undefined', path);
       assert.equal(await page.locator('script[src="/assets/google-tag.js"]').count(), 0, path);
@@ -61,5 +62,5 @@ try {
   }
 } finally {
   await browser?.close();
-  await app.close();
+  app.kill();
 }

@@ -1,14 +1,12 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
-import { getHome, getSite } from '@/lib/api';
+import { getHomepage, getMenus } from '@/lib/content';
 import { BUSINESS, siteOrigin, ADDRESS_LINE } from '@/lib/site';
 import { DesktopNav, MobileNav } from '@/components/NavLinks';
 import { RevealObserver } from '@/components/RevealObserver';
-import { QuoteBagProvider, BagButton } from '@/components/quote/QuoteBag';
 
-// Pages read live CMS/catalogue data; the CDN caches the HTML briefly (see server next-handler).
-export const dynamic = 'force-dynamic';
+// Fully static export (next.config.mjs `output: 'export'`): every page is plain HTML at build time.
 
 const manrope = localFont({
   src: '../../public/assets/fonts/manrope-latin.woff2',
@@ -32,8 +30,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export const viewport: Viewport = { themeColor: '#153f70', width: 'device-width', initialScale: 1 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const [{ menus }, { homepage }] = await Promise.all([getSite(), getHome()]);
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const menus = getMenus();
+  const homepage = getHomepage();
   const footerColumns = [
     { label: 'Products', links: menus.footer.products },
     { label: 'Services', links: menus.footer.services },
@@ -47,7 +46,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
       </head>
       <body>
-        <QuoteBagProvider email={BUSINESS.email}>
           <a className="skip-link" href="#main-content">Skip to content</a>
           <header className="gnav">
             <div className="shell gnav-inner">
@@ -59,7 +57,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               </a>
               <DesktopNav links={menus.header} />
               <div className="gnav-actions">
-                <BagButton />
+                <a className="btn btn-primary btn-small" href="/request-for-a-quote">Request a quote</a>
                 <MobileNav links={menus.header} />
               </div>
             </div>
@@ -95,7 +93,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <p className="small">{homepage.footer_brand.copyrightLine}</p>
             </div>
           </footer>
-        </QuoteBagProvider>
         <RevealObserver />
       </body>
     </html>

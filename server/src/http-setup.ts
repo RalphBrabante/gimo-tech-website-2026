@@ -11,6 +11,7 @@ import { contentSecurityPolicy, publicSiteContentSecurityPolicy } from './common
 import { productUploadsPath } from './products/product-upload.config';
 import { contentUploadsPath } from './media/media-upload.config';
 import { createNextMiddleware, isNestPath } from './next/next-handler';
+import { registerRenderBridge } from './public-content/render-bridge';
 
 const cacheableAssetPattern = /[\\/]assets[\\/]/;
 
@@ -65,6 +66,8 @@ export async function configureHttp(app: NestExpressApplication, options: { dev:
     setHeaders: (response) => response.setHeader('Cache-Control', 'public, max-age=2592000')
   });
 
+  // Server-rendered pages read public content in-process (no loopback HTTP; see render-bridge.ts).
+  registerRenderBridge(app);
   // Every non-NestJS path is a public website document rendered by Next.js (multi-page, SSR).
   const site = await createNextMiddleware({ dev, port, httpServer: app.getHttpServer() });
   app.use(site.middleware);

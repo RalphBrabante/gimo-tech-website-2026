@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getCmsPage } from '@/lib/api';
+import { getCmsPage } from '@/lib/content';
 import { SiteAnalytics } from '@/components/SiteAnalytics';
 import { pageMetadata, JsonLd, breadcrumbNode, webPageNode, DEFAULT_SOCIAL_IMAGE } from '@/lib/seo';
 import { BUSINESS, LAZADA_NYLON_URL, SHOPEE_NYLON_URL, MEMBRANE_GUIDE_PATH, NYLON_PATH, PORE_SIZE_GUIDE_PATH, absoluteUrl, metaDescription } from '@/lib/site';
@@ -13,25 +13,25 @@ const DEFAULT_TITLE = 'Syringe Filters for HPLC Sample Preparation';
 const DEFAULT_DESCRIPTION = 'Laboratory syringe filter supplier in the Philippines. Nylon, PTFE, PVDF and MCE syringe filters for HPLC sample preparation, incl. 25mm 0.45 micron nylon.';
 const DEFAULT_INTRO = 'Gimo Tech Supplies provides syringe filters for routine HPLC sample preparation, sample clarification, and laboratory filtration workflows. Available membrane options include Nylon, PTFE, PVDF, and MCE.';
 
-async function content() {
-  // Title, description and intro stay editable in the CMS page "syringe-filters".
-  const page = await getCmsPage('syringe-filters').catch(() => null);
+function content() {
+  // Title and intro come from the CMS snapshot; the description is keyword-tuned for Google Ads.
+  const page = getCmsPage('syringe-filters');
   return {
     title: page?.title || DEFAULT_TITLE,
-    description: metaDescription(page?.metaDescription?.trim() || DEFAULT_DESCRIPTION),
+    description: metaDescription(DEFAULT_DESCRIPTION),
     intro: page?.blocks.find((block) => block.blockType === 'paragraph' && block.paragraphText?.trim())?.paragraphText ?? DEFAULT_INTRO
   };
 }
 
-export async function generateMetadata(): Promise<Metadata> {
-  const { title, description } = await content();
+export function generateMetadata(): Metadata {
+  const { title, description } = content();
   return pageMetadata({ title, description, path: PATH, image: DEFAULT_SOCIAL_IMAGE });
 }
 
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'Syringe Filters', path: PATH }];
 
-export default async function SyringeFiltersPage() {
-  const { title, description, intro } = await content();
+export default function SyringeFiltersPage() {
+  const { title, description, intro } = content();
   return (
     <>
       <SiteAnalytics />
