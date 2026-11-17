@@ -360,7 +360,7 @@ table { border-collapse: collapse; width: 100%; }
 .footer a { color: var(--text-soft); text-decoration: none; display: inline-block; padding: 0.3rem 0; }
 .footer a:hover { color: var(--navy); text-decoration: underline; }
 .footer address { font-style: normal; padding-top: 1.4rem; line-height: 1.7; }
-@media (min-width: 900px) { .footer-top { grid-template-columns: 1.1fr 2fr; } .footer-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 900px) { .footer-top { grid-template-columns: 1fr 2.4fr; } .footer-cols { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
 /* ---------- Error / status pages ---------- */
 .status-page { min-height: 60vh; display: grid; place-items: center; text-align: center; padding: clamp(56px, 10vw, 120px) 0; }

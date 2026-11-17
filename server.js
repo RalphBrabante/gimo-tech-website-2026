@@ -15,7 +15,7 @@ const canonicalHost = 'gimosupplies.com';
 
 const TYPES = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
-  '.json': 'application/json; charset=utf-8', '.xml': 'application/xml; charset=utf-8', '.txt': 'text/plain; charset=utf-8',
+  '.json': 'application/json; charset=utf-8', '.md': 'text/markdown; charset=utf-8', '.xml': 'application/xml; charset=utf-8', '.txt': 'text/plain; charset=utf-8',
   '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp',
   '.avif': 'image/avif', '.ico': 'image/x-icon', '.woff2': 'font/woff2'
 };
@@ -33,6 +33,7 @@ const SECURITY_HEADERS = {
 
 function cacheControl(path, file) {
   if (path.startsWith('/_next/static/')) return 'public, max-age=31536000, immutable';
+  if (file.endsWith('.md')) return 'private, max-age=300'; // may be served under an HTML URL
   if (/\.(html|xml|txt)$/.test(file)) return 'public, max-age=300, stale-while-revalidate=86400';
   return 'public, max-age=604800, stale-while-revalidate=86400';
 }
@@ -44,7 +45,13 @@ async function fileAt(relative) {
 }
 
 function send(response, status, file, path, method) {
-  response.writeHead(status, { ...SECURITY_HEADERS, 'Content-Type': TYPES[extname(file)] ?? 'application/octet-stream', 'Cache-Control': status === 200 ? cacheControl(path, file) : 'no-store' });
+  const page = /\.(html|md)$/.test(file);
+  response.writeHead(status, {
+    ...SECURITY_HEADERS,
+    'Content-Type': TYPES[extname(file)] ?? 'application/octet-stream',
+    'Cache-Control': status === 200 ? cacheControl(path, file) : 'no-store',
+    ...(page ? { Vary: 'Accept', Link: '</llms.txt>; rel="describedby"; type="text/plain"' } : {})
+  });
   if (method === 'HEAD') { response.end(); return; }
   createReadStream(file).on('error', () => response.destroy()).pipe(response);
 }
@@ -65,7 +72,10 @@ const server = createServer(async (request, response) => {
     if (!blocked && path.length > 1 && path.endsWith('/')) { response.writeHead(301, { Location: `${path.replace(/\/+$/, '')}${url.search}` }).end(); return; }
     if (path === '/health') { response.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }).end('{"status":"ok","service":"gimo-static"}'); return; }
 
-    const file = blocked ? null : path === '/' ? await fileAt('index.html') : (await fileAt(path)) ?? (extname(path) ? null : await fileAt(`${path}.html`));
+    // AI agents asking for Markdown get the page's .md copy; browsers get HTML.
+    const wantsMarkdown = /text\/markdown/i.test(request.headers.accept ?? '');
+    const page = async (base) => (wantsMarkdown && await fileAt(`${base}.md`)) || await fileAt(`${base}.html`);
+    const file = blocked ? null : path === '/' ? await page('index') : (await fileAt(path)) ?? (extname(path) ? null : await page(path));
     if (file) { send(response, 200, file, path, method); return; }
     const notFound = await fileAt('404.html');
     if (notFound) send(response, 404, notFound, path, method);

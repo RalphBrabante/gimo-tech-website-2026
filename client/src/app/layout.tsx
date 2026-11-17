@@ -5,6 +5,10 @@ import { getHomepage, getMenus } from '@/lib/content';
 import { BUSINESS, siteOrigin, ADDRESS_LINE } from '@/lib/site';
 import { DesktopNav, MobileNav } from '@/components/NavLinks';
 import { RevealObserver } from '@/components/RevealObserver';
+import { AgentTools } from '@/components/AgentTools';
+import { RANGES } from '@/content/ranges';
+import { NYLON, NYLON_SPECS } from '@/content/nylon';
+import { absoluteUrl, NYLON_PATH } from '@/lib/site';
 
 // Fully static export (next.config.mjs `output: 'export'`): every page is plain HTML at build time.
 
@@ -36,7 +40,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const footerColumns = [
     { label: 'Products', links: menus.footer.products },
     { label: 'Services', links: menus.footer.services },
-    { label: 'Purchasing help', links: menus.footer.purchasing }
+    { label: 'Purchasing help', links: menus.footer.purchasing },
+    { label: 'Company', links: [
+      { label: 'About Gimo Tech Supplies', href: '/about-gimo', openInNewTab: false },
+      { label: 'Contact us', href: '/contact-us', openInNewTab: false },
+      { label: 'Request a quotation', href: '/request-for-a-quote', openInNewTab: false }
+    ] }
   ].filter((column) => column.links.length);
 
   return (
@@ -94,6 +103,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </footer>
         <RevealObserver />
+        <AgentTools
+          business={{ name: BUSINESS.name, alternateName: BUSINESS.alternateName, email: BUSINESS.email, address: ADDRESS_LINE, lazadaShop: BUSINESS.lazadaShop, shopeeShop: BUSINESS.shopeeShop }}
+          products={RANGES.map((range) => ({ name: range.name, url: absoluteUrl(range.path), summary: range.text, ...(range.path === NYLON_PATH ? { specs: NYLON_SPECS, title: NYLON.title } : {}) }))}
+        />
       </body>
     </html>
   );

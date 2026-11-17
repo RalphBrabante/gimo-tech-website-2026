@@ -1,10 +1,9 @@
+# Content signals (https://contentsignals.org): search and AI answers may use this site's
+# content with attribution; it may not be used to train AI models.
 User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+Allow: /
 Disallow: /internal/
 Disallow: /api/
-Allow: /
-Allow: /assets/
-Allow: /uploads/products/
-Allow: /uploads/content/
 
 Sitemap: https://gimosupplies.com/sitemap.xml
-Host: gimosupplies.com

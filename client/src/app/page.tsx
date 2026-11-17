@@ -3,7 +3,7 @@ import { getHomepage } from '@/lib/content';
 import { RANGES } from '@/content/ranges';
 import { SiteAnalytics } from '@/components/SiteAnalytics';
 import { pageMetadata, JsonLd, webPageNode } from '@/lib/seo';
-import { BUSINESS, LAZADA_NYLON_URL, SHOPEE_NYLON_URL, MEMBRANE_GUIDE_PATH, NYLON_PATH, PORE_SIZE_GUIDE_PATH, isExternal } from '@/lib/site';
+import { BUSINESS, LAZADA_NYLON_URL, SHOPEE_NYLON_URL, MEMBRANE_GUIDE_PATH, NYLON_PATH, PORE_SIZE_GUIDE_PATH, absoluteUrl, isExternal } from '@/lib/site';
 import { Picture, NYLON_PHOTO, QR_PHOTO } from '@/components/Picture';
 import { FilterScene } from '@/components/three/FilterScene';
 
@@ -20,7 +20,10 @@ export default function HomePage() {
   return (
     <>
       <SiteAnalytics />
-      <JsonLd nodes={[webPageNode('WebPage', TITLE, DESCRIPTION, '/')]} />
+      <JsonLd nodes={[
+        webPageNode('WebPage', TITLE, DESCRIPTION, '/', { mainEntity: { '@id': `${absoluteUrl('/')}#product-ranges` } }),
+        { '@type': 'ItemList', '@id': `${absoluteUrl('/')}#product-ranges`, name: 'Gimo Tech Supplies product ranges', itemListElement: RANGES.map((range, index) => ({ '@type': 'ListItem', position: index + 1, name: range.name, description: range.text, url: absoluteUrl(range.path) })) }
+      ]} />
 
       <section className="hero" aria-labelledby="home-title">
         <div className="shell">

@@ -27,6 +27,14 @@ Rebuild and redeploy after any change.
 
 There is no server, so the nylon page form validates the details and opens the visitor's email app with a pre-filled message to the sales email, with a copy-and-paste fallback. Other pages link to email, Lazada and Shopee.
 
+## AI agents and crawlers
+
+- `robots.txt` declares `Content-Signal: search=yes, ai-input=yes, ai-train=no` (search and AI answers allowed, model training not).
+- `/llms.txt` summarises the business and links every key page.
+- Every page has a Markdown copy (`/index.md`, `/contact-us.md`, …) generated after the build by `client/scripts/build-markdown.mjs`. Requests with `Accept: text/markdown` receive it at the normal URL. Pages advertise it with `<link rel="alternate" type="text/markdown">` and send `Link: </llms.txt>; rel="describedby"`.
+- WebMCP: `client/src/components/AgentTools.tsx` registers `get_gimo_product_info` and `prepare_gimo_quotation_email` through `navigator.modelContext` where supported. The nylon quotation form carries `toolname`/`tooldescription`. Neither sends anything automatically.
+- Not published: an MCP Server Card (there is no MCP server), a telephone number (not yet verified), prices (quote-only) and terms (need owner-approved legal text). Any 403 or 429 for agent user agents comes from Hostinger's CDN bot protection, not this code.
+
 ## Hostinger deployment
 
 **Recommended: static hosting.** Deploy from GitHub with:

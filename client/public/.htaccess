@@ -36,6 +36,14 @@ ErrorDocument 404 /404.html
   RewriteCond %{REQUEST_FILENAME}.html !-f
   RewriteRule ^(.+?)/?$ - [R=404,L]
 
+  # Markdown for AI agents: "Accept: text/markdown" gets the page's .md copy (built by
+  # client/scripts/build-markdown.mjs). Browsers keep receiving HTML.
+  RewriteCond %{HTTP:Accept} text/markdown [NC]
+  RewriteRule ^$ index.md [L]
+  RewriteCond %{HTTP:Accept} text/markdown [NC]
+  RewriteCond %{REQUEST_FILENAME}.md -f
+  RewriteRule ^(.+)$ $1.md [L]
+
   # Clean URLs: /contact-us -> contact-us.html
   RewriteCond %{REQUEST_FILENAME}.html -f
   RewriteRule ^(.+)$ $1.html [L]
@@ -56,8 +64,21 @@ ErrorDocument 404 /404.html
   <FilesMatch "\.(avif|webp|jpg|jpeg|png|svg|ico)$">
     Header set Cache-Control "public, max-age=604800, stale-while-revalidate=86400"
   </FilesMatch>
-  <FilesMatch "\.(html|xml|txt)$">
+  <FilesMatch "\.(xml|txt)$">
     Header set Cache-Control "public, max-age=300, stale-while-revalidate=86400"
+  </FilesMatch>
+  # Pages: same URL can be HTML or Markdown, so responses vary by Accept; the Link header points
+  # agents at llms.txt (RFC 8288).
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=300, stale-while-revalidate=86400"
+    Header merge Vary "Accept"
+    Header set Link "</llms.txt>; rel=\"describedby\"; type=\"text/plain\""
+  </FilesMatch>
+  # Negotiated Markdown must never be stored by a shared cache under the HTML URL.
+  <FilesMatch "\.md$">
+    Header set Cache-Control "private, max-age=300"
+    Header merge Vary "Accept"
+    Header set Link "</llms.txt>; rel=\"describedby\"; type=\"text/plain\""
   </FilesMatch>
 </IfModule>
 
@@ -67,6 +88,8 @@ ErrorDocument 404 /404.html
 </IfModule>
 
 <IfModule mod_mime.c>
+  AddType "text/markdown; charset=utf-8" .md
+  AddType "text/plain; charset=utf-8" .txt
   AddType image/avif .avif
   AddType image/webp .webp
   AddType font/woff2 .woff2

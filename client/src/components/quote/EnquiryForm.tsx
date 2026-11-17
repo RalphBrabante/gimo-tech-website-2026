@@ -68,7 +68,9 @@ export function EnquiryForm({ productName, unitLabel, email }: { productName: st
   const error = (name: keyof Errors) => errors[name] ? <p id={`${name}-error`} className="field-error">{errors[name]}</p> : null;
 
   return (
-    <form className="form-card" onSubmit={submit} noValidate>
+    // WebMCP declarative tool annotation for in-browser agents (the form only prepares an email).
+    <form className="form-card" onSubmit={submit} noValidate
+      {...{ toolname: 'request_nylon_syringe_filter_quotation', tooldescription: 'Prepare an email requesting a quotation for 25mm 0.45 micron nylon syringe filters (canisters of 100) from Gimo Tech Supplies. Requires quantity, name and email; opens the user\'s email app and sends nothing automatically.' }}>
       <div className="form-grid">
         <div className="field">
           <label htmlFor="enq-quantity">Quantity ({unitLabel})</label>

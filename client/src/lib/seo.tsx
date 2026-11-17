@@ -23,7 +23,8 @@ export function pageMetadata(seo: PageSeo): Metadata {
   return {
     title: { absolute: title },
     description: seo.description,
-    alternates: seo.path ? { canonical: absoluteUrl(seo.path) } : undefined,
+    // Markdown copy for AI agents (generated at build by scripts/build-markdown.mjs).
+    alternates: seo.path ? { canonical: absoluteUrl(seo.path), types: { 'text/markdown': seo.path === '/' ? '/index.md' : `${seo.path}.md` } } : undefined,
     robots: seo.noindex ? { index: false, follow: true } : undefined,
     openGraph: {
       type: seo.type ?? 'website',
