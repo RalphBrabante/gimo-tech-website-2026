@@ -119,7 +119,7 @@ export default function SyringeFiltersPage() {
             <h3>25 mm 0.45 µm Nylon</h3>
             <p>Non-sterile canister of 100 pieces for HPLC sample preparation.</p>
             <div className="btn-row"><span className="link-arrow">Review product details</span></div>
-            <div className="tile-media"><Picture {...NYLON_PHOTO} alt="Canister of GIMO 25 millimetre 0.45 micron nylon syringe filters" sizes="(max-width: 900px) 90vw, 440px" /></div>
+            <div className="tile-media"><Picture {...NYLON_PHOTO} alt="Canister of GIMO 25 millimetre 0.45 micron nylon syringe filters" sizes="(max-width: 520px) calc(100vw - 80px), 440px" /></div>
           </a>
         </div>
       </section>

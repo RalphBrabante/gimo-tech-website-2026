@@ -69,8 +69,10 @@ ErrorDocument 404 /404.html
   </FilesMatch>
   # Pages: same URL can be HTML or Markdown, so responses vary by Accept; the Link header points
   # agents at llms.txt (RFC 8288).
+  # no-transform: stops the CDN (Cloudflare, via Hostinger) rewriting pages: it would otherwise
+  # inject a parser-blocking email-decode script and a beacon script that the CSP blocks.
   <FilesMatch "\.html$">
-    Header set Cache-Control "public, max-age=300, stale-while-revalidate=86400"
+    Header set Cache-Control "public, max-age=300, stale-while-revalidate=86400, no-transform"
     Header merge Vary "Accept"
     Header set Link "</llms.txt>; rel=\"describedby\"; type=\"text/plain\""
   </FilesMatch>
@@ -80,6 +82,11 @@ ErrorDocument 404 /404.html
     Header merge Vary "Accept"
     Header set Link "</llms.txt>; rel=\"describedby\"; type=\"text/plain\""
   </FilesMatch>
+</IfModule>
+
+# no-transform also stops the CDN compressing pages itself, so compress them here.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript text/plain text/markdown application/xml image/svg+xml
 </IfModule>
 
 <IfModule mod_expires.c>

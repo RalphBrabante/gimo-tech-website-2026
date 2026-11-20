@@ -17,7 +17,10 @@ const nextConfig = {
   turbopack: { root: repositoryRoot },
   outputFileTracingRoot: repositoryRoot,
   // Images are pre-optimised AVIF/WebP/JPEG files with explicit srcset; no runtime optimiser.
-  images: { unoptimized: true }
+  images: { unoptimized: true },
+  // The stylesheet is small (~6 KB compressed) and most visitors arrive fresh from search or ads,
+  // so inlining it removes a render-blocking request at little cost to repeat visits.
+  experimental: { inlineCss: true }
 };
 
 export default nextConfig;

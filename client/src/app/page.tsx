@@ -49,14 +49,14 @@ export default function HomePage() {
             <h2>Nylon Syringe Filter</h2>
             <p>0.45 micron. 25 mm. 100 per canister.</p>
             <div className="btn-row"><span className="link-arrow">Learn more</span></div>
-            <div className="tile-media"><Picture {...NYLON_PHOTO} alt="Canister of 25mm 0.45 micron nylon syringe filters" sizes="(max-width: 700px) 90vw, 440px" /></div>
+            <div className="tile-media"><Picture {...NYLON_PHOTO} alt="Canister of 25mm 0.45 micron nylon syringe filters" sizes="(max-width: 520px) calc(100vw - 80px), 440px" /></div>
           </a>
           <a className="tile" href="/sequential-qr-code-labels" data-reveal>
             <p className="eyebrow">Custom printing</p>
             <h2>Sequential QR Code Labels</h2>
             <p>30 × 20 mm adhesive labels with unique codes and numbering.</p>
             <div className="btn-row"><span className="link-arrow">Learn more</span></div>
-            <div className="tile-media"><Picture {...QR_PHOTO} alt="Roll of white sequential QR code adhesive labels" sizes="(max-width: 700px) 90vw, 440px" /></div>
+            <div className="tile-media"><Picture {...QR_PHOTO} alt="Roll of white sequential QR code adhesive labels" sizes="(max-width: 520px) calc(100vw - 80px), 440px" /></div>
           </a>
           <a className="tile tile-navy" href="/biohazard-bags" data-reveal style={{ ['--reveal-delay' as string]: '0.08s' }}>
             <p className="eyebrow">{h.impact_banner.eyebrow}</p>

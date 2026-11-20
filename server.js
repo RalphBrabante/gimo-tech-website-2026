@@ -34,7 +34,8 @@ const SECURITY_HEADERS = {
 function cacheControl(path, file) {
   if (path.startsWith('/_next/static/')) return 'public, max-age=31536000, immutable';
   if (file.endsWith('.md')) return 'private, max-age=300'; // may be served under an HTML URL
-  if (/\.(html|xml|txt)$/.test(file)) return 'public, max-age=300, stale-while-revalidate=86400';
+  if (file.endsWith('.html')) return 'public, max-age=300, stale-while-revalidate=86400, no-transform'; // see .htaccess
+  if (/\.(xml|txt)$/.test(file)) return 'public, max-age=300, stale-while-revalidate=86400';
   return 'public, max-age=604800, stale-while-revalidate=86400';
 }
 
