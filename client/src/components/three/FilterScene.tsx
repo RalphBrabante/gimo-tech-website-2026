@@ -15,9 +15,42 @@ const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 const smooth = (a: number, b: number, v: number) => { const t = clamp01((v - a) / (b - a)); return t * t * (3 - 2 * t); };
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
+const ENGAGE_EVENTS = ['pointerdown', 'pointermove', 'touchstart', 'keydown', 'wheel', 'scroll'] as const;
+
+/**
+ * Calls `start` once the visitor engages with the page (scroll, touch, pointer, key) or, on a
+ * desktop with a mouse, once the page has loaded and the main thread is idle. Until then phones
+ * keep the photograph, so downloading three.js, compiling shaders and the render loop never
+ * compete with page load (they were most of the mobile Total Blocking Time). Returns a canceller.
+ */
+function whenEngaged(start: () => void): () => void {
+  let done = false;
+  let idle = 0;
+  let timer = 0;
+  const desktop = window.matchMedia('(min-width: 900px) and (pointer: fine)').matches;
+  const stop = () => {
+    ENGAGE_EVENTS.forEach((type) => window.removeEventListener(type, go));
+    window.removeEventListener('load', onLoad);
+    if (idle) window.cancelIdleCallback?.(idle);
+    if (timer) window.clearTimeout(timer);
+  };
+  function go() { if (done) return; done = true; stop(); start(); }
+  function onLoad() {
+    if (typeof window.requestIdleCallback === 'function') idle = window.requestIdleCallback(go, { timeout: 4000 });
+    else timer = window.setTimeout(go, 1500);
+  }
+  ENGAGE_EVENTS.forEach((type) => window.addEventListener(type, go, { passive: true }));
+  if (desktop) {
+    if (document.readyState === 'complete') onLoad();
+    else window.addEventListener('load', onLoad, { once: true });
+  }
+  return () => { done = true; stop(); };
+}
+
 /**
  * Procedural 25 mm syringe filter (housing, nylon membrane, connectors) rendered with three.js.
- * The module is code-split and only downloaded when the stage approaches the viewport; rendering
+ * The module is code-split and only downloaded after the visitor engages (see `whenEngaged`)
+ * and when the stage approaches the viewport; rendering
  * stops while off-screen, in background tabs, and for reduced-motion users (single still frame).
  * The product photograph stays visible until the first frame is ready, and if WebGL fails.
  */
@@ -69,7 +102,9 @@ export function FilterScene({ mode, progress, label, fallback, className }: Filt
 
       const yellow = new THREE.MeshPhysicalMaterial({ color: 0xf2ac00, roughness: 0.32, clearcoat: 0.8, clearcoatRoughness: 0.18 });
       const yellowEdge = new THREE.MeshPhysicalMaterial({ color: 0xffc21a, roughness: 0.36, clearcoat: 0.6 });
-      const clear = new THREE.MeshPhysicalMaterial({ color: 0xf7fbff, roughness: 0.08, transmission: 0.6, transparent: true, opacity: 0.72, thickness: 0.6, ior: 1.45, side: THREE.DoubleSide });
+      // Plain transparency, not `transmission`: transmission re-renders the scene into an extra
+      // buffer every frame, which is costly on phones for a barely visible difference here.
+      const clear = new THREE.MeshPhysicalMaterial({ color: 0xf7fbff, roughness: 0.08, transparent: true, opacity: 0.6, side: THREE.DoubleSide });
       const membraneMaterial = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.85, sheen: 1, sheenColor: new THREE.Color(0xdff7f6), emissive: new THREE.Color(0x22c7c4), emissiveIntensity: 0 });
       const support = new THREE.MeshPhysicalMaterial({ color: 0xe9eef2, roughness: 0.3, transparent: true, opacity: 0.6 });
 
@@ -224,9 +259,9 @@ export function FilterScene({ mode, progress, label, fallback, className }: Filt
       loader.disconnect();
       init().catch(() => { /* Keep the photograph fallback. */ });
     }, { rootMargin: '300px 0px' });
-    loader.observe(stage);
+    const cancelWait = whenEngaged(() => { if (!disposed) loader.observe(stage); });
 
-    return () => { disposed = true; loader.disconnect(); cleanup(); };
+    return () => { disposed = true; cancelWait(); loader.disconnect(); cleanup(); };
   }, [mode, progress]);
 
   // Story mode is re-rendered by its scroll section.

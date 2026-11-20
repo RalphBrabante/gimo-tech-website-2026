@@ -1,6 +1,6 @@
-/** Pre-optimised local photographs: AVIF → WebP → JPEG at 640/1280 widths. */
+/** Pre-optimised local photographs: AVIF → WebP → JPEG at 640/960/1280 widths. */
 export function Picture({ base, alt, width, height, sizes, priority = false, className }: { base: string; alt: string; width: number; height: number; sizes: string; priority?: boolean; className?: string }) {
-  const set = (ext: string) => `${base}-640.${ext} 640w, ${base}-1280.${ext} 1280w`;
+  const set = (ext: string) => `${base}-640.${ext} 640w, ${base}-960.${ext} 960w, ${base}-1280.${ext} 1280w`;
   return (
     <picture className={className}>
       <source type="image/avif" srcSet={set('avif')} sizes={sizes} />
