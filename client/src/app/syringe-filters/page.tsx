@@ -3,7 +3,7 @@ import { getCmsPage } from '@/lib/content';
 import { SiteAnalytics } from '@/components/SiteAnalytics';
 import { pageMetadata, JsonLd, breadcrumbNode, webPageNode, DEFAULT_SOCIAL_IMAGE } from '@/lib/seo';
 import { BUSINESS, LAZADA_NYLON_URL, SHOPEE_NYLON_URL, MEMBRANE_GUIDE_PATH, NYLON_PATH, PORE_SIZE_GUIDE_PATH, absoluteUrl, metaDescription } from '@/lib/site';
-import { MEMBRANES } from '@/content/nylon';
+import { MEMBRANES, NYLON_PRICING, peso } from '@/content/nylon';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Picture, NYLON_PHOTO } from '@/components/Picture';
 import { FilterScene } from '@/components/three/FilterScene';
@@ -117,7 +117,7 @@ export default function SyringeFiltersPage() {
           <a className="tile tile-blue" href={NYLON_PATH} data-reveal="scale" style={{ minHeight: 'auto' }}>
             <p className="eyebrow">Featured configuration</p>
             <h3>25 mm 0.45 µm Nylon</h3>
-            <p>Non-sterile canister of 100 pieces for HPLC sample preparation.</p>
+            <p>Non-sterile canister of 100 for HPLC sample preparation: {peso(NYLON_PRICING.canister.price)}, or {peso(NYLON_PRICING.single.price)} per piece (VAT excluded).</p>
             <div className="btn-row"><span className="link-arrow">Review product details</span></div>
             <div className="tile-media"><Picture {...NYLON_PHOTO} alt="Canister of GIMO 25 millimetre 0.45 micron nylon syringe filters" sizes="(max-width: 520px) calc(100vw - 80px), 440px" /></div>
           </a>

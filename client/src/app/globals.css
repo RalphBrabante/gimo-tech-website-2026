@@ -246,6 +246,24 @@ table { border-collapse: collapse; width: 100%; }
 @media (min-width: 640px) { .compare { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 1000px) { .compare { grid-template-columns: repeat(4, minmax(0, 1fr)); } .compare.compare-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 880px; margin-inline: auto; } }
 
+/* ---------- Pricing ---------- */
+.hero-price { margin: 0.2rem 0 0.35rem; color: var(--heading); font-size: clamp(1.15rem, 2.4vw, 1.5rem); font-weight: 600; }
+.hero-price strong { font-size: 1.6em; font-weight: 800; letter-spacing: -0.03em; }
+.hero-price-unit { color: var(--text); white-space: nowrap; }
+@media (max-width: 559px) { .hero-price-unit { display: block; } .hero-price-sep { display: none; } }
+.hero-price-note { margin: 0 0 1.2rem; color: var(--text-soft); font-size: 0.95rem; font-weight: 600; }
+.price-grid { display: grid; gap: 16px; grid-template-columns: 1fr; max-width: 880px; margin-inline: auto; }
+@media (min-width: 720px) { .price-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.price-card { display: flex; flex-direction: column; align-items: flex-start; padding: clamp(26px, 3.4vw, 40px); border-radius: var(--radius-tile); background: #fff; border: 2px solid transparent; }
+.price-card.is-featured { border-color: var(--aqua); box-shadow: var(--shadow); }
+.price-card h3 { font-size: 1.35rem; margin: 1rem 0 0.2rem; }
+.price-amount { margin: 0; color: var(--heading); font-size: clamp(2.6rem, 6vw, 3.6rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; }
+.price-unit { margin: 0.2rem 0 1.3rem; color: var(--text-soft); font-weight: 600; }
+.price-card .checklist { margin-bottom: 1.8rem; }
+.price-card .btn { margin-top: auto; width: 100%; }
+.compare-badge-quiet { background: var(--bg-blue); color: var(--heading); }
+.price-terms { max-width: 880px; margin: 1.4rem auto 0; text-align: center; font-size: 0.9rem; color: var(--text-soft); }
+
 /* Spec table */
 .spec-table { border-top: 1px solid var(--line); }
 .spec-row { display: grid; gap: 0.25rem 2rem; padding: 1.1rem 0; border-bottom: 1px solid var(--line); }

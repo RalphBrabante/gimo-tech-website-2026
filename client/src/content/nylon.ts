@@ -1,14 +1,43 @@
 /**
  * Verified facts only (owner-confirmed configuration): nylon membrane, 25 mm diameter, 0.45 µm
- * pore size, non-sterile canister of 100 pieces. Housing, connectors, SKU, operating limits,
- * manufacturer and price are NOT verified and must not be stated or put in structured data.
+ * pore size, non-sterile canister of 100 pieces. Housing, connectors, SKU, operating limits and
+ * manufacturer are NOT verified and must not be stated or put in structured data.
  * The visible FAQ and the FAQPage structured data are generated from the same array.
  */
+
+/**
+ * Owner-approved public prices (November 2026): PHP, VAT excluded, in stock, delivery quoted
+ * separately. The visible page, metadata and Offer structured data all read from this object;
+ * change prices here (and in client/public/llms.txt, which is static). Lazada/Shopee prices may differ.
+ */
+export const NYLON_PRICING = {
+  currency: 'PHP',
+  vatIncluded: false,
+  availability: 'https://schema.org/InStock',
+  canister: { price: 3077, pieces: 100 },
+  single: { price: 47, pieces: 1 }
+} as const;
+
+/** "₱3,077" or "₱30.77": whole pesos when there are no centavos. */
+export function peso(amount: number): string {
+  return `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: Number.isInteger(amount) ? 0 : 2, maximumFractionDigits: 2 })}`;
+}
+
+export const CANISTER_PER_FILTER = Math.round((NYLON_PRICING.canister.price / NYLON_PRICING.canister.pieces) * 100) / 100;
+/** Rounded down so the claim is never overstated. */
+export const CANISTER_SAVING_PERCENT = Math.floor((1 - CANISTER_PER_FILTER / NYLON_PRICING.single.price) * 100);
+
+const CANISTER = peso(NYLON_PRICING.canister.price);
+const SINGLE = peso(NYLON_PRICING.single.price);
+const PER_FILTER = peso(CANISTER_PER_FILTER);
+export const PRICE_TERMS = 'Prices exclude VAT. Delivery is quoted separately for your location.';
+export const PRICE_SUMMARY = `${CANISTER} per non-sterile canister of 100 (${PER_FILTER} per filter) or ${SINGLE} per single piece, VAT excluded`;
+
 export const NYLON = {
   name: 'Nylon Syringe Filter 25mm 0.45µm',
   shortName: 'Nylon Syringe Filter',
-  title: 'Nylon Syringe Filter Philippines | 0.45 Micron 25mm Supplier',
-  description: 'Buy 0.45 micron nylon syringe filters (25mm) in the Philippines from GIMO, a laboratory syringe filter supplier. For HPLC sample prep. Request a quote.',
+  title: `Nylon Syringe Filter Philippines | 0.45µm 25mm, ${CANISTER} per 100`,
+  description: `Low-priced, lab-quality 0.45 micron nylon syringe filters (25mm) in the Philippines: ${CANISTER} per canister of 100 (${PER_FILTER} each) or ${SINGLE} per piece, ex-VAT.`,
   imageAlt: '25mm 0.45 micron non-sterile nylon syringe filter canister supplied by GIMO Laboratory Supplies Philippines'
 };
 
@@ -31,11 +60,17 @@ export const NYLON_SPECS: { label: string; value: string }[] = [
   { label: 'Filter diameter', value: '25 mm' },
   { label: 'Pore size', value: '0.45 µm (0.45 micron)' },
   { label: 'Packaging', value: 'Non-sterile canister, 100 pieces' },
+  { label: 'Price', value: `${PRICE_SUMMARY}. Delivery is quoted separately.` },
+  { label: 'Availability', value: 'In stock' },
   { label: 'Sterile packaging', value: 'Not part of this listing. Ask GIMO to confirm availability before ordering.' },
   { label: 'Housing, connectors, SKU and operating limits', value: 'Not yet verified in the catalogue. Request the applicable manufacturer specification with your quotation.' }
 ];
 
 export const NYLON_FAQS = [
+  {
+    question: 'How much is a nylon syringe filter in the Philippines?',
+    answer: `GIMO sells 25mm 0.45 micron nylon syringe filters at ${CANISTER} per non-sterile canister of 100, which works out to ${PER_FILTER} per filter, or ${SINGLE} per single piece. The canister saves about ${CANISTER_SAVING_PERCENT}% per filter compared with buying singles. ${PRICE_TERMS}`
+  },
   {
     question: 'Where can I buy nylon syringe filters in the Philippines?',
     answer: 'You can buy 25mm 0.45 micron nylon syringe filters from GIMO Laboratory Supplies (Gimo Tech Supplies), a laboratory supplier based in San Pedro, Laguna. Request a quotation on this page for canister quantities, or order online through the official GIMO Laboratory Supplies Lazada and Shopee shops.'
@@ -54,11 +89,11 @@ export const NYLON_FAQS = [
   },
   {
     question: 'How many filters are in a pack?',
-    answer: 'The verified non-sterile canister shown on this page contains 100 pieces. Single pieces are sold separately on Lazada and Shopee; other packaging configurations must be confirmed when requesting a quotation.'
+    answer: `The non-sterile canister shown on this page contains 100 pieces and costs ${CANISTER}. Single pieces are also available at ${SINGLE} each. Other packaging configurations must be confirmed when requesting a quotation.`
   },
   {
     question: 'Can my company or laboratory request a formal quotation?',
-    answer: 'Yes. Purchasing departments, schools, universities, clinics and industrial laboratories can request a quotation with the required quantity and delivery destination. Pricing, availability and delivery terms are confirmed by email.'
+    answer: `Yes. Purchasing departments, schools, universities, clinics and industrial laboratories can request a quotation with the required quantity and delivery destination. The quotation confirms the total with VAT, delivery charges and lead time for the listed ${CANISTER} canister or ${SINGLE} single-piece price.`
   },
   {
     question: 'Can GIMO deliver syringe filters outside Metro Manila?',

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { SiteAnalytics } from '@/components/SiteAnalytics';
 import { pageMetadata, JsonLd, breadcrumbNode, faqNode, webPageNode, DEFAULT_SOCIAL_IMAGE } from '@/lib/seo';
-import { BUSINESS, LAZADA_NYLON_URL, SHOPEE_NYLON_URL, MEMBRANE_GUIDE_PATH, NYLON_PATH, PORE_SIZE_GUIDE_PATH, absoluteUrl } from '@/lib/site';
-import { NYLON, NYLON_FAQS, NYLON_HIGHLIGHTS, NYLON_SPECS, NYLON_STORY, MEMBRANES } from '@/content/nylon';
+import { BUSINESS, LAZADA_NYLON_URL, SHOPEE_NYLON_URL, MEMBRANE_GUIDE_PATH, NYLON_PATH, PORE_SIZE_GUIDE_PATH, absoluteUrl, siteOrigin } from '@/lib/site';
+import { NYLON, NYLON_FAQS, NYLON_HIGHLIGHTS, NYLON_SPECS, NYLON_STORY, MEMBRANES, NYLON_PRICING, CANISTER_PER_FILTER, CANISTER_SAVING_PERCENT, PRICE_TERMS, peso } from '@/content/nylon';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { LocalNav } from '@/components/LocalNav';
 import { Faq } from '@/components/Faq';
@@ -14,6 +14,28 @@ import { EnquiryForm } from '@/components/quote/EnquiryForm';
 export const metadata: Metadata = pageMetadata({ title: NYLON.title, absoluteTitle: true, description: NYLON.description, path: NYLON_PATH, image: DEFAULT_SOCIAL_IMAGE });
 
 const crumbs = [{ name: 'Home', path: '/' }, { name: 'Syringe Filters', path: '/syringe-filters' }, { name: NYLON.name, path: NYLON_PATH }];
+
+const CANISTER = peso(NYLON_PRICING.canister.price);
+const SINGLE = peso(NYLON_PRICING.single.price);
+const PER_FILTER = peso(CANISTER_PER_FILTER);
+
+const PACKS = [
+  { value: 'canister', label: `Canister of 100 (${CANISTER})`, unitLabel: 'canisters of 100' },
+  { value: 'single', label: `Single pieces (${SINGLE} each)`, unitLabel: 'single pieces' }
+];
+
+/** Offer nodes come from NYLON_PRICING, the same object that renders the visible prices. */
+function offerNode(name: string, price: number, pieces: number) {
+  return {
+    '@type': 'Offer', name, url: absoluteUrl(`${NYLON_PATH}#pricing`), price, priceCurrency: NYLON_PRICING.currency,
+    availability: NYLON_PRICING.availability, itemCondition: 'https://schema.org/NewCondition', areaServed: 'PH',
+    seller: { '@id': `${siteOrigin()}/#organization` },
+    priceSpecification: {
+      '@type': 'UnitPriceSpecification', price, priceCurrency: NYLON_PRICING.currency, valueAddedTaxIncluded: NYLON_PRICING.vatIncluded,
+      referenceQuantity: { '@type': 'QuantitativeValue', value: pieces, unitCode: 'C62', unitText: pieces === 1 ? 'piece' : 'pieces' }
+    }
+  };
+}
 
 export default function NylonSyringeFilterPage() {
   const productUrl = absoluteUrl(NYLON_PATH);
@@ -34,25 +56,31 @@ export default function NylonSyringeFilterPage() {
             { '@type': 'PropertyValue', name: 'Pore size', value: 0.45, unitCode: '4H', unitText: 'µm' },
             { '@type': 'PropertyValue', name: 'Pieces per canister', value: 100 },
             { '@type': 'PropertyValue', name: 'Sterility', value: 'Non-sterile' }
+          ],
+          offers: [
+            offerNode('Non-sterile canister of 100', NYLON_PRICING.canister.price, NYLON_PRICING.canister.pieces),
+            offerNode('Single piece', NYLON_PRICING.single.price, NYLON_PRICING.single.pieces)
           ]
         },
         breadcrumbNode(crumbs),
         faqNode(NYLON_FAQS)
       ]} />
 
-      <LocalNav title={NYLON.shortName} cta={{ href: '#quote', label: 'Request a quote' }} links={[
-        { href: '#overview', label: 'Overview' }, { href: '#inside', label: 'Inside' }, { href: '#specs', label: 'Specs' },
+      <LocalNav title={NYLON.shortName} cta={{ href: '#quote', label: 'Order now' }} links={[
+        { href: '#overview', label: 'Overview' }, { href: '#pricing', label: 'Price' }, { href: '#inside', label: 'Inside' }, { href: '#specs', label: 'Specs' },
         { href: '#pore-size', label: '0.22 vs 0.45' }, { href: '#compare', label: 'Compare' }, { href: '#faq', label: 'FAQ' }
       ]} />
 
       <section id="overview" className="hero" aria-labelledby="nylon-title">
         <div className="shell"><Breadcrumbs items={crumbs} /></div>
         <div className="shell" style={{ paddingTop: 'clamp(20px, 4vw, 40px)' }}>
-          <p className="eyebrow">Laboratory filtration · Philippines</p>
+          <p className="eyebrow">Low price · Lab quality · Philippines</p>
           <h1 id="nylon-title" className="display">Nylon Syringe Filter <span className="gradient-text">0.45&nbsp;Micron</span></h1>
-          <p className="lede">25 mm nylon syringe filters for HPLC sample preparation and everyday lab filtration, supplied across the Philippines in non-sterile 100-piece canisters.</p>
+          <p className="hero-price"><strong>{CANISTER}</strong> per canister of 100 <span className="hero-price-unit"><span className="hero-price-sep">· </span>{PER_FILTER} per filter</span></p>
+          <p className="hero-price-note">Or {SINGLE} per piece · In stock · Prices exclude VAT</p>
+          <p className="lede">Lab-quality 25 mm nylon syringe filters for HPLC sample preparation and everyday lab filtration, at a low per-filter price with delivery across the Philippines.</p>
           <div className="btn-row center">
-            <a className="btn btn-primary" href="#quote">Request a quotation</a>
+            <a className="btn btn-primary" href="#quote">Order now</a>
             <a className="btn btn-outline" href={LAZADA_NYLON_URL} target="_blank" rel="noopener noreferrer">Buy on Lazada <span aria-hidden="true">↗</span></a>
             <a className="btn btn-outline" href={SHOPEE_NYLON_URL} target="_blank" rel="noopener noreferrer">Buy on Shopee <span aria-hidden="true">↗</span></a>
           </div>
@@ -76,6 +104,43 @@ export default function NylonSyringeFilterPage() {
         </div>
       </section>
 
+      <section id="pricing" className="section bg-pale" aria-labelledby="pricing-title">
+        <div className="shell">
+          <div className="section-head">
+            <p className="eyebrow">Low price · Lab quality</p>
+            <h2 id="pricing-title" className="headline">Nylon syringe filter price.</h2>
+            <p>Lab-quality 25 mm 0.45 µm nylon filters at a low per-filter price, published upfront so you know what you will pay before you ask.</p>
+          </div>
+          <div className="price-grid">
+            <article className="price-card is-featured" aria-labelledby="price-canister" data-reveal>
+              <span className="compare-badge">Best value · save {CANISTER_SAVING_PERCENT}% per filter</span>
+              <h3 id="price-canister">Canister of 100</h3>
+              <p className="price-amount">{CANISTER}</p>
+              <p className="price-unit">{PER_FILTER} per filter · VAT excluded</p>
+              <ul className="checklist">
+                <li>100 non-sterile 25 mm 0.45 µm nylon filters</li>
+                <li>Cheaper per filter than singles, for routine HPLC sample prep</li>
+                <li>In stock, with delivery across the Philippines</li>
+              </ul>
+              <a className="btn btn-primary" href="#quote">Order a canister</a>
+            </article>
+            <article className="price-card" aria-labelledby="price-single" data-reveal style={{ ['--reveal-delay' as string]: '0.08s' }}>
+              <span className="compare-badge compare-badge-quiet">Buy only what you need</span>
+              <h3 id="price-single">Single piece</h3>
+              <p className="price-amount">{SINGLE}</p>
+              <p className="price-unit">per filter · VAT excluded</p>
+              <ul className="checklist">
+                <li>The same 25 mm 0.45 µm nylon filter</li>
+                <li>Suited to method trials and small sample runs</li>
+                <li>In stock, with delivery across the Philippines</li>
+              </ul>
+              <a className="btn btn-outline" href="#quote">Order single pieces</a>
+            </article>
+          </div>
+          <p className="price-terms">{PRICE_TERMS} Prices on Lazada and Shopee are set on each marketplace and may differ.</p>
+        </div>
+      </section>
+
       <div id="inside">
         <ScrollStory
           heading={<>Four facts. <span className="gradient-text">One clean sample.</span></>}
@@ -94,13 +159,13 @@ export default function NylonSyringeFilterPage() {
           <div data-reveal>
             <p className="eyebrow">Supplied as a 100-piece canister</p>
             <h2 id="canister-title" className="headline">Ready for routine HPLC sample prep.</h2>
-            <p>GIMO Laboratory Supplies provides 25mm 0.45 micron nylon syringe filters for HPLC sample preparation, routine sample clarification and general laboratory filtration. Singles are also sold separately on Lazada and Shopee; confirm the selected listing option there.</p>
+            <p>GIMO Laboratory Supplies provides 25mm 0.45 micron nylon syringe filters for HPLC sample preparation, routine sample clarification and general laboratory filtration. Single pieces are also available at {SINGLE} each, and both are listed on Lazada and Shopee.</p>
             <ul className="checklist">
               <li>Syringe filter for HPLC sample preparation</li>
               <li>Routine sample clarification and lab filtration</li>
               <li>For purchasing departments, researchers, schools, universities, clinics and industrial laboratories</li>
             </ul>
-            <a className="link-arrow" href="#quote">Get pricing for your quantity</a>
+            <a className="link-arrow" href="#pricing">See canister and single-piece prices</a>
           </div>
         </div>
       </section>
@@ -133,7 +198,7 @@ export default function NylonSyringeFilterPage() {
               <dl>
                 <div><dt>Typical use</dt><dd>General HPLC sample preparation and particulate removal</dd></div>
                 <div><dt>Flow</dt><dd>Larger pores filter faster, with less back-pressure</dd></div>
-                <div><dt>On this page</dt><dd>25 mm · non-sterile · 100 pieces</dd></div>
+                <div><dt>On this page</dt><dd>25 mm · non-sterile · {CANISTER} per 100</dd></div>
               </dl>
             </div>
             <div className="compare-col" data-reveal style={{ ['--reveal-delay' as string]: '0.1s' }}>
@@ -156,13 +221,14 @@ export default function NylonSyringeFilterPage() {
           <div className="section-head">
             <p className="eyebrow">Why buy from GIMO</p>
             <h2 id="supplier-title" className="headline">Your nylon syringe filter supplier in the Philippines.</h2>
-            <p>Gimo Tech Supplies, also known as GIMO Laboratory Supplies, is a laboratory syringe filter supplier serving laboratories and procurement teams nationwide.</p>
+            <p>Gimo Tech Supplies, also known as GIMO Laboratory Supplies, is a laboratory syringe filter supplier serving laboratories and procurement teams nationwide with lab-quality filters at a low price.</p>
           </div>
-          <div className="grid grid-3">
+          <div className="grid grid-2">
             {[
+              { title: 'Low price, published upfront', body: `${CANISTER} per canister of 100 works out to ${PER_FILTER} per filter. No negotiation needed to see the price.` },
+              { title: 'Lab-quality nylon membrane', body: 'A 0.45 µm nylon membrane in the common 25 mm format, for HPLC sample preparation and particulate removal. Ask for the manufacturer documentation with your order.' },
               { title: 'Based in San Pedro, Laguna', body: 'A local supply team you can email directly about configuration, quantity and documentation.' },
-              { title: 'Delivery across the Philippines', body: 'Share your destination and the courier, lead time and charges are confirmed with your quotation.' },
-              { title: 'Quotation or online checkout', body: 'Request a formal quotation for canister quantities, or buy through the official GIMO Lazada or Shopee shop.' }
+              { title: 'Delivery across the Philippines', body: 'Share your destination and the courier, lead time and charges are confirmed with your order or quotation. Prefer online checkout? Use the official GIMO Lazada or Shopee shop.' }
             ].map((card, index) => (
               <article key={card.title} className="card" data-reveal style={{ ['--reveal-delay' as string]: `${index * 0.08}s` }}>
                 <h3>{card.title}</h3>
@@ -200,16 +266,17 @@ export default function NylonSyringeFilterPage() {
         <div className="shell split" style={{ alignItems: 'start' }}>
           <div>
             <p className="eyebrow">Buy nylon syringe filters</p>
-            <h2 id="quote-title" className="headline">Request a quotation.</h2>
-            <p>Tell us how many canisters you need and where to deliver. The form prepares an email to our supply team, who reply with pricing, current availability and delivery timing for your location.</p>
+            <h2 id="quote-title" className="headline">Order or request a quotation.</h2>
+            <p>Choose canisters or single pieces, the quantity and where to deliver. The form prepares an email to our supply team, who confirm the total with VAT, delivery charges and timing for your location.</p>
             <ul className="checklist">
-              <li>Nylon · 25 mm · 0.45 µm · 100 pieces per canister</li>
+              <li>{CANISTER} per canister of 100 · {SINGLE} per piece (VAT excluded)</li>
+              <li>Nylon · 25 mm · 0.45 µm · non-sterile</li>
               <li>Formal quotations for purchasing departments</li>
               <li>Delivery enquiries throughout the Philippines</li>
             </ul>
             <p className="small">Prefer to order online now? Buy on <a href={LAZADA_NYLON_URL} target="_blank" rel="noopener noreferrer">Lazada</a> or <a href={SHOPEE_NYLON_URL} target="_blank" rel="noopener noreferrer">Shopee</a>. Or email <a href={`mailto:${BUSINESS.email}?subject=${encodeURIComponent('Quotation request: 25mm 0.45µm nylon syringe filters')}`}>{BUSINESS.email}</a>.</p>
           </div>
-          <EnquiryForm productName="Nylon Syringe Filter 25mm 0.45µm (non-sterile, 100-piece canister)" unitLabel="canisters of 100" email={BUSINESS.email} />
+          <EnquiryForm productName="Nylon Syringe Filter 25mm 0.45µm (non-sterile)" unitLabel="canisters of 100" packs={PACKS} email={BUSINESS.email} />
         </div>
       </section>
 
@@ -227,9 +294,9 @@ export default function NylonSyringeFilterPage() {
       <section className="cta-band" aria-labelledby="cta-title">
         <div className="shell">
           <h2 id="cta-title" className="headline">Filters for your next sample run.</h2>
-          <p className="lede">25mm 0.45 micron nylon syringe filters from a Philippine laboratory supplier.</p>
+          <p className="lede">Lab-quality 25mm 0.45 micron nylon syringe filters for {CANISTER} per canister of 100, from a Philippine laboratory supplier.</p>
           <div className="btn-row center">
-            <a className="btn btn-aqua" href="#quote">Request a quotation</a>
+            <a className="btn btn-aqua" href="#quote">Order now</a>
             <a className="btn btn-white" href={LAZADA_NYLON_URL} target="_blank" rel="noopener noreferrer">Buy on Lazada <span aria-hidden="true">↗</span></a>
             <a className="btn btn-white" href={SHOPEE_NYLON_URL} target="_blank" rel="noopener noreferrer">Buy on Shopee <span aria-hidden="true">↗</span></a>
           </div>

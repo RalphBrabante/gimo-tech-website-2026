@@ -1,11 +1,12 @@
 # Gimo Tech Supplies (GIMO Laboratory Supplies)
 
-> Laboratory supplier in San Pedro, Laguna, Philippines. Supplies 25mm 0.45 micron nylon syringe filters for HPLC sample preparation, sequential QR code labels and customized biohazard bags to laboratories and procurement teams nationwide. Pricing is quote-only: email the supply team or buy through the official Lazada and Shopee shops.
+> Laboratory supplier in San Pedro, Laguna, Philippines. Supplies 25mm 0.45 micron nylon syringe filters for HPLC sample preparation, sequential QR code labels and customized biohazard bags to laboratories and procurement teams nationwide. Nylon syringe filter prices are published (below); other products are quote-only. Email the supply team or buy through the official Lazada and Shopee shops.
 
 Key facts:
 
 - Nylon syringe filter: nylon membrane, 25 mm diameter, 0.45 µm (0.45 micron) pore size, non-sterile canister of 100 pieces. 0.22 µm is not part of the listing; ask the supply team.
-- Quotations: gimotechsupplies@gmail.com (pricing, availability and delivery confirmed by email).
+- Nylon syringe filter price: ₱3,077 per canister of 100 (₱30.77 per filter) or ₱47 per single piece. Prices exclude VAT; delivery is quoted separately. In stock. Lazada and Shopee prices may differ.
+- Orders and quotations: gimotechsupplies@gmail.com (totals with VAT, availability and delivery confirmed by email).
 - Address: B2 L26 Diamond St., South 1 Camella Homes Annex, San Pedro, Laguna 4023, Philippines (contact before visiting).
 - Online shops: https://www.lazada.com.ph/shop/gimo-laboratory-supplies/ and https://shopee.ph/shop/229076897
 
@@ -13,7 +14,7 @@ Every page is also available as Markdown: add `.md` to the URL (homepage: /index
 
 ## Products
 
-- [Nylon Syringe Filter 0.45 Micron, 25mm](https://gimosupplies.com/products/nylon-syringe-filter-25mm-045um.md): specifications, uses, FAQ and how to request a quotation
+- [Nylon Syringe Filter 0.45 Micron, 25mm](https://gimosupplies.com/products/nylon-syringe-filter-25mm-045um.md): price, specifications, uses, FAQ and how to order
 - [Syringe Filters for HPLC Sample Preparation](https://gimosupplies.com/syringe-filters.md): Nylon, PTFE, PVDF and MCE membranes
 - [Sequential QR Code Labels](https://gimosupplies.com/sequential-qr-code-labels.md): 30 × 20 mm adhesive labels with unique QR codes and numbering
 - [Customized Biohazard Bags](https://gimosupplies.com/biohazard-bags.md): printed identifiers and QR code attachments

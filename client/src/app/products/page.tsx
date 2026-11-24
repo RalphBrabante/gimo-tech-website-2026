@@ -25,7 +25,7 @@ export default function CataloguePage() {
         <div className="shell">
           <Breadcrumbs items={crumbs} />
           <h1 style={{ marginTop: '1.5rem' }}>Laboratory Supplies Catalogue</h1>
-          <p className="lede" style={{ maxWidth: '62ch' }}>Gimo Tech Supplies, also known as GIMO Laboratory Supplies, supplies syringe filters, sequential QR code labels and customized biohazard bags to laboratories and procurement teams in the Philippines. Pricing, packaging and availability are confirmed with each quotation.</p>
+          <p className="lede" style={{ maxWidth: '62ch' }}>Gimo Tech Supplies, also known as GIMO Laboratory Supplies, supplies syringe filters, sequential QR code labels and customized biohazard bags to laboratories and procurement teams in the Philippines. Nylon syringe filters have published prices; other pricing, packaging and availability are confirmed with each quotation.</p>
         </div>
       </div>
 

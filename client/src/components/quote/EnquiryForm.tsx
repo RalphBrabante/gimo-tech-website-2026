@@ -3,13 +3,14 @@
 import { useState, type FormEvent } from 'react';
 
 type Errors = Partial<Record<'quantity' | 'name' | 'email', string>>;
+export interface PackOption { value: string; label: string; unitLabel: string }
 
 /**
  * Quotation request for a static website: no server stores the request. The form validates the
  * details, then opens the visitor's email app with a pre-filled message to the supply team. If no
  * email app opens, the same message is shown ready to copy.
  */
-export function EnquiryForm({ productName, unitLabel, email }: { productName: string; unitLabel: string; email: string }) {
+export function EnquiryForm({ productName, unitLabel, email, packs }: { productName: string; unitLabel: string; email: string; packs?: PackOption[] }) {
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<{ text: string; error: boolean }>({ text: '', error: false });
   const [message, setMessage] = useState<{ subject: string; body: string } | null>(null);
@@ -21,8 +22,10 @@ export function EnquiryForm({ productName, unitLabel, email }: { productName: st
     const data = new FormData(form);
     const text = (name: string) => String(data.get(name) ?? '').trim();
     const quantity = Number(text('quantity'));
+    const pack = packs?.find((option) => option.value === text('pack'));
+    const unit = pack?.unitLabel ?? unitLabel;
     const next: Errors = {};
-    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 100000) next.quantity = 'Enter a whole number of canisters (1 or more).';
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 100000) next.quantity = `Enter a whole number of ${unit} (1 or more).`;
     if (!text('name')) next.name = 'Enter your full name.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text('email'))) next.email = 'Enter a valid email address, for example name@laboratory.ph.';
     setErrors(next);
@@ -36,7 +39,8 @@ export function EnquiryForm({ productName, unitLabel, email }: { productName: st
       'Hello Gimo Tech Supplies,',
       '',
       `Please send a quotation for: ${productName}`,
-      `Quantity: ${quantity} × ${unitLabel}`,
+      pack && `Pack: ${pack.label}`,
+      `Quantity: ${quantity} × ${unit}`,
       text('deliveryLocation') && `Delivery city/province: ${text('deliveryLocation')}`,
       text('notes') && `Requirements: ${text('notes')}`,
       '',
@@ -70,14 +74,22 @@ export function EnquiryForm({ productName, unitLabel, email }: { productName: st
   return (
     // WebMCP declarative tool annotation for in-browser agents (the form only prepares an email).
     <form className="form-card" onSubmit={submit} noValidate
-      {...{ toolname: 'request_nylon_syringe_filter_quotation', tooldescription: 'Prepare an email requesting a quotation for 25mm 0.45 micron nylon syringe filters (canisters of 100) from Gimo Tech Supplies. Requires quantity, name and email; opens the user\'s email app and sends nothing automatically.' }}>
+      {...{ toolname: 'request_nylon_syringe_filter_quotation', tooldescription: 'Prepare an email requesting a quotation for 25mm 0.45 micron nylon syringe filters (canisters of 100 or single pieces) from Gimo Tech Supplies. Requires quantity, name and email; opens the user\'s email app and sends nothing automatically.' }}>
       <div className="form-grid">
+        {packs?.length ? (
+          <div className="field">
+            <label htmlFor="enq-pack">Pack</label>
+            <select id="enq-pack" name="pack" defaultValue={packs[0].value}>
+              {packs.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+            </select>
+          </div>
+        ) : null}
         <div className="field">
-          <label htmlFor="enq-quantity">Quantity ({unitLabel})</label>
+          <label htmlFor="enq-quantity">{packs?.length ? 'Quantity' : `Quantity (${unitLabel})`}</label>
           <input id="enq-quantity" type="number" inputMode="numeric" min={1} max={100000} step={1} defaultValue={1} required {...fieldProps('quantity')} />
           {error('quantity')}
         </div>
-        <div className="field">
+        <div className={`field${packs?.length ? ' full' : ''}`}>
           <label htmlFor="enq-location">Delivery city or province <span className="muted">(optional)</span></label>
           <input id="enq-location" name="deliveryLocation" autoComplete="address-level2" maxLength={160} placeholder="e.g. Quezon City" />
         </div>

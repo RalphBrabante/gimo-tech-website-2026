@@ -30,21 +30,22 @@ export function AgentTools({ business, products }: AgentToolsProps) {
     const tools: ModelContextTool[] = [
       {
         name: 'get_gimo_product_info',
-        description: `Product ranges, verified specifications and contact/ordering details for ${business.name} (${business.alternateName}), a laboratory supplier in the Philippines. Pricing is quote-only.`,
+        description: `Product ranges, verified specifications and contact/ordering details for ${business.name} (${business.alternateName}), a laboratory supplier in the Philippines. Nylon syringe filter prices are published; other items are quote-only.`,
         inputSchema: { type: 'object', properties: { product: { type: 'string', description: 'Optional product name to filter by, e.g. "nylon syringe filter".' } } },
         async execute(input) {
           const query = String(input.product ?? '').toLowerCase();
           const matches = query ? products.filter((p) => p.name.toLowerCase().includes(query) || query.split(/\s+/).every((w) => p.name.toLowerCase().includes(w))) : products;
-          return text({ business: { ...business, pricing: 'Quote-only: pricing, availability and delivery are confirmed by email.' }, products: matches.length ? matches : products });
+          return text({ business: { ...business, pricing: 'Nylon syringe filter prices are listed in its specs (VAT excluded, delivery quoted separately). Other products are quote-only: pricing, availability and delivery are confirmed by email.' }, products: matches.length ? matches : products });
         }
       },
       {
         name: 'prepare_gimo_quotation_email',
-        description: 'Prepare (not send) a quotation request email for 25mm 0.45 micron nylon syringe filters (non-sterile canisters of 100). Returns a mailto link and message text for the user to review and send.',
+        description: 'Prepare (not send) a quotation request email for 25mm 0.45 micron nylon syringe filters (non-sterile canisters of 100, or single pieces). Returns a mailto link and message text for the user to review and send.',
         inputSchema: {
           type: 'object',
           properties: {
-            quantity: { type: 'integer', minimum: 1, description: 'Number of canisters of 100 filters.' },
+            pack: { type: 'string', enum: ['canister', 'single'], description: 'canister = canister of 100 filters (default); single = single pieces.' },
+            quantity: { type: 'integer', minimum: 1, description: 'Number of canisters of 100, or of single pieces when pack is "single".' },
             name: { type: 'string', description: 'Requester full name.' },
             email: { type: 'string', description: 'Requester email address for the reply.' },
             company: { type: 'string', description: 'Company or laboratory (optional).' },
@@ -55,12 +56,14 @@ export function AgentTools({ business, products }: AgentToolsProps) {
         },
         async execute(input) {
           const quantity = Number(input.quantity);
-          if (!Number.isInteger(quantity) || quantity < 1) return text('quantity must be a whole number of canisters (1 or more).');
-          const subject = 'Quotation request: Nylon Syringe Filter 25mm 0.45µm (non-sterile, 100-piece canister)';
+          if (!Number.isInteger(quantity) || quantity < 1) return text('quantity must be a whole number (1 or more).');
+          const single = input.pack === 'single';
+          const product = `Nylon Syringe Filter 25mm 0.45µm (non-sterile, ${single ? 'single pieces' : '100-piece canister'})`;
+          const subject = `Quotation request: ${product}`;
           const body = [
             'Hello Gimo Tech Supplies,', '',
-            'Please send a quotation for: Nylon Syringe Filter 25mm 0.45µm (non-sterile, 100-piece canister)',
-            `Quantity: ${quantity} × canisters of 100`,
+            `Please send a quotation for: ${product}`,
+            `Quantity: ${quantity} × ${single ? 'single pieces' : 'canisters of 100'}`,
             input.deliveryLocation ? `Delivery city/province: ${input.deliveryLocation}` : '',
             input.notes ? `Requirements: ${input.notes}` : '', '',
             `Name: ${input.name}`, input.company ? `Company/laboratory: ${input.company}` : '', `Email: ${input.email}`

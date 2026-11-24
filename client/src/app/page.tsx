@@ -5,6 +5,7 @@ import { SiteAnalytics } from '@/components/SiteAnalytics';
 import { pageMetadata, JsonLd, webPageNode } from '@/lib/seo';
 import { BUSINESS, LAZADA_NYLON_URL, SHOPEE_NYLON_URL, MEMBRANE_GUIDE_PATH, NYLON_PATH, PORE_SIZE_GUIDE_PATH, absoluteUrl, isExternal } from '@/lib/site';
 import { Picture, NYLON_PHOTO, QR_PHOTO } from '@/components/Picture';
+import { NYLON_PRICING, peso } from '@/content/nylon';
 import { FilterScene } from '@/components/three/FilterScene';
 
 const TITLE = 'Syringe Filter Supplier Philippines | Gimo Tech Supplies';
@@ -47,7 +48,7 @@ export default function HomePage() {
           <a className="tile tile-blue tile-wide" href={NYLON_PATH} data-reveal>
             <p className="eyebrow">Featured · HPLC sample preparation</p>
             <h2>Nylon Syringe Filter</h2>
-            <p>0.45 micron. 25 mm. 100 per canister.</p>
+            <p>0.45 micron. 25 mm. {peso(NYLON_PRICING.canister.price)} per canister of 100, or {peso(NYLON_PRICING.single.price)} each.</p>
             <div className="btn-row"><span className="link-arrow">Learn more</span></div>
             <div className="tile-media"><Picture {...NYLON_PHOTO} alt="Canister of 25mm 0.45 micron nylon syringe filters" sizes="(max-width: 520px) calc(100vw - 80px), 440px" /></div>
           </a>
